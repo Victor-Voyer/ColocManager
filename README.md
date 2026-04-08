@@ -31,6 +31,7 @@ ColocManager répond à ces problématiques via une plateforme collaborative acc
 - Jeunes actifs partageant un logement
 - Colocations longue durée
 - Maisons partagées
+- Famille
 
 ---
 
