@@ -21,10 +21,10 @@ L’objectif est de proposer une interface :
 
 | Usage                | Couleur         | Code HEX | Aperçu |
 |---------------------|----------------|----------|--------|
-| Couleur primaire    | Bleu moderne   | `#3B82F6` | <div style="width:24px;height:24px;background-color:#3B82F6;border-radius:4px;"></div> |
-| Bleu foncé (header) | Bleu profond   | `#1E3A8A` | <div style="width:24px;height:24px;background-color:#1E3A8A;border-radius:4px;"></div> |
-| Fond principal      | Blanc cassé    | `#F9FAFB` | <div style="width:24px;height:24px;background-color:#F9FAFB;border:1px solid #ddd;border-radius:4px;"></div> |
-| Texte principal     | Gris foncé     | `#1F2937` | <div style="width:24px;height:24px;background-color:#1F2937;border-radius:4px;"></div> |
+| Couleur primaire    | Bleu moderne   | `#3B82F6` | ![](https://img.shields.io/badge/-3B82F6-3B82F6?style=flat-square) |
+| Bleu foncé (header) | Bleu profond   | `#1E3A8A` | ![](https://img.shields.io/badge/-1E3A8A-1E3A8A?style=flat-square) |
+| Fond principal      | Blanc cassé    | `#F9FAFB` | ![](https://img.shields.io/badge/-F9FAFB-F9FAFB?style=flat-square) |
+| Texte principal     | Gris foncé     | `#1F2937` | ![](https://img.shields.io/badge/-1F2937-1F2937?style=flat-square) |
 
 ---
 
@@ -32,10 +32,10 @@ L’objectif est de proposer une interface :
 
 | Usage                | Couleur         | Code HEX | Aperçu |
 |---------------------|----------------|----------|--------|
-| Accent coloc        | Vert doux      | `#34D399` | <div style="width:24px;height:24px;background-color:#34D399;border-radius:4px;"></div> |
-| Vert foncé          | Vert profond   | `#065F46` | <div style="width:24px;height:24px;background-color:#065F46;border-radius:4px;"></div> |
-| Fond secondaire     | Beige clair    | `#FFFBEB` | <div style="width:24px;height:24px;background-color:#FFFBEB;border:1px solid #ddd;border-radius:4px;"></div> |
-| Accent chaleureux   | Brun léger     | `#92400E` | <div style="width:24px;height:24px;background-color:#92400E;border-radius:4px;"></div> |
+| Accent coloc        | Vert doux      | `#34D399` | ![](https://img.shields.io/badge/-34D399-34D399?style=flat-square) |
+| Vert foncé          | Vert profond   | `#065F46` | ![](https://img.shields.io/badge/-065F46-065F46?style=flat-square) |
+| Fond secondaire     | Beige clair    | `#FFFBEB` | ![](https://img.shields.io/badge/-FFFBEB-FFFBEB?style=flat-square) |
+| Accent chaleureux   | Brun léger     | `#92400E` | ![](https://img.shields.io/badge/-92400E-92400E?style=flat-square) |
 
 ---
 
@@ -43,11 +43,11 @@ L’objectif est de proposer une interface :
 
 | Signification        | Couleur         | Code HEX | Aperçu |
 |---------------------|----------------|----------|--------|
-| Succès / payé       | Vert           | `#10B981` | <div style="width:24px;height:24px;background-color:#10B981;border-radius:4px;"></div> |
-| Erreur / dette      | Rouge          | `#EF4444` | <div style="width:24px;height:24px;background-color:#EF4444;border-radius:4px;"></div> |
-| Avertissement       | Jaune          | `#F59E0B` | <div style="width:24px;height:24px;background-color:#F59E0B;border-radius:4px;"></div> |
-| Information         | Bleu clair     | `#93C5FD` | <div style="width:24px;height:24px;background-color:#93C5FD;border-radius:4px;"></div> |
-| Interaction / chat  | Violet         | `#C4B5FD` | <div style="width:24px;height:24px;background-color:#C4B5FD;border-radius:4px;"></div> |
+| Succès / payé       | Vert           | `#10B981` | ![](https://img.shields.io/badge/-10B981-10B981?style=flat-square) |
+| Erreur / dette      | Rouge          | `#EF4444` | ![](https://img.shields.io/badge/-EF4444-EF4444?style=flat-square) |
+| Avertissement       | Jaune          | `#F59E0B` | ![](https://img.shields.io/badge/-F59E0B-F59E0B?style=flat-square) |
+| Information         | Bleu clair     | `#93C5FD` | ![](https://img.shields.io/badge/-93C5FD-93C5FD?style=flat-square) |
+| Interaction / chat  | Violet         | `#C4B5FD` | ![](https://img.shields.io/badge/-C4B5FD-C4B5FD?style=flat-square) |
 
 ---
 
@@ -79,10 +79,10 @@ L’objectif est de proposer une interface :
 
 | Type       | Style | Aperçu |
 |------------|------|--------|
-| Primaire   | Fond bleu `#3B82F6`, texte blanc | <div style="padding:6px 12px;background-color:#3B82F6;color:white;border-radius:6px;display:inline-block;">Bouton</div> |
-| Secondaire | Fond vert doux `#34D399`, texte foncé | <div style="padding:6px 12px;background-color:#34D399;color:#1F2937;border-radius:6px;display:inline-block;">Bouton</div> |
-| Danger     | Fond rouge `#EF4444`, texte blanc | <div style="padding:6px 12px;background-color:#EF4444;color:white;border-radius:6px;display:inline-block;">Bouton</div> |
-| Neutre     | Fond gris clair, texte sombre | <div style="padding:6px 12px;background-color:#E5E7EB;color:#1F2937;border-radius:6px;display:inline-block;">Bouton</div> |
+| Primaire   | Fond bleu `#3B82F6`, texte blanc | ![](https://img.shields.io/badge/Bouton-3B82F6?style=flat-square&color=3B82F6&labelColor=3B82F6) |
+| Secondaire | Fond vert doux `#34D399`, texte foncé | ![](https://img.shields.io/badge/Bouton-34D399?style=flat-square&color=34D399&labelColor=34D399) |
+| Danger     | Fond rouge `#EF4444`, texte blanc | ![](https://img.shields.io/badge/Bouton-EF4444?style=flat-square&color=EF4444&labelColor=EF4444) |
+| Neutre     | Fond gris clair, texte sombre | ![](https://img.shields.io/badge/Bouton-E5E7EB?style=flat-square&color=E5E7EB&labelColor=E5E7EB) |
 
 ---
 
