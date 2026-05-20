@@ -1,0 +1,77 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-colocmanager}
+      MYSQL_USER: ${MYSQL_USER:-coloc}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-coloc}
+    ports:
+      - "${DB_PORT:-3307}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      APP_ENV: dev
+      DATABASE_URL: mysql://${MYSQL_USER:-coloc}:${MYSQL_PASSWORD:-coloc}@db:3306/${MYSQL_DATABASE:-colocmanager}?serverVersion=8.0&charset=utf8mb4
+      MERCURE_URL: http://mercure/.well-known/mercure
+      MERCURE_PUBLIC_URL: http://localhost:3001/.well-known/mercure
+      MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET:-!ChangeThisMercureJWTSecretKey!}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "${API_PORT:-8088}:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:${API_PORT:-8088}/api
+      VITE_MERCURE_URL: http://localhost:3001/.well-known/mercure
+
+  mercure:
+    image: dunglas/mercure
+    ports:
+      - "${MERCURE_PORT:-3001}:80"
+    environment:
+      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET:-!ChangeThisMercureJWTSecretKey!}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET:-!ChangeThisMercureJWTSecretKey!}
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://localhost:5173
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "${PHPMYADMIN_PORT:-8081}:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${MYSQL_USER:-coloc}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-coloc}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
