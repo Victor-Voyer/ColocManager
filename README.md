@@ -5,98 +5,48 @@
 
 ## 📌 1. Présentation du projet
 
-**ColocManager** est une application web permettant aux colocataires de gérer facilement la vie en colocation : dépenses partagées, répartition des charges, planning des tâches ménagères, gestion des courses et communication interne.
-
-L’objectif est de proposer une solution centralisée, simple et sécurisée pour éviter les conflits liés à l’organisation et aux finances.
+L’application vise à simplifier la gestion quotidienne d’une colocation en centralisant les informations essentielles comme les dépenses, les tâches ménagères et les événements communs.
 
 ---
 
-## 🎯 2. Problématique
+## 🎯 2. Objectifs
 
-En colocation, les difficultés principales sont :
-
-- Suivi des dépenses communes
-- Répartition équitable des charges
-- Organisation des tâches ménagères
-- Manque de visibilité sur qui doit quoi
-- Mauvaise communication
-
-ColocManager répond à ces problématiques via une plateforme collaborative accessible en ligne.
+- Offrir une interface intuitive pour suivre les finances du foyer.
+- Faciliter la répartition équitable des tâches.
+- Améliorer la communication entre colocataires.
 
 ---
 
-## 👥 3. Cible utilisateur
+## 👥 3. Public cible
 
-- Étudiants en colocation
-- Jeunes actifs partageant un logement
-- Colocations longue durée
-- Maisons partagées
-- Famille
+- Étudiants et jeunes actifs vivant en colocation.
+- Familles souhaitant mieux organiser leurs dépenses et tâches.
 
 ---
 
-## 🚀 4. Fonctionnalités principales
+## 🚀 4. Périmètre fonctionnel
 
-### 🔐 Authentification & gestion des utilisateurs
-- Inscription / Connexion
-- Authentification sécurisée (JWT)
-- Gestion des rôles :
-  - Admin de la colocation
-  - Membre
-- Invitation par lien ou email
+### 4.1 Authentification & gestion des comptes
+
+- Création de compte (email/mot de passe).
+- Connexion / Déconnexion.
+- Profil utilisateur (nom, photo, préférences).
 
 ---
 
-### 💸 Gestion des dépenses
+### 4.2 Gestion de la colocation (foyer)
 
-- Ajout d’une dépense (montant, catégorie, description)
-- Attribution à un ou plusieurs colocataires
-- Calcul automatique des parts
-- Visualisation des soldes
-- Historique des transactions
-
-#### Logique de calcul des soldes :
-- Répartition équitable par défaut
-- Possibilité de pondération personnalisée
-
-Exemple :
-> Une dépense de 120€ partagée entre 3 colocataires = 40€ chacun
+- Créer ou rejoindre un foyer via un code unique.
+- Liste des membres du foyer.
+- Quitter un foyer.
 
 ---
 
-### 📊 Tableau de bord
+### 4.3 Gestion des dépenses partagées
 
-- Vue globale des dettes/crédits
-- Total des dépenses du mois
-- Graphiques par catégorie
-- Solde individuel
-
----
-
-### 🧹 Planning des tâches ménagères
-
-- Création de tâches
-- Attribution à un membre
-- Système de rotation automatique
-- Marquage comme "terminé"
-- Historique des tâches réalisées
-
----
-
-### 🛒 Liste de courses collaborative
-
-- Ajout d’articles
-- Statut (à acheter / acheté)
-- Attribution facultative
-- Historique
-
----
-
-### 💬 Messagerie interne (optionnel / bonus)
-
-- Messages liés à la colocation
-- Notifications en temps réel
-- Système simple de discussion
+- Ajouter une dépense (montant, catégorie, payeur, bénéficiaires).
+- Visualiser les soldes (qui doit combien à qui).
+- Historique des transactions.
 
 ---
 
