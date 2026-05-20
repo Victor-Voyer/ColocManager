@@ -63,6 +63,13 @@ L’application vise à simplifier la gestion quotidienne d’une colocation en 
 - Validation des données
 - Middleware d’authentification
 - Gestion des permissions
+- **Mercure** (`symfony/mercure-bundle`) pour le temps réel
+
+### ⚡ Temps réel (Mercure)
+- Hub Mercure pour pousser des événements du serveur vers le client (SSE)
+- Publication d’événements depuis Symfony après chaque action (nouveau message, mise à jour de la liste de courses, etc.)
+- Abonnement côté React via `EventSource`
+- Topics privés par colocation, sécurisés par JWT Mercure
 
 ### 🗄 Base de données
 - MySQL
@@ -87,6 +94,7 @@ Tables principales :
 - Gestion des rôles et permissions
 - Protection des routes API
 - Sécurisation des requêtes SQL (ORM Doctrine)
+- Tokens JWT Mercure pour restreindre l’accès aux topics de chaque colocation
 
 ---
 
@@ -104,6 +112,7 @@ Tables principales :
 ## ☁ 8. Déploiement
 
 - Dockerisation de l’application
+- Services Docker : backend (Symfony), frontend (React), base de données (MySQL), **Mercure**
 - Hébergement VPS ou plateforme cloud
 - Base de données distante
 - HTTPS
@@ -149,6 +158,7 @@ Tables principales :
 - Conception base de données
 - Architecture API REST
 - Authentification sécurisée
+- Communication temps réel (Mercure / SSE)
 - Gestion des rôles
 - Interface utilisateur moderne
 - Travail en équipe
