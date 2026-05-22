@@ -100,6 +100,26 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.homepage__burger {
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+
+.homepage__burger:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.homepage__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
 /* Buttons */
 .homepage__btn {
   display: inline-flex;
@@ -537,6 +557,19 @@
 }
 
 /* Responsive — mobile-first */
+
+/* Tablette large */
+@media (max-width: 1200px) {
+  .homepage__container {
+    padding: 0 1.5rem;
+  }
+
+  .homepage__features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablette */
 @media (max-width: 900px) {
   .homepage__hero-inner,
   .homepage__benefits-inner {
@@ -548,18 +581,116 @@
     order: -1;
   }
 
-  .homepage__features-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .homepage__features,
+  .homepage__benefits,
+  .homepage__cta {
+    padding: 3rem 0;
   }
 
-  .homepage__nav-link {
-    display: none;
+  .homepage__section-header {
+    margin-bottom: 2rem;
   }
 }
 
-@media (max-width: 560px) {
+/* Mobile large */
+@media (max-width: 768px) {
+  .homepage__overlay {
+    display: block;
+  }
+
+  .homepage--menu-open .homepage__overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .homepage__header-inner {
+    min-height: 3.5rem;
+    position: relative;
+    justify-content: space-between;
+  }
+
+  .homepage__burger {
+    z-index: 160;
+  }
+
+  .homepage__nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(300px, 85vw);
+    height: 100vh;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 5rem 1.25rem 1.5rem;
+    background: var(--color-primary-dark);
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.15);
+    z-index: 155;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .homepage--menu-open .homepage__nav {
+    transform: translateX(0);
+  }
+
+  .homepage__nav-link {
+    display: block;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .homepage__nav .homepage__btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    white-space: normal;
+  }
+
+  .homepage__logo-text {
+    font-size: 1rem;
+  }
+
   .homepage__hero {
     padding: 2.5rem 0 3rem;
+  }
+
+  .homepage__subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .homepage__dashboard-preview {
+    max-width: 100%;
+  }
+
+  .homepage__preview-body {
+    padding: 1rem;
+    gap: 0.625rem;
+  }
+
+  .homepage__preview-card {
+    padding: 0.75rem;
+  }
+
+  .homepage__preview-card strong {
+    font-size: 1.125rem;
+  }
+
+  .homepage__cta-inner {
+    padding: 2rem 1.25rem;
+  }
+
+  .homepage__cta-text {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .homepage__container {
+    padding: 0 1rem;
   }
 
   .homepage__features-grid {
@@ -577,12 +708,39 @@
     width: 100%;
   }
 
-  .homepage__nav .homepage__btn--neutral {
-    display: none;
-  }
-
   .homepage__footer-inner {
     flex-direction: column;
     text-align: center;
+  }
+
+  .homepage__footer-copy {
+    font-size: 0.8125rem;
+  }
+
+  .homepage__benefit-item {
+    padding: 1rem;
+  }
+
+  .homepage__feature-card {
+    padding: 1.25rem;
+  }
+}
+
+/* Petit mobile */
+@media (max-width: 400px) {
+  .homepage__title {
+    font-size: 1.75rem;
+  }
+
+  .homepage__logo-text {
+    display: none;
+  }
+
+  .homepage__preview-body {
+    grid-template-columns: 1fr;
+  }
+
+  .homepage__eyebrow {
+    font-size: 0.75rem;
   }
 }

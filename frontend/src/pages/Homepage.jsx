@@ -1,4 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
+import BurgerButton from '../components/BurgerButton'
+import '../components/BurgerButton.css'
 import './Homepage.css'
 
 const features = [
@@ -68,8 +71,36 @@ const benefits = [
 ]
 
 function Homepage() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [])
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <div className="homepage">
+    <div className={`homepage ${menuOpen ? 'homepage--menu-open' : ''}`}>
+      <div
+        className="homepage__overlay"
+        onClick={closeMenu}
+        aria-hidden="true"
+      />
+
       <header className="homepage__header">
         <div className="homepage__container homepage__header-inner">
           <Link to="/" className="homepage__logo" aria-label="ColocManager — Accueil">
@@ -78,11 +109,17 @@ function Homepage() {
           </Link>
 
           <nav className="homepage__nav" aria-label="Navigation principale">
-            <a href="#features" className="homepage__nav-link">Fonctionnalités</a>
-            <a href="#benefits" className="homepage__nav-link">Avantages</a>
-            <Link to="/dashboard" className="homepage__btn homepage__btn--neutral homepage__btn--sm">Connexion</Link>
-            <Link to="/dashboard" className="homepage__btn homepage__btn--primary homepage__btn--sm">S&apos;inscrire</Link>
+            <a href="#features" className="homepage__nav-link" onClick={closeMenu}>Fonctionnalités</a>
+            <a href="#benefits" className="homepage__nav-link" onClick={closeMenu}>Avantages</a>
+            <Link to="/dashboard" className="homepage__btn homepage__btn--neutral homepage__btn--sm" onClick={closeMenu}>Connexion</Link>
+            <Link to="/dashboard" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
           </nav>
+
+          <BurgerButton
+            isOpen={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="homepage__burger"
+          />
         </div>
       </header>
 

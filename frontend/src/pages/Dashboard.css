@@ -262,22 +262,153 @@
   gap: 0.25rem;
 }
 
-@media (max-width: 1024px) {
+/* ── Responsive ── */
+
+/* Tablette large */
+@media (max-width: 1200px) {
   .dashboard-content__stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
+
   .dashboard-content__main-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 768px) {
-  .dashboard-content__stats-grid {
-    grid-template-columns: 1fr;
+/* Tablette */
+@media (max-width: 1024px) {
+  .dashboard-content__greeting h1 {
+    font-size: 1.5rem;
   }
+
+  .dashboard-content__stat-value {
+    font-size: 1.375rem;
+  }
+
+  .dashboard-content__chart-container {
+    height: 220px;
+  }
+
+  .dashboard-content__bar-item {
+    width: 50px;
+  }
+
+  .dashboard-content__bar {
+    width: 32px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
   .dashboard-content__greeting {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dashboard-content__greeting-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-content__greeting-actions .dashboard-content__btn {
+    flex: 1;
+    min-width: fit-content;
+    text-align: center;
+  }
+
+  .dashboard-content__stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dashboard-content__stat-card {
+    padding: 1.25rem;
+  }
+
+  .dashboard-content__main-grid {
+    gap: 1rem;
+  }
+
+  .dashboard-content__chart-section,
+  .dashboard-content__activity-section {
+    padding: 1.25rem;
+  }
+
+  .dashboard-content__section-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .dashboard-content__section-header h2 {
+    font-size: 1rem;
+  }
+
+  .dashboard-content__chart-container {
+    height: 200px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-content__bar-chart {
+    min-width: 320px;
+    padding: 0 0.5rem;
+  }
+
+  .dashboard-content__bar-item span {
+    font-size: 0.6875rem;
+  }
+
+  .dashboard-content__activity-item {
+    gap: 0.75rem;
+  }
+
+  .dashboard-content__activity-content p {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Petit mobile */
+@media (max-width: 480px) {
+  .dashboard-content__greeting h1 {
+    font-size: 1.375rem;
+  }
+
+  .dashboard-content__greeting-actions {
+    flex-direction: column;
+  }
+
+  .dashboard-content__greeting-actions .dashboard-content__btn {
+    width: 100%;
+  }
+
+  .dashboard-content__stat-value {
+    font-size: 1.25rem;
+  }
+
+  .dashboard-content__stat-arrow {
+    display: none;
+  }
+
+  .dashboard-content__activity-content p {
+    word-break: break-word;
+  }
+
+  .dashboard-content__chart-section,
+  .dashboard-content__activity-section {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  .dashboard-content__bar {
+    width: 28px;
+  }
+
+  .dashboard-content__bar-item {
+    width: 44px;
   }
 }

@@ -240,3 +240,168 @@
 .form-group input:focus {
   border-color: #3b82f6;
 }
+
+/* ── Responsive ── */
+
+/* Tablette */
+@media (max-width: 1024px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .messages-layout {
+    grid-template-columns: 260px 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-header .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .card {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+
+  .tasks-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .task-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .messages-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+    min-height: calc(100vh - 12rem);
+    gap: 1rem;
+  }
+
+  .messages-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    scrollbar-width: none;
+  }
+
+  .messages-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chat-preview {
+    flex-shrink: 0;
+    min-width: 180px;
+    padding: 0.75rem;
+  }
+
+  .messages-main {
+    min-height: 360px;
+  }
+
+  .chat-messages {
+    padding: 1rem;
+    min-height: 240px;
+  }
+
+  .message {
+    max-width: 85%;
+  }
+
+  .chat-input {
+    flex-wrap: wrap;
+    padding: 0.75rem;
+  }
+
+  .chat-input .btn {
+    width: 100%;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .table th:nth-child(3),
+  .table td:nth-child(3) {
+    display: none;
+  }
+}
+
+/* Petit mobile */
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.375rem;
+  }
+
+  .page-header p {
+    font-size: 0.875rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.625rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .table th:nth-child(2),
+  .table td:nth-child(2) {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badge {
+    font-size: 0.6875rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .shopping-item {
+    padding: 0.625rem 0;
+    font-size: 0.9375rem;
+  }
+
+  .chat-preview {
+    min-width: 150px;
+  }
+
+  .message {
+    max-width: 92%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .form-group input {
+    font-size: 1rem; /* évite le zoom iOS */
+  }
+
+  .settings-grid .btn {
+    width: 100%;
+  }
+}
