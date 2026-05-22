@@ -131,86 +131,6 @@
   color: #9ca3af;
 }
 
-/* Messages */
-.messages-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 1.5rem;
-  height: calc(100vh - 200px);
-}
-
-.messages-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-}
-
-.chat-preview {
-  padding: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.chat-preview:hover { background: #f9fafb; }
-.chat-preview--active { background: #eff6ff; border-left: 3px solid #3b82f6; }
-
-.chat-preview p {
-  margin: 0.25rem 0 0;
-  font-size: 0.8125rem;
-  color: #6b7280;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.messages-main {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-}
-
-.chat-messages {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.message {
-  max-width: 70%;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-}
-
-.message--received {
-  align-self: flex-start;
-  background: #f3f4f6;
-}
-
-.message--sent {
-  align-self: flex-end;
-  background: #3b82f6;
-  color: white;
-}
-
-.chat-input {
-  padding: 1rem;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  gap: 0.75rem;
-}
-
-.chat-input input {
-  flex: 1;
-  padding: 0.625rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  outline: none;
-}
-
 /* Settings */
 .settings-grid {
   display: grid;
@@ -248,10 +168,6 @@
   .settings-grid {
     grid-template-columns: 1fr;
   }
-
-  .messages-layout {
-    grid-template-columns: 260px 1fr;
-  }
 }
 
 /* Mobile */
@@ -286,55 +202,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
-  }
-
-  .messages-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: auto;
-    min-height: calc(100vh - 12rem);
-    gap: 1rem;
-  }
-
-  .messages-sidebar {
-    flex-direction: row;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 0.75rem;
-    gap: 0.5rem;
-    scrollbar-width: none;
-  }
-
-  .messages-sidebar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .chat-preview {
-    flex-shrink: 0;
-    min-width: 180px;
-    padding: 0.75rem;
-  }
-
-  .messages-main {
-    min-height: 360px;
-  }
-
-  .chat-messages {
-    padding: 1rem;
-    min-height: 240px;
-  }
-
-  .message {
-    max-width: 85%;
-  }
-
-  .chat-input {
-    flex-wrap: wrap;
-    padding: 0.75rem;
-  }
-
-  .chat-input .btn {
-    width: 100%;
   }
 
   .table th,
@@ -385,16 +252,6 @@
   .shopping-item {
     padding: 0.625rem 0;
     font-size: 0.9375rem;
-  }
-
-  .chat-preview {
-    min-width: 150px;
-  }
-
-  .message {
-    max-width: 92%;
-    padding: 0.625rem 0.875rem;
-    font-size: 0.875rem;
   }
 
   .form-group input {

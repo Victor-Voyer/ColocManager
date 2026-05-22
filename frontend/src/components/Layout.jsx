@@ -9,7 +9,6 @@ const navItems = [
   { id: 'expenses', label: 'Expenses', icon: '💸', path: '/expenses' },
   { id: 'tasks', label: 'Tasks', icon: '✅', path: '/tasks' },
   { id: 'shopping', label: 'Shopping List', icon: '🛒', path: '/shopping' },
-  { id: 'messages', label: 'Messages', icon: '💬', path: '/messages' },
   { id: 'settings', label: 'Settings', icon: '⚙️', path: '/settings' },
 ]
 

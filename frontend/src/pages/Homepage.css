@@ -13,7 +13,6 @@
   --color-error: #ef4444;
   --color-warning: #f59e0b;
   --color-info: #93c5fd;
-  --color-chat: #c4b5fd;
   --color-white: #ffffff;
   --color-neutral: #e5e7eb;
   --color-neutral-dark: #9ca3af;
@@ -314,11 +313,6 @@
   border-left: 3px solid var(--color-accent-green);
 }
 .homepage__preview-card--shop .homepage__preview-label { color: var(--color-accent-green-dark); }
-
-.homepage__preview-card--chat {
-  border-left: 3px solid var(--color-chat);
-}
-.homepage__preview-card--chat .homepage__preview-label { color: #7c3aed; }
 
 /* Section headers */
 .homepage__section-header {
