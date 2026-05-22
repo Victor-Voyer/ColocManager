@@ -1,4 +1,4 @@
-import './Pages.css'
+import './Expenses.css'
 
 function Expenses() {
   return (

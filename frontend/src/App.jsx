@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router'
-import Homepage from './pages/Homepage.jsx'
-import Dashboard from './pages/Dashboard.jsx'
-import Expenses from './pages/Expenses.jsx'
-import Tasks from './pages/Tasks.jsx'
-import ShoppingList from './pages/ShoppingList.jsx'
-import Settings from './pages/Settings.jsx'
+import Homepage from './pages/Homepage/Homepage.jsx'
+import Dashboard from './pages/Dashboard/Dashboard.jsx'
+import Expenses from './pages/Expenses/Expenses.jsx'
+import Tasks from './pages/Tasks/Tasks.jsx'
+import ShoppingList from './pages/ShoppingList/ShoppingList.jsx'
+import Settings from './pages/Settings/Settings.jsx'
 import Layout from './components/Layout.jsx'
 
 function App() {

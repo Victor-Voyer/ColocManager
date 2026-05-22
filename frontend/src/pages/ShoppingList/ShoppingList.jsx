@@ -1,4 +1,4 @@
-import './Pages.css'
+import './ShoppingList.css'
 
 function ShoppingList() {
   return (

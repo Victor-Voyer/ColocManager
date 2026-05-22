@@ -1,4 +1,4 @@
-import './Pages.css'
+import './Tasks.css'
 
 function Tasks() {
   return (
