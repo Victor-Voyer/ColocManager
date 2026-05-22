@@ -1,3 +1,5 @@
+import './BurgerButton.css'
+
 function BurgerButton({ isOpen, onClick, className = '', label = 'Ouvrir le menu' }) {
   return (
     <button

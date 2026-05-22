@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router'
-import BurgerButton from './BurgerButton'
-import './BurgerButton.css'
+import BurgerButton from '../BurgerButton/BurgerButton'
 import './Layout.css'
 
 const navItems = [

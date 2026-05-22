@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
-import BurgerButton from '../../components/BurgerButton'
-import '../../components/BurgerButton.css'
+import BurgerButton from '../../components/BurgerButton/BurgerButton'
 import './Homepage.css'
 
 const features = [

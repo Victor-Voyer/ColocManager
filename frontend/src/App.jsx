@@ -5,7 +5,7 @@ import Expenses from './pages/Expenses/Expenses.jsx'
 import Tasks from './pages/Tasks/Tasks.jsx'
 import ShoppingList from './pages/ShoppingList/ShoppingList.jsx'
 import Settings from './pages/Settings/Settings.jsx'
-import Layout from './components/Layout.jsx'
+import Layout from './components/Layout/Layout.jsx'
 
 function App() {
   return (
