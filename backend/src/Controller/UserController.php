@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\DTO\DeleteUserAccountDto;
-use App\DTO\UpdateUserProfileDto;
+use App\DTO\User\DeleteUserAccountDto;
+use App\DTO\User\UpdateUserProfileDto;
 use App\Entity\ColocationUser;
 use App\Entity\User;
 use App\Repository\UserRepository;

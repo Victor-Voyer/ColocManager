@@ -15,4 +15,20 @@ class ColocationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Colocation::class);
     }
+
+    public function findOneByInvitationCode(string $invitationCode): ?Colocation
+    {
+        return $this->findOneBy(['invitationCode' => $invitationCode]);
+    }
+
+    public function countExpenses(Colocation $colocation): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(e.id)')
+            ->join('c.expenses', 'e')
+            ->where('c = :colocation')
+            ->setParameter('colocation', $colocation)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
