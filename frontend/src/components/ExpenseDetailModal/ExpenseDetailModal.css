@@ -75,9 +75,17 @@
   gap: 0.5rem;
 }
 
+.expense-detail__share-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .expense-detail__pay-btn {
   padding: 0.375rem 0.75rem;
   font-size: 0.8125rem;
+  white-space: nowrap;
 }
 
 @media (max-width: 480px) {

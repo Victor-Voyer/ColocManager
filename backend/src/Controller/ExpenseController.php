@@ -114,6 +114,15 @@ class ExpenseController extends AbstractController
         );
     }
 
+    /** PATCH /api/expenses/{expenseId}/shares/{userId}/unpay — Annule le remboursement d'une part */
+    #[Route('/expenses/{expenseId}/shares/{userId}/unpay', name: 'api_expense_share_unpay', methods: ['PATCH'], requirements: ['expenseId' => '\d+', 'userId' => '\d+'])]
+    public function markShareAsUnpaid(int $expenseId, int $userId): JsonResponse
+    {
+        return $this->json(
+            $this->expenseService->markShareAsUnpaid($this->currentUserProvider->getUser(), $expenseId, $userId),
+        );
+    }
+
     /** Valide un DTO — lève ApiException (422) si les données sont invalides */
     private function validate(object $dto, ?array $groups = null): void
     {

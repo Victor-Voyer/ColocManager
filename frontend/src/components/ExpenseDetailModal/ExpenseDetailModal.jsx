@@ -33,7 +33,7 @@ function ExpenseDetailModal({
 }) {
   const [mode, setMode] = useState('view')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isPayingShare, setIsPayingShare] = useState(null)
+  const [isUpdatingShare, setIsUpdatingShare] = useState(null)
   const [error, setError] = useState('')
 
   const handleClose = () => {
@@ -64,16 +64,21 @@ function ExpenseDetailModal({
     }
   }
 
+  const updateShareInExpense = (userId, updatedShare) => {
+    onUpdated({
+      ...expense,
+      shares: expense.shares.map((share) =>
+        share.userId === userId ? { ...share, ...updatedShare } : share,
+      ),
+    })
+  }
+
   const handleMarkPaid = async (userId) => {
-    setIsPayingShare(userId)
+    setIsUpdatingShare(userId)
+    setError('')
     try {
       const updatedShare = await expenseApi.markShareAsPaid(expense.id, userId)
-      onUpdated({
-        ...expense,
-        shares: expense.shares.map((share) =>
-          share.userId === userId ? { ...share, ...updatedShare } : share,
-        ),
-      })
+      updateShareInExpense(userId, updatedShare)
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -81,7 +86,24 @@ function ExpenseDetailModal({
           : 'Impossible de marquer la part comme remboursée.',
       )
     } finally {
-      setIsPayingShare(null)
+      setIsUpdatingShare(null)
+    }
+  }
+
+  const handleMarkUnpaid = async (userId) => {
+    setIsUpdatingShare(userId)
+    setError('')
+    try {
+      const updatedShare = await expenseApi.markShareAsUnpaid(expense.id, userId)
+      updateShareInExpense(userId, updatedShare)
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Impossible d\'annuler le remboursement.',
+      )
+    } finally {
+      setIsUpdatingShare(null)
     }
   }
 
@@ -165,15 +187,27 @@ function ExpenseDetailModal({
                     </span>
                   </div>
                   {share.isPaid ? (
-                    <span className="badge badge--success">Remboursé</span>
+                    <div className="expense-detail__share-status">
+                      <span className="badge badge--success">Remboursé</span>
+                      <button
+                        type="button"
+                        className="btn btn--neutral expense-detail__pay-btn"
+                        disabled={isUpdatingShare === share.userId}
+                        onClick={() => handleMarkUnpaid(share.userId)}
+                      >
+                        {isUpdatingShare === share.userId
+                          ? '…'
+                          : 'Annuler'}
+                      </button>
+                    </div>
                   ) : (
                     <button
                       type="button"
                       className="btn btn--primary expense-detail__pay-btn"
-                      disabled={isPayingShare === share.userId}
+                      disabled={isUpdatingShare === share.userId}
                       onClick={() => handleMarkPaid(share.userId)}
                     >
-                      {isPayingShare === share.userId
+                      {isUpdatingShare === share.userId
                         ? '…'
                         : 'Marquer remboursé'}
                     </button>

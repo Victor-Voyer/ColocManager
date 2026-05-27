@@ -59,11 +59,11 @@ function ExpenseForm({
   const handleSubmit = async (event) => {
     event.preventDefault()
     await onSubmit({
-      amount: form.amount.trim(),
+      amount: form.amount.trim().replace(',', '.'),
       description: form.description.trim(),
       category: form.category.trim() || null,
       expenseDate: form.expenseDate,
-      paidByUserId: Number(form.paidByUserId),
+      paidByUserId: form.paidByUserId ? Number(form.paidByUserId) : null,
       splitMode: form.splitMode,
       participantUserIds: form.participantUserIds,
       shares: [],

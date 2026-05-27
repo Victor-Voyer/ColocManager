@@ -46,3 +46,9 @@ export function markShareAsPaid(expenseId, userId) {
     method: 'PATCH',
   })
 }
+
+export function markShareAsUnpaid(expenseId, userId) {
+  return apiRequest(`/expenses/${expenseId}/shares/${userId}/unpay`, {
+    method: 'PATCH',
+  })
+}

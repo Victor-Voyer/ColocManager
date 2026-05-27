@@ -168,6 +168,33 @@ final class ExpenseService
     /** Marque une part comme remboursée (isPaid = true, paidAt = now) */
     public function markShareAsPaid(User $user, int $expenseId, int $targetUserId): array
     {
+        $share = $this->resolveShare($user, $expenseId, $targetUserId);
+
+        $share->setIsPaid(true);
+        $share->setPaidAt(new \DateTimeImmutable());
+        $this->entityManager->flush();
+
+        return $this->serializer->serializeShare($share);
+    }
+
+    /** Annule le remboursement d'une part (isPaid = false, paidAt = null) */
+    public function markShareAsUnpaid(User $user, int $expenseId, int $targetUserId): array
+    {
+        $share = $this->resolveShare($user, $expenseId, $targetUserId);
+
+        if (!$share->isPaid()) {
+            throw new ApiException('Cette part n\'est pas marquée comme remboursée.');
+        }
+
+        $share->setIsPaid(false);
+        $share->setPaidAt(null);
+        $this->entityManager->flush();
+
+        return $this->serializer->serializeShare($share);
+    }
+
+    private function resolveShare(User $user, int $expenseId, int $targetUserId): ExpenseShare
+    {
         $expense = $this->expenseRepository->find($expenseId);
         if ($expense === null) {
             throw ApiException::notFound('Dépense introuvable.');
@@ -185,11 +212,7 @@ final class ExpenseService
             throw ApiException::notFound('Part de dépense introuvable.');
         }
 
-        $share->setIsPaid(true);
-        $share->setPaidAt(new \DateTimeImmutable());
-        $this->entityManager->flush();
-
-        return $this->serializer->serializeShare($share);
+        return $share;
     }
 
     /** Vérifie l'accès coloc + que la dépense appartient bien à cette coloc */
