@@ -1,25 +1,15 @@
 import { useState } from 'react'
-import { ApiError } from '../../api/client'
 import * as expenseApi from '../../api/expenseApi'
+import { getErrorMessage } from '../../utils/apiError'
+import {
+  formatAmount,
+  formatExpenseDate,
+  formatMemberName,
+  mergeShareIntoExpense,
+} from '../../utils/expenseUtils'
 import Modal from '../Modal/Modal.jsx'
 import ExpenseForm from '../ExpenseForm/ExpenseForm.jsx'
 import './ExpenseDetailModal.css'
-
-function formatDate(isoDate) {
-  return new Date(isoDate).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
-
-function formatAmount(amount) {
-  return `${Number(amount).toFixed(2)} €`
-}
-
-function formatMemberName(person) {
-  return `${person.firstName} ${person.lastName}`
-}
 
 function ExpenseDetailModal({
   isOpen,
@@ -54,54 +44,20 @@ function ExpenseDetailModal({
       onUpdated(updated)
       setMode('view')
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Impossible de modifier la dépense.',
-      )
+      setError(getErrorMessage(err, 'Impossible de modifier la dépense.'))
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const updateShareInExpense = (userId, updatedShare) => {
-    onUpdated({
-      ...expense,
-      shares: expense.shares.map((share) =>
-        share.userId === userId ? { ...share, ...updatedShare } : share,
-      ),
-    })
-  }
-
-  const handleMarkPaid = async (userId) => {
+  const handleShareStatusChange = async (userId, apiCall, fallbackMessage) => {
     setIsUpdatingShare(userId)
     setError('')
     try {
-      const updatedShare = await expenseApi.markShareAsPaid(expense.id, userId)
-      updateShareInExpense(userId, updatedShare)
+      const updatedShare = await apiCall(expense.id, userId)
+      onUpdated(mergeShareIntoExpense(expense, userId, updatedShare))
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Impossible de marquer la part comme remboursée.',
-      )
-    } finally {
-      setIsUpdatingShare(null)
-    }
-  }
-
-  const handleMarkUnpaid = async (userId) => {
-    setIsUpdatingShare(userId)
-    setError('')
-    try {
-      const updatedShare = await expenseApi.markShareAsUnpaid(expense.id, userId)
-      updateShareInExpense(userId, updatedShare)
-    } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Impossible d\'annuler le remboursement.',
-      )
+      setError(getErrorMessage(err, fallbackMessage))
     } finally {
       setIsUpdatingShare(null)
     }
@@ -149,7 +105,7 @@ function ExpenseDetailModal({
               <div>
                 <span className="expense-detail__label">Date</span>
                 <p className="expense-detail__value">
-                  {formatDate(expense.expenseDate)}
+                  {formatExpenseDate(expense.expenseDate, 'long')}
                 </p>
               </div>
               <div>
@@ -193,11 +149,15 @@ function ExpenseDetailModal({
                         type="button"
                         className="btn btn--neutral expense-detail__pay-btn"
                         disabled={isUpdatingShare === share.userId}
-                        onClick={() => handleMarkUnpaid(share.userId)}
+                        onClick={() =>
+                          handleShareStatusChange(
+                            share.userId,
+                            expenseApi.markShareAsUnpaid,
+                            'Impossible d\'annuler le remboursement.',
+                          )
+                        }
                       >
-                        {isUpdatingShare === share.userId
-                          ? '…'
-                          : 'Annuler'}
+                        {isUpdatingShare === share.userId ? '…' : 'Annuler'}
                       </button>
                     </div>
                   ) : (
@@ -205,7 +165,13 @@ function ExpenseDetailModal({
                       type="button"
                       className="btn btn--primary expense-detail__pay-btn"
                       disabled={isUpdatingShare === share.userId}
-                      onClick={() => handleMarkPaid(share.userId)}
+                      onClick={() =>
+                        handleShareStatusChange(
+                          share.userId,
+                          expenseApi.markShareAsPaid,
+                          'Impossible de marquer la part comme remboursée.',
+                        )
+                      }
                     >
                       {isUpdatingShare === share.userId
                         ? '…'
