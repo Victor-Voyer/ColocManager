@@ -6,7 +6,7 @@ use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-/** Récupère l'utilisateur connecté via le JWT (Symfony Security) */
+/** Récupère l'utilisateur connecté via le JWT en cookie httpOnly (Symfony Security) */
 final class CurrentUserProvider
 {
     public function __construct(

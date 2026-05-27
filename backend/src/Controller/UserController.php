@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Gère le profil de l'utilisateur connecté.
- * Toutes les routes nécessitent d'être connecté (JWT).
+ * Toutes les routes nécessitent d'être connecté (cookie JWT httpOnly).
  * La logique métier est déléguée à UserService.
  */
 #[Route('/api')]
