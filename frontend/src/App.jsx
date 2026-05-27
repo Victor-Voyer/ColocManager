@@ -1,62 +1,90 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router'
+import GuestRoute from './components/GuestRoute/GuestRoute.jsx'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx'
+import Layout from './components/Layout/Layout.jsx'
 import Homepage from './pages/Homepage/Homepage.jsx'
+import Login from './pages/Auth/Login.jsx'
+import Register from './pages/Auth/Register.jsx'
 import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import Expenses from './pages/Expenses/Expenses.jsx'
 import Tasks from './pages/Tasks/Tasks.jsx'
 import ShoppingList from './pages/ShoppingList/ShoppingList.jsx'
 import Settings from './pages/Settings/Settings.jsx'
-import Layout from './components/Layout/Layout.jsx'
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Route */}
         <Route path="/" element={<Homepage />} />
 
-        {/* Dashboard Routes (Wrapped in Layout) */}
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
+
         <Route
           path="/dashboard"
           element={
-            <Layout>
-              <Dashboard />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/expenses"
           element={
-            <Layout>
-              <Expenses />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Expenses />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/tasks"
           element={
-            <Layout>
-              <Tasks />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Tasks />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/shopping"
           element={
-            <Layout>
-              <ShoppingList />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ShoppingList />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/settings"
           element={
-            <Layout>
-              <Settings />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Settings />
+              </Layout>
+            </ProtectedRoute>
           }
         />
 
-        {/* Redirect unknown routes to homepage */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

@@ -98,8 +98,8 @@ function Homepage() {
           <nav className="homepage__nav" aria-label="Navigation principale">
             <a href="#features" className="homepage__nav-link" onClick={closeMenu}>Fonctionnalités</a>
             <a href="#benefits" className="homepage__nav-link" onClick={closeMenu}>Avantages</a>
-            <Link to="/dashboard" className="homepage__btn homepage__btn--neutral homepage__btn--sm" onClick={closeMenu}>Connexion</Link>
-            <Link to="/dashboard" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
+            <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--sm" onClick={closeMenu}>Connexion</Link>
+            <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
           </nav>
 
           <BurgerButton
@@ -123,10 +123,10 @@ function Homepage() {
                 — le tout dans une interface claire et apaisante.
               </p>
               <div className="homepage__hero-actions">
-                <Link to="/dashboard" className="homepage__btn homepage__btn--primary">
+                <Link to="/register" className="homepage__btn homepage__btn--primary">
                   Créer ma colocation
                 </Link>
-                <Link to="/dashboard" className="homepage__btn homepage__btn--secondary">
+                <Link to="/register" className="homepage__btn homepage__btn--secondary">
                   Rejoindre un foyer
                 </Link>
               </div>
@@ -218,10 +218,10 @@ function Homepage() {
               Créez votre foyer en quelques clics ou rejoignez-le avec un code d&apos;invitation.
             </p>
             <div className="homepage__cta-actions">
-              <Link to="/dashboard" className="homepage__btn homepage__btn--primary homepage__btn--lg">
+              <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--lg">
                 Commencer gratuitement
               </Link>
-              <Link to="/dashboard" className="homepage__btn homepage__btn--neutral homepage__btn--lg">
+              <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--lg">
                 J&apos;ai déjà un compte
               </Link>
             </div>

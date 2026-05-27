@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
+import { useAuth } from '../../context/AuthContext'
 import BurgerButton from '../BurgerButton/BurgerButton'
 import './Layout.css'
 
@@ -13,7 +14,22 @@ const navItems = [
 
 function Layout({ children }) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const displayName = user
+    ? `${user.firstName} ${user.lastName}`.trim()
+    : 'Utilisateur'
+  const colocationName = user?.colocations?.[0]?.name ?? 'Aucune colocation'
+  const avatarSrc =
+    user?.avatarUrl ??
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login', { replace: true })
+  }
 
   useEffect(() => {
     setMenuOpen(false)
@@ -75,9 +91,13 @@ function Layout({ children }) {
           <button className="dashboard-layout__btn dashboard-layout__btn--white">+ Invite Member</button>
         </div>
 
-        <button className="dashboard-layout__logout" type="button">
+        <button
+          className="dashboard-layout__logout"
+          type="button"
+          onClick={handleLogout}
+        >
           <span className="dashboard-layout__logout-icon">🚪</span>
-          <span>Log out</span>
+          <span>Déconnexion</span>
         </button>
       </aside>
 
@@ -93,12 +113,12 @@ function Layout({ children }) {
           <div className="dashboard-layout__topbar-right">
             <div className="dashboard-layout__user-profile">
               <div className="dashboard-layout__user-info">
-                <span className="dashboard-layout__user-name">Alex Rivera</span>
-                <span className="dashboard-layout__flat-name">THE BIG FLATROOM</span>
+                <span className="dashboard-layout__user-name">{displayName}</span>
+                <span className="dashboard-layout__flat-name">{colocationName.toUpperCase()}</span>
               </div>
               <img
-                src="https://ui-avatars.com/api/?name=Alex+Rivera&background=3B82F6&color=fff"
-                alt="Alex Rivera"
+                src={avatarSrc}
+                alt={displayName}
                 className="dashboard-layout__user-avatar"
               />
             </div>
