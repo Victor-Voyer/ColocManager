@@ -9,6 +9,7 @@ function Login() {
   const navigate = useNavigate()
   const location = useLocation()
   const redirectTo = location.state?.from ?? '/dashboard'
+  const onboardingJoin = location.state?.onboardingJoin
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +23,10 @@ function Login() {
 
     try {
       await login(email.trim(), password)
-      navigate(redirectTo, { replace: true })
+      navigate(redirectTo, {
+        replace: true,
+        state: onboardingJoin ? { onboardingJoin: true } : undefined,
+      })
     } catch (err) {
       setError(
         err instanceof ApiError

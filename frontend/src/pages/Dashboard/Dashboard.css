@@ -168,10 +168,15 @@
   outline: none;
 }
 
+.dashboard-content__onboarding {
+  margin-bottom: 2rem;
+}
+
 .dashboard-content__link-btn {
+  text-decoration: none;
+  color: var(--color-primary);
   background: none;
   border: none;
-  color: var(--color-primary);
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;

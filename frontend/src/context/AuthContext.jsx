@@ -72,6 +72,12 @@ export function AuthProvider({ children }) {
     }
   }, [clearSession])
 
+  const refreshProfile = useCallback(async () => {
+    const profile = await authApi.getMe()
+    setUser(profile)
+    return profile
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -80,8 +86,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      refreshProfile,
     }),
-    [user, isBootstrapping, login, register, logout],
+    [user, isBootstrapping, login, register, logout, refreshProfile],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

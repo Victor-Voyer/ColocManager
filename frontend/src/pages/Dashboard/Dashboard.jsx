@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router'
+import { useAuth } from '../../context/AuthContext'
+import NoColocationActions from '../../components/NoColocationActions/NoColocationActions.jsx'
 import './Dashboard.css'
 
 const stats = [
@@ -97,18 +101,65 @@ const recentActivity = [
 ]
 
 function Dashboard() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const colocationId = user?.colocations?.[0]?.id
+
+  const onboarding = location.state?.onboarding
+  const onboardingJoin = location.state?.onboardingJoin
+  const [showOnboarding, setShowOnboarding] = useState(Boolean(onboarding))
+
+  useEffect(() => {
+    if (onboarding || onboardingJoin) {
+      setShowOnboarding(true)
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+  }, [onboarding, onboardingJoin, navigate, location.pathname])
+
+  const firstName = user?.firstName ?? 'Utilisateur'
+
   return (
     <div className="dashboard-content">
       <div className="dashboard-content__greeting">
         <div className="dashboard-content__greeting-text">
-          <h1>Bonjour, Alex 👋</h1>
-          <p>Here&apos;s what&apos;s happening in your flat today.</p>
+          <h1>Bonjour, {firstName} 👋</h1>
+          <p>
+            {colocationId
+              ? "Here's what's happening in your flat today."
+              : 'Commencez par créer ou rejoindre une colocation.'}
+          </p>
         </div>
         <div className="dashboard-content__greeting-actions">
-          <button className="dashboard-content__btn dashboard-content__btn--neutral">Manage Flat</button>
-          <button className="dashboard-content__btn dashboard-content__btn--primary">+ Add Expense</button>
+          <button
+            type="button"
+            className="dashboard-content__btn dashboard-content__btn--neutral"
+            onClick={() => navigate('/settings')}
+          >
+            Manage Flat
+          </button>
+          <button
+            type="button"
+            className="dashboard-content__btn dashboard-content__btn--primary"
+            onClick={() =>
+              navigate('/expenses', { state: { openCreate: true } })
+            }
+            disabled={!colocationId}
+          >
+            + Add Expense
+          </button>
         </div>
       </div>
+
+      {!colocationId && (
+        <div className="card dashboard-content__onboarding">
+          <NoColocationActions
+            variant="compact"
+            defaultCreateOpen={showOnboarding && !onboardingJoin}
+            defaultJoinOpen={Boolean(onboardingJoin)}
+          />
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="dashboard-content__stats-grid">
@@ -136,11 +187,10 @@ function Dashboard() {
 
       {/* Main Grid */}
       <div className="dashboard-content__main-grid">
-        {/* Expense Distribution */}
         <section className="dashboard-content__chart-section">
           <div className="dashboard-content__section-header">
             <h2>Expense Distribution</h2>
-            <select className="dashboard-content__select">
+            <select className="dashboard-content__select" disabled>
               <option>This Month</option>
             </select>
           </div>
@@ -170,11 +220,12 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* Recent Activity */}
         <section className="dashboard-content__activity-section">
           <div className="dashboard-content__section-header">
             <h2>Recent Activity</h2>
-            <button className="dashboard-content__link-btn">View All</button>
+            <Link to="/expenses" className="dashboard-content__link-btn">
+              View All
+            </Link>
           </div>
           <div className="dashboard-content__activity-list">
             {recentActivity.map((activity, index) => (

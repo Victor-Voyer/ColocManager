@@ -27,7 +27,7 @@ function Register() {
         email: email.trim(),
         password,
       })
-      navigate('/dashboard', { replace: true })
+      navigate('/dashboard', { replace: true, state: { onboarding: true } })
     } catch (err) {
       setError(
         err instanceof ApiError

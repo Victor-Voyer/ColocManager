@@ -136,6 +136,6 @@ export function useExpenses(colocationId) {
     createExpense,
     deleteExpense,
     upsertExpense,
-    clearFormError: () => setFormError(''),
+    clearFormError: useCallback(() => setFormError(''), []),
   }
 }

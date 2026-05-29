@@ -199,6 +199,8 @@
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
+  text-decoration: none;
+  color: inherit;
 }
 
 .dashboard-layout__user-info {

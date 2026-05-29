@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import * as colocationApi from '../../api/colocationApi'
 import { useAuth } from '../../context/AuthContext'
 import BurgerButton from '../BurgerButton/BurgerButton'
+import NoColocationActions from '../NoColocationActions/NoColocationActions.jsx'
 import './Layout.css'
 
 const navItems = [
@@ -17,6 +19,11 @@ function Layout({ children }) {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [invitationCode, setInvitationCode] = useState('')
+  const [copyFeedback, setCopyFeedback] = useState('')
+
+  const colocationId = user?.colocations?.[0]?.id
+  const isAdmin = user?.colocations?.[0]?.role === 'admin'
 
   const displayName = user
     ? `${user.firstName} ${user.lastName}`.trim()
@@ -26,9 +33,50 @@ function Layout({ children }) {
     user?.avatarUrl ??
     `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
 
+  useEffect(() => {
+    if (!colocationId || !isAdmin) {
+      setInvitationCode('')
+      return undefined
+    }
+
+    let cancelled = false
+
+    colocationApi
+      .getColocation(colocationId)
+      .then((data) => {
+        if (!cancelled) {
+          setInvitationCode(data.invitationCode ?? '')
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setInvitationCode('')
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [colocationId, isAdmin])
+
   const handleLogout = async () => {
     await logout()
     navigate('/login', { replace: true })
+  }
+
+  const handleCopyInvitationCode = async () => {
+    if (!invitationCode) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(invitationCode)
+      setCopyFeedback('Code copié !')
+    } catch {
+      setCopyFeedback('Copie impossible')
+    }
+
+    window.setTimeout(() => setCopyFeedback(''), 2000)
   }
 
   useEffect(() => {
@@ -64,7 +112,7 @@ function Layout({ children }) {
       />
 
       <aside className="dashboard-layout__sidebar">
-        <Link to="/" className="dashboard-layout__logo" onClick={closeMenu}>
+        <Link to="/dashboard" className="dashboard-layout__logo" onClick={closeMenu}>
           <span className="dashboard-layout__logo-icon">🏠</span>
           <span className="dashboard-layout__logo-text">ColocManager</span>
         </Link>
@@ -86,9 +134,27 @@ function Layout({ children }) {
         </nav>
 
         <div className="dashboard-layout__invite-card">
-          <h3>Invite Roommates</h3>
-          <p>Manage your flat together.</p>
-          <button className="dashboard-layout__btn dashboard-layout__btn--white">+ Invite Member</button>
+          {colocationId ? (
+            <>
+              <h3>Invite Roommates</h3>
+              <p>
+                {isAdmin && invitationCode
+                  ? `Code : ${invitationCode}`
+                  : 'Invitez vos colocataires à rejoindre le foyer.'}
+              </p>
+              {isAdmin && invitationCode && (
+                <button
+                  type="button"
+                  className="dashboard-layout__btn dashboard-layout__btn--white"
+                  onClick={handleCopyInvitationCode}
+                >
+                  {copyFeedback || '+ Copier le code'}
+                </button>
+              )}
+            </>
+          ) : (
+            <NoColocationActions variant="sidebar" />
+          )}
         </div>
 
         <button
@@ -106,12 +172,16 @@ function Layout({ children }) {
           <div className="dashboard-layout__topbar-center">
             <div className="dashboard-layout__search">
               <span className="dashboard-layout__search-icon">🔍</span>
-              <input type="text" placeholder="Search anything..." />
+              <input type="text" placeholder="Search anything..." disabled />
             </div>
           </div>
 
           <div className="dashboard-layout__topbar-right">
-            <div className="dashboard-layout__user-profile">
+            <Link
+              to="/settings"
+              className="dashboard-layout__user-profile"
+              onClick={closeMenu}
+            >
               <div className="dashboard-layout__user-info">
                 <span className="dashboard-layout__user-name">{displayName}</span>
                 <span className="dashboard-layout__flat-name">{colocationName.toUpperCase()}</span>
@@ -121,7 +191,7 @@ function Layout({ children }) {
                 alt={displayName}
                 className="dashboard-layout__user-avatar"
               />
-            </div>
+            </Link>
             <BurgerButton
               isOpen={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}

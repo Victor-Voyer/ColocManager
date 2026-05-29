@@ -1,0 +1,37 @@
+.colocation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.colocation-form__error {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.colocation-form__field label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.colocation-form__field input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.colocation-form__field input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}

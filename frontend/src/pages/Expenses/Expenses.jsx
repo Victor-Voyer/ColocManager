@@ -1,15 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 import ExpenseDetailModal from '../../components/ExpenseDetailModal/ExpenseDetailModal.jsx'
 import ExpenseForm from '../../components/ExpenseForm/ExpenseForm.jsx'
 import ExpensesTable from '../../components/ExpensesTable/ExpensesTable.jsx'
 import Modal from '../../components/Modal/Modal.jsx'
+import NoColocationActions from '../../components/NoColocationActions/NoColocationActions.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { useExpenses } from '../../hooks/useExpenses'
 import './Expenses.css'
 
 function Expenses() {
   const { user } = useAuth()
+  const location = useLocation()
+  const navigate = useNavigate()
   const colocationId = user?.colocations?.[0]?.id
 
   const {
@@ -32,6 +36,16 @@ function Expenses() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedExpense, setSelectedExpense] = useState(null)
   const [expenseToDelete, setExpenseToDelete] = useState(null)
+
+  useEffect(() => {
+    if (!location.state?.openCreate || !colocationId) {
+      return
+    }
+
+    clearFormError()
+    setIsCreateOpen(true)
+    navigate('.', { replace: true, state: {} })
+  }, [location.key, colocationId, navigate, clearFormError])
 
   const handleCreate = async (payload) => {
     const success = await createExpense(payload)
@@ -65,6 +79,10 @@ function Expenses() {
             <h1>Dépenses</h1>
             <p>Rejoignez ou créez une colocation pour gérer les dépenses.</p>
           </div>
+        </div>
+
+        <div className="card">
+          <NoColocationActions variant="compact" />
         </div>
       </div>
     )

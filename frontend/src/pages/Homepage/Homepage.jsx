@@ -126,7 +126,11 @@ function Homepage() {
                 <Link to="/register" className="homepage__btn homepage__btn--primary">
                   Créer ma colocation
                 </Link>
-                <Link to="/register" className="homepage__btn homepage__btn--secondary">
+                <Link
+                  to="/login"
+                  state={{ onboardingJoin: true }}
+                  className="homepage__btn homepage__btn--secondary"
+                >
                   Rejoindre un foyer
                 </Link>
               </div>
