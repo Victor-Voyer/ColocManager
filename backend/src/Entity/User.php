@@ -64,6 +64,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: TaskRotationMember::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $taskRotationMemberships;
 
+    /** @var Collection<int, ShoppingList> */
+    #[ORM\OneToMany(targetEntity: ShoppingList::class, mappedBy: 'createdBy')]
+    private Collection $shoppingListsCreated;
+
     /** @var Collection<int, ShoppingItem> */
     #[ORM\OneToMany(targetEntity: ShoppingItem::class, mappedBy: 'createdBy')]
     private Collection $shoppingItemsCreated;
@@ -84,6 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->expenseShares = new ArrayCollection();
         $this->tasksAssigned = new ArrayCollection();
         $this->taskRotationMemberships = new ArrayCollection();
+        $this->shoppingListsCreated = new ArrayCollection();
         $this->shoppingItemsCreated = new ArrayCollection();
         $this->shoppingItemsAssigned = new ArrayCollection();
         $this->messages = new ArrayCollection();
@@ -233,6 +238,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getTaskRotationMemberships(): Collection
     {
         return $this->taskRotationMemberships;
+    }
+
+    /** @return Collection<int, ShoppingList> */
+    public function getShoppingListsCreated(): Collection
+    {
+        return $this->shoppingListsCreated;
     }
 
     /** @return Collection<int, ShoppingItem> */

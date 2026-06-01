@@ -17,9 +17,9 @@ class ShoppingItem
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Colocation::class, inversedBy: 'shoppingItems')]
-    #[ORM\JoinColumn(nullable: false)]
-    private Colocation $colocation;
+    #[ORM\ManyToOne(targetEntity: ShoppingList::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ShoppingList $shoppingList;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'shoppingItemsCreated')]
     #[ORM\JoinColumn(name: 'created_by', nullable: false)]
@@ -61,14 +61,14 @@ class ShoppingItem
         return $this->id;
     }
 
-    public function getColocation(): Colocation
+    public function getShoppingList(): ShoppingList
     {
-        return $this->colocation;
+        return $this->shoppingList;
     }
 
-    public function setColocation(Colocation $colocation): static
+    public function setShoppingList(ShoppingList $shoppingList): static
     {
-        $this->colocation = $colocation;
+        $this->shoppingList = $shoppingList;
 
         return $this;
     }

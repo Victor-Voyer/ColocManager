@@ -45,9 +45,9 @@ class Colocation
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'colocation', orphanRemoval: true)]
     private Collection $tasks;
 
-    /** @var Collection<int, ShoppingItem> */
-    #[ORM\OneToMany(targetEntity: ShoppingItem::class, mappedBy: 'colocation', orphanRemoval: true)]
-    private Collection $shoppingItems;
+    /** @var Collection<int, ShoppingList> */
+    #[ORM\OneToMany(targetEntity: ShoppingList::class, mappedBy: 'colocation', orphanRemoval: true)]
+    private Collection $shoppingLists;
 
     /** @var Collection<int, Message> */
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'colocation', orphanRemoval: true)]
@@ -59,7 +59,7 @@ class Colocation
         $this->invitationTokens = new ArrayCollection();
         $this->expenses = new ArrayCollection();
         $this->tasks = new ArrayCollection();
-        $this->shoppingItems = new ArrayCollection();
+        $this->shoppingLists = new ArrayCollection();
         $this->messages = new ArrayCollection();
     }
 
@@ -161,10 +161,27 @@ class Colocation
         return $this->tasks;
     }
 
-    /** @return Collection<int, ShoppingItem> */
-    public function getShoppingItems(): Collection
+    /** @return Collection<int, ShoppingList> */
+    public function getShoppingLists(): Collection
     {
-        return $this->shoppingItems;
+        return $this->shoppingLists;
+    }
+
+    public function addShoppingList(ShoppingList $shoppingList): static
+    {
+        if (!$this->shoppingLists->contains($shoppingList)) {
+            $this->shoppingLists->add($shoppingList);
+            $shoppingList->setColocation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShoppingList(ShoppingList $shoppingList): static
+    {
+        $this->shoppingLists->removeElement($shoppingList);
+
+        return $this;
     }
 
     /** @return Collection<int, Message> */
