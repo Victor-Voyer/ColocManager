@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   TASK_PRIORITY_OPTIONS,
   TASK_RECURRENCE_OPTIONS,
-  TASK_STATUS_OPTIONS,
 } from '../../utils/taskUtils'
 import './TaskForm.css'
 
@@ -110,20 +109,6 @@ function TaskForm({
       </div>
 
       <div className="task-form__row">
-        <div className="task-form__field">
-          <label htmlFor="task-status">Statut</label>
-          <select
-            id="task-status"
-            value={form.status}
-            onChange={(event) => updateField('status', event.target.value)}
-          >
-            {TASK_STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
         <div className="task-form__field">
           <label htmlFor="task-priority">Priorite</label>
           <select

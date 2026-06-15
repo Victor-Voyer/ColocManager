@@ -9,9 +9,26 @@ import { useTasks } from '../../hooks/useTasks'
 import {
   formatMemberName,
   formatTaskDate,
-  TASK_STATUS_OPTIONS,
 } from '../../utils/taskUtils'
 import './Tasks.css'
+
+function buildTaskPayload(task, status = task.status) {
+  const isRecurring = task.recurrence !== 'none'
+
+  return {
+    title: task.title,
+    description: task.description ?? null,
+    status,
+    priority: task.priority,
+    recurrence: task.recurrence,
+    dueDate: task.dueDate ?? null,
+    assignedToUserId:
+      !isRecurring && task.assignedTo ? Number(task.assignedTo.id) : null,
+    rotationMemberUserIds: isRecurring
+      ? task.rotationMembers.map((member) => member.userId)
+      : [],
+  }
+}
 
 function Tasks() {
   const { user } = useAuth()
@@ -31,6 +48,7 @@ function Tasks() {
     isDeleting,
     createTask,
     updateTask,
+    checkTask,
     deleteTask,
     completeTask,
     clearFormError,
@@ -39,6 +57,7 @@ function Tasks() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
   const [taskToDelete, setTaskToDelete] = useState(null)
+  const [completingTaskId, setCompletingTaskId] = useState(null)
 
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({ ...prev, [field]: value }))
@@ -72,11 +91,25 @@ function Tasks() {
   }
 
   const handleTaskCompleted = async (taskId) => {
-    const updated = await completeTask(taskId)
-    if (updated) {
-      setSelectedTask(updated)
+    setCompletingTaskId(taskId)
+    try {
+      const updated = await completeTask(taskId)
+      if (updated) {
+        setSelectedTask(updated)
+      }
+      return updated
+    } finally {
+      setCompletingTaskId(null)
     }
-    return updated
+  }
+
+  const handleTaskChecked = async (task) => {
+    setCompletingTaskId(task.id)
+    try {
+      await checkTask(task.id, buildTaskPayload(task, 'done'))
+    } finally {
+      setCompletingTaskId(null)
+    }
   }
 
   if (!colocationId) {
@@ -119,23 +152,6 @@ function Tasks() {
 
       <div className="tasks-page__filters">
         <label>
-          Statut
-          <select
-            value={filters.status}
-            onChange={(event) =>
-              handleFilterChange('status', event.target.value)
-            }
-          >
-            <option value="">Tous</option>
-            {TASK_STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
           Membre
           <select
             value={filters.assignedTo}
@@ -157,12 +173,14 @@ function Tasks() {
         <TasksTable
           tasks={tasks}
           isLoading={isLoading}
+          completingTaskId={completingTaskId}
           onSelectTask={setSelectedTask}
+          onCompleteTask={handleTaskChecked}
         />
       </div>
 
       <section className="tasks-page__history">
-        <h2>Dernieres taches terminees</h2>
+        <h2>Taches terminees</h2>
         <div className="tasks-page__history-list">
           {isHistoryLoading ? (
             <p className="tasks-page__status">Chargement...</p>
@@ -170,18 +188,27 @@ function Tasks() {
             <p className="tasks-page__status">Aucun historique pour le moment.</p>
           ) : (
             history.map((task) => (
-              <button
-                key={task.id}
-                type="button"
-                className="tasks-page__history-item"
-                onClick={() => setSelectedTask(task)}
-              >
-                <span>{task.title}</span>
-                <small>
-                  {formatMemberName(task.assignedTo)} -{' '}
-                  {formatTaskDate(task.dueDate, 'Sans echeance')}
-                </small>
-              </button>
+              <div key={task.id} className="tasks-page__history-item">
+                <button
+                  type="button"
+                  className="tasks-page__history-content"
+                  onClick={() => setSelectedTask(task)}
+                >
+                  <span>{task.title}</span>
+                  <small>
+                    {formatMemberName(task.assignedTo)} -{' '}
+                    {formatTaskDate(task.dueDate, 'Sans echeance')}
+                  </small>
+                </button>
+                <button
+                  type="button"
+                  className="tasks-page__history-delete"
+                  aria-label={`Supprimer ${task.title}`}
+                  onClick={() => setTaskToDelete(task)}
+                >
+                  ×
+                </button>
+              </div>
             ))
           )}
         </div>

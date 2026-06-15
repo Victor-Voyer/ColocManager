@@ -17,7 +17,7 @@
 
 .tasks-page__filters {
   display: grid;
-  grid-template-columns: repeat(2, minmax(180px, 240px));
+  grid-template-columns: minmax(180px, 240px);
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -65,15 +65,13 @@
 
 .tasks-page__history-item {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
+  justify-content: space-between;
   gap: 0.25rem;
-  padding: 0.875rem 1rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: white;
-  text-align: left;
-  cursor: pointer;
+  overflow: hidden;
 }
 
 .tasks-page__history-item:hover {
@@ -81,13 +79,43 @@
   background: #f8fbff;
 }
 
-.tasks-page__history-item span {
+.tasks-page__history-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.875rem 1rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tasks-page__history-content span {
   font-weight: 600;
   color: #1f2937;
 }
 
-.tasks-page__history-item small {
+.tasks-page__history-content small {
   color: #6b7280;
+}
+
+.tasks-page__history-delete {
+  width: 2.75rem;
+  border: 0;
+  border-left: 1px solid #f3f4f6;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tasks-page__history-delete:hover {
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .table__row--clickable {
@@ -121,6 +149,17 @@
   padding: 1rem;
   border-bottom: 1px solid #f3f4f6;
   font-size: 0.875rem;
+}
+
+.tasks-page__done-checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: #10b981;
+  cursor: pointer;
+}
+
+.tasks-page__done-checkbox:disabled {
+  cursor: not-allowed;
 }
 
 .badge--info {

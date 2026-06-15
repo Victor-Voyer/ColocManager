@@ -1,6 +1,5 @@
 export const TASK_STATUS_OPTIONS = [
   { value: 'pending', label: 'A faire' },
-  { value: 'in_progress', label: 'En cours' },
   { value: 'done', label: 'Terminee' },
 ]
 
@@ -41,7 +40,6 @@ export function getTaskStatus(status) {
   return (
     {
       pending: { label: 'A faire', variant: 'warning' },
-      in_progress: { label: 'En cours', variant: 'info' },
       done: { label: 'Terminee', variant: 'success' },
     }[status] ?? { label: status, variant: 'neutral' }
   )

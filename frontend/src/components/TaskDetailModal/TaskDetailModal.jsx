@@ -39,6 +39,10 @@ function TaskDetailModal({
   }
 
   const handleComplete = async () => {
+    if (task.status === 'done') {
+      return
+    }
+
     setIsCompleting(true)
     try {
       await onComplete(task.id)
@@ -53,6 +57,7 @@ function TaskDetailModal({
 
   const status = getTaskStatus(task.status)
   const priority = getTaskPriority(task.priority)
+  const isCompleted = task.status === 'done'
   const title = mode === 'edit' ? 'Modifier la tâche' : 'Détail de la tâche'
 
   return (
@@ -158,8 +163,8 @@ function TaskDetailModal({
             </button>
             <button
               type="button"
-              className="btn btn--primary"
-              disabled={task.status === 'done' || isCompleting}
+              className="btn btn--primary task-detail__complete-btn"
+              disabled={isCompleted || isCompleting}
               onClick={handleComplete}
             >
               {isCompleting ? 'Validation...' : 'Marquer comme terminée'}
