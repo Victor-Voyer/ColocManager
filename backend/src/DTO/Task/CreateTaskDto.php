@@ -17,7 +17,7 @@ class CreateTaskDto
     #[Assert\Length(max: 2000)]
     public ?string $description = null;
 
-    #[Assert\Choice(choices: ['pending', 'in_progress', 'done'])]
+    #[Assert\Choice(choices: ['pending', 'done'])]
     public string $status = 'pending';
 
     #[Assert\Choice(choices: ['low', 'medium', 'high'])]

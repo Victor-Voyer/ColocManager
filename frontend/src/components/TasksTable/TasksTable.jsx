@@ -6,7 +6,13 @@ import {
   getTaskStatus,
 } from '../../utils/taskUtils'
 
-function TasksTable({ tasks, isLoading, onSelectTask }) {
+function TasksTable({
+  tasks,
+  isLoading,
+  completingTaskId = null,
+  onSelectTask,
+  onCompleteTask,
+}) {
   if (isLoading) {
     return <p className="tasks-page__status">Chargement...</p>
   }
@@ -30,6 +36,7 @@ function TasksTable({ tasks, isLoading, onSelectTask }) {
             <th>Priorite</th>
             <th>Statut</th>
             <th>Recurrence</th>
+            <th>Faite</th>
           </tr>
         </thead>
         <tbody>
@@ -57,6 +64,22 @@ function TasksTable({ tasks, isLoading, onSelectTask }) {
                   </span>
                 </td>
                 <td>{getTaskRecurrence(task.recurrence)}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    className="tasks-page__done-checkbox"
+                    aria-label={`Marquer ${task.title} comme terminee`}
+                    checked={task.status === 'done'}
+                    disabled={task.status === 'done' || completingTaskId === task.id}
+                    onChange={(event) => {
+                      event.stopPropagation()
+                      if (event.target.checked) {
+                        onCompleteTask(task)
+                      }
+                    }}
+                    onClick={(event) => event.stopPropagation()}
+                  />
+                </td>
               </tr>
             )
           })}

@@ -124,6 +124,7 @@ export function useTasks(colocationId) {
       try {
         const updated = await taskApi.updateTask(colocationId, taskId, payload)
         upsertTask(updated)
+        await refresh()
         await refreshHistory()
         return updated
       } catch (err) {
@@ -133,7 +134,25 @@ export function useTasks(colocationId) {
         setIsSubmitting(false)
       }
     },
-    [colocationId, refreshHistory, upsertTask],
+    [colocationId, refresh, refreshHistory, upsertTask],
+  )
+
+  const checkTask = useCallback(
+    async (taskId, payload) => {
+      setError('')
+
+      try {
+        const updated = await taskApi.updateTask(colocationId, taskId, payload)
+        upsertTask(updated)
+        await refresh()
+        await refreshHistory()
+        return updated
+      } catch (err) {
+        setError(getErrorMessage(err, 'Impossible de terminer la tache.'))
+        return null
+      }
+    },
+    [colocationId, refresh, refreshHistory, upsertTask],
   )
 
   const deleteTask = useCallback(
@@ -188,6 +207,7 @@ export function useTasks(colocationId) {
     refresh,
     createTask,
     updateTask,
+    checkTask,
     deleteTask,
     completeTask,
     upsertTask,
