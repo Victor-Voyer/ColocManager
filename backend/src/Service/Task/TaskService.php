@@ -96,13 +96,10 @@ final class TaskService
 
         $this->accessChecker->requireMembership($user, $task->getColocation());
         $task->setCompletedAt(new \DateTimeImmutable());
+        $task->setStatus(TaskStatus::Done);
 
-        if ($task->getRecurrence() === TaskRecurrence::None) {
-            $task->setStatus(TaskStatus::Done);
-        } else {
-            $this->advanceRotation($task);
-            $task->setStatus(TaskStatus::Pending);
-            $task->setDueDate($this->nextDueDate($task));
+        if ($task->getRecurrence() !== TaskRecurrence::None) {
+            $this->entityManager->persist($this->createNextRecurringTask($task));
         }
 
         $this->entityManager->flush();
@@ -175,15 +172,24 @@ final class TaskService
     /** @param list<int> $userIds */
     private function replaceRotationMembers(Task $task, array $userIds, Colocation $colocation): void
     {
+        $uniqueUserIds = array_values(array_unique($userIds));
+        $users = array_map(
+            fn (int $userId): User => $this->resolveMember($userId, $colocation),
+            array_map('intval', $uniqueUserIds),
+        );
+
         foreach ($task->getRotationMembers()->toArray() as $rotationMember) {
             $task->removeRotationMember($rotationMember);
             $this->entityManager->remove($rotationMember);
         }
 
-        $uniqueUserIds = array_values(array_unique($userIds));
-        foreach ($uniqueUserIds as $position => $userId) {
+        if ($task->getId() !== null) {
+            $this->entityManager->flush();
+        }
+
+        foreach ($users as $position => $user) {
             $rotationMember = new TaskRotationMember();
-            $rotationMember->setUser($this->resolveMember((int) $userId, $colocation));
+            $rotationMember->setUser($user);
             $rotationMember->setPosition($position);
             $task->addRotationMember($rotationMember);
         }
@@ -210,6 +216,35 @@ final class TaskService
 
         $task->setRotationIndex(($task->getRotationIndex() + 1) % count($members));
         $task->setAssignedTo($this->assignedUserFromRotation($task));
+    }
+
+    private function createNextRecurringTask(Task $completedTask): Task
+    {
+        $nextTask = new Task();
+        $nextTask->setColocation($completedTask->getColocation());
+        $nextTask->setTitle($completedTask->getTitle());
+        $nextTask->setDescription($completedTask->getDescription());
+        $nextTask->setStatus(TaskStatus::Pending);
+        $nextTask->setPriority($completedTask->getPriority());
+        $nextTask->setRecurrence($completedTask->getRecurrence());
+        $nextTask->setDueDate($this->nextDueDate($completedTask));
+
+        foreach ($completedTask->getRotationMembers()->toArray() as $rotationMember) {
+            $nextRotationMember = new TaskRotationMember();
+            $nextRotationMember->setUser($rotationMember->getUser());
+            $nextRotationMember->setPosition($rotationMember->getPosition());
+            $nextTask->addRotationMember($nextRotationMember);
+        }
+
+        $memberCount = count($nextTask->getRotationMembers());
+        if ($memberCount > 0) {
+            $nextTask->setRotationIndex(($completedTask->getRotationIndex() + 1) % $memberCount);
+            $nextTask->setAssignedTo($this->assignedUserFromRotation($nextTask));
+        } else {
+            $nextTask->setAssignedTo($completedTask->getAssignedTo());
+        }
+
+        return $nextTask;
     }
 
     private function nextDueDate(Task $task): ?\DateTimeImmutable

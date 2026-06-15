@@ -1,0 +1,174 @@
+[33mcommit b2e9bae859d65d64f9c619b36f2e9956daa40a10[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mback--make-task-controller[m[33m, [m[1;31morigin/back--make-task-controller[m[33m)[m
+Merge: c2dde19 e47d018
+Author: ThibFr33 <thibs.cha@gmail.com>
+Date:   Wed May 27 11:02:42 2026 +0200
+
+    Merge branch 'main' into back--make-task-controller
+
+[33mcommit c2dde192dd1b29c236f06e284e868142fa54e7f3[m
+Author: ThibFr33 <thibs.cha@gmail.com>
+Date:   Wed May 27 11:01:46 2026 +0200
+
+    task-controller, dto and service done
+
+[33mcommit e47d018f3dc6447aa4fe700313e7c7658a3c9721[m[33m ([m[1;31morigin/back--auth[m[33m)[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 27 10:53:15 2026 +0200
+
+    update : auth --> cookie + httpOnly
+
+[33mcommit cee9af080b44ba7ea57bdb762c8698ba70631eae[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 27 10:41:49 2026 +0200
+
+    create : auth
+
+[33mcommit 9a8df8c90d0228273728f687e438890cbd560f6e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/back--make-controller[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Tue May 26 10:54:33 2026 +0200
+
+    update : facto controllers / commentary
+
+[33mcommit 178deeef0d43b9765025335edc5ba9318a59b08a[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Tue May 26 10:48:52 2026 +0200
+
+    create : expenseController + facto services / exception
+
+[33mcommit 98752619586a2f6245952171a66a13725b13575f[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Tue May 26 10:25:05 2026 +0200
+
+    create : colocationController + DTO / update : facto folder files DTO
+
+[33mcommit da1e5914d0591375c42988e50c6375e7772f3efb[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Tue May 26 10:12:53 2026 +0200
+
+    create : userController with DTO for delete + update with commentary
+
+[33mcommit 703b2e743443d01f638876404e0e21c97f3b16ca[m[33m ([m[1;31morigin/front--mock-up[m[33m)[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Fri May 22 14:23:55 2026 +0200
+
+    update : factorization components with folder
+
+[33mcommit ab7077350e0c0a53bf61990d03bd4d6e002b4316[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Fri May 22 14:23:01 2026 +0200
+
+    update : factorization pages with folder
+
+[33mcommit b978a77bd1677ebcc70fe2964d504e826f57956d[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Fri May 22 14:21:08 2026 +0200
+
+    delete : messages
+
+[33mcommit 8b67a74c13d621a87bde23bace019fc7e5fed145[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Fri May 22 14:10:36 2026 +0200
+
+    update : responsive
+
+[33mcommit 1a1e1fee8b2622241a91fb499ea4a5c493121808[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Fri May 22 13:48:30 2026 +0200
+
+    create : pages
+
+[33mcommit 1e6491d5ef1843835292eefa14e74ae6420b6bd7[m[33m ([m[1;31morigin/back--entities[m[33m, [m[1;32mback--entities[m[33m)[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Fri May 22 10:53:39 2026 +0200
+
+    make : migration
+
+[33mcommit 5ea107e250562f168d61eda091c258b8c8c35e33[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Thu May 21 11:00:58 2026 +0200
+
+    create : entities / enum / repositories
+
+[33mcommit c5e378cc11183f4a123b3efa887c0ffb884575d1[m[33m ([m[1;31morigin/initialization[m[33m)[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 14:14:30 2026 +0200
+
+    delete : remove .env cash github
+
+[33mcommit 0f24cf7fefbf79fa44d55e0fc9fda006dcbfb99f[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 14:13:08 2026 +0200
+
+    chore: stop tracking .env files
+
+[33mcommit 027be0cadcb64b537c81248ae03b5bdc28864a4f[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 14:09:03 2026 +0200
+
+    update : add .env --W .gitignore
+
+[33mcommit 65be9382b8ec90b33025a319723ffedbd849de60[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 14:06:09 2026 +0200
+
+    update : add .env --W .gitignore
+
+[33mcommit c65835497d2ddb5a6fdfe3f44adbcd9d3cb65701[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 14:04:49 2026 +0200
+
+    delete : TypeScript
+
+[33mcommit b5e2a5e6369c66e3ae4e975d1b31238c0064c593[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 14:01:37 2026 +0200
+
+    update : rename .env
+
+[33mcommit a4fc1bfd6bc9b534a9b882603e12c1b9f99689f3[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 13:44:10 2026 +0200
+
+    initialization env
+
+[33mcommit 000f7f89989ad2ed20cffea64edc852f0a67c600[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 13:26:24 2026 +0200
+
+    update : README --> Mercure
+
+[33mcommit 08d3e483f899a9bd4b850bcd8c46a7edee76e1ec[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Wed May 20 13:23:17 2026 +0200
+
+    update : README
+
+[33mcommit cb5cd93d32bce1e2d0540f40cc4bab6c0586f39f[m
+Author: Victor-Voyer <victor.voyer@outlook.fr>
+Date:   Fri Apr 10 17:45:01 2026 +0200
+
+    create : MLD.md
+
+[33mcommit c6048223aed4b08e5b4acdfe1736d1a7189a4e09[m
+Author: Victor-Voyer <victor.voyer@outlook.fr>
+Date:   Wed Apr 8 11:51:55 2026 +0200
+
+    update : preview colors for github
+
+[33mcommit c0270367ed75cd7d61432d40850e852b6a1c9cef[m
+Author: Victor-Voyer <victor.voyer@outlook.fr>
+Date:   Wed Apr 8 10:39:58 2026 +0200
+
+    create : graphic charter
+
+[33mcommit a9fb7f5de979b7de681ca479671241bd827108db[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Tue Mar 31 12:22:33 2026 +0200
+
+    add README.md
+
+[33mcommit c3e0768c59876cc2f5a710759aa0742f5214e0bd[m
+Author: Victor-Voyer <victor.voyer@oclock.school>
+Date:   Tue Mar 31 12:03:39 2026 +0200
+
+    initial commit
