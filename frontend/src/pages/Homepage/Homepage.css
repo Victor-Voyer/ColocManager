@@ -1,31 +1,12 @@
 /* Variables — Charte graphique ColocManager */
 .homepage {
-  --color-primary: #3b82f6;
-  --color-primary-dark: #1e3a8a;
-  --color-bg: #f9fafb;
-  --color-text: #1f2937;
-  --color-text-muted: #6b7280;
-  --color-accent-green: #34d399;
-  --color-accent-green-dark: #065f46;
-  --color-bg-secondary: #fffbeb;
-  --color-accent-warm: #92400e;
-  --color-success: #10b981;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
-  --color-info: #93c5fd;
-  --color-white: #ffffff;
-  --color-neutral: #e5e7eb;
-  --color-neutral-dark: #9ca3af;
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 30px rgba(30, 58, 138, 0.12);
-
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --font-sans: var(--font-sans);
 
   font-family: var(--font-sans);
   color: var(--color-text);
@@ -104,6 +85,13 @@
   flex-shrink: 0;
 }
 
+.homepage__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .homepage__burger:hover {
   background: rgba(255, 255, 255, 0.12);
 }
@@ -112,7 +100,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--color-overlay);
   z-index: 150;
   opacity: 0;
   pointer-events: none;
@@ -147,7 +135,7 @@
 }
 
 .homepage__btn--primary:hover {
-  background: #2563eb;
+  background: var(--color-primary-hover);
   box-shadow: var(--shadow-md);
 }
 
@@ -166,7 +154,7 @@
 }
 
 .homepage__btn--neutral:hover {
-  background: #d1d5db;
+  background: var(--color-border);
 }
 
 .homepage__btn--sm {
@@ -242,7 +230,7 @@
 .homepage__dashboard-preview {
   width: 100%;
   max-width: 22rem;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
@@ -343,7 +331,7 @@
 /* Features */
 .homepage__features {
   padding: 4rem 0;
-  background: var(--color-white);
+  background: var(--color-surface);
 }
 
 .homepage__features-grid {
@@ -439,7 +427,7 @@
   display: flex;
   gap: 1rem;
   padding: 1.25rem;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }

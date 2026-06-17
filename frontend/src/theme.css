@@ -1,0 +1,159 @@
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-dark: #1e3a8a;
+  --color-primary-light: rgba(59, 130, 246, 0.1);
+  --color-bg: #f9fafb;
+  --color-bg-secondary: #fffbeb;
+  --color-surface: #ffffff;
+  --color-text: #1f2937;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-neutral: #e5e7eb;
+  --color-neutral-dark: #9ca3af;
+  --color-error: #ef4444;
+  --color-error-bg: #fef2f2;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-accent-green: #34d399;
+  --color-accent-green-dark: #065f46;
+  --color-accent-warm: #92400e;
+  --color-info: #93c5fd;
+  --color-white: #ffffff;
+  --color-logout-hover-bg: #fee2e2;
+  --color-input-focus-ring: rgba(59, 130, 246, 0.15);
+  --color-overlay: rgba(15, 23, 42, 0.45);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 30px rgba(30, 58, 138, 0.12);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-primary: #60a5fa;
+  --color-primary-hover: #93c5fd;
+  --color-primary-dark: #0f172a;
+  --color-primary-light: rgba(96, 165, 250, 0.15);
+  --color-bg: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-surface: #1e293b;
+  --color-text: #f1f5f9;
+  --color-text-secondary: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+  --color-border-light: #475569;
+  --color-neutral: #334155;
+  --color-neutral-dark: #64748b;
+  --color-error-bg: rgba(239, 68, 68, 0.15);
+  --color-accent-green-dark: #6ee7b7;
+  --color-accent-warm: #fbbf24;
+  --color-logout-hover-bg: rgba(239, 68, 68, 0.15);
+  --color-input-focus-ring: rgba(96, 165, 250, 0.2);
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] input,
+[data-theme='dark'] select,
+[data-theme='dark'] textarea {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .card,
+[data-theme='dark'] .modal,
+[data-theme='dark'] .auth-page__card {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .btn--neutral,
+[data-theme='dark'] .dashboard-content__btn--neutral {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .badge--success {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+[data-theme='dark'] .badge--warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+[data-theme='dark'] .auth-page__error,
+[data-theme='dark'] .expense-form__error,
+[data-theme='dark'] .task-form__error,
+[data-theme='dark'] .tasks-page__error {
+  background: var(--color-error-bg);
+}
+
+[data-theme='dark'] .modal__close:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .dashboard-layout__search input {
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .dashboard-layout__search input::placeholder {
+  color: var(--color-text-muted);
+}
+
+[data-theme='dark'] code {
+  background: var(--color-bg);
+  color: var(--color-primary);
+}
+
+[data-theme='dark'] .tasks-page__filters select {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .table th {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .table td {
+  border-color: var(--color-border-light);
+}
+
+[data-theme='dark'] .table__row--clickable:hover {
+  background: var(--color-bg);
+}
+
+[data-theme='dark'] .badge--info {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+[data-theme='dark'] .badge--danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+[data-theme='dark'] .badge--neutral {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+[data-theme='dark'] .expense-form__field label,
+[data-theme='dark'] .task-form__field label {
+  color: var(--color-text-secondary);
+}

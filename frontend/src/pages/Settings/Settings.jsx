@@ -1,6 +1,10 @@
+import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
+import { useTheme } from '../../hooks/useTheme'
 import './Settings.css'
 
 function Settings() {
+  const { toggle, isDark } = useTheme()
+
   return (
     <div className="page-content">
       <div className="page-header">
@@ -11,6 +15,15 @@ function Settings() {
       </div>
 
       <div className="settings-grid">
+        <div className="card">
+          <h2>Apparence</h2>
+          <p className="settings-appearance__desc">
+            Thème actuel : <strong>{isDark ? 'Sombre' : 'Clair'}</strong>
+          </p>
+          <button type="button" className="btn btn--neutral" onClick={toggle}>
+            {isDark ? '☀️ Passer en mode clair' : '🌙 Passer en mode sombre'}
+          </button>
+        </div>
         <div className="card">
           <h2>Profil</h2>
           <div className="form-group">

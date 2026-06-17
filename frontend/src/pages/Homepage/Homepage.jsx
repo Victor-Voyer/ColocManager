@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
 import BurgerButton from '../../components/BurgerButton/BurgerButton'
+import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
 import './Homepage.css'
 
 const features = [
@@ -102,11 +103,14 @@ function Homepage() {
             <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
           </nav>
 
-          <BurgerButton
-            isOpen={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-            className="homepage__burger"
-          />
+          <div className="homepage__header-actions">
+            <ThemeToggle className="theme-toggle--on-dark" />
+            <BurgerButton
+              isOpen={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+              className="homepage__burger"
+            />
+          </div>
         </div>
       </header>
 

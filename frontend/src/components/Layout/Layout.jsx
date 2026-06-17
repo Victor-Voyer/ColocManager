@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
 import BurgerButton from '../BurgerButton/BurgerButton'
+import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import './Layout.css'
 
 const navItems = [
@@ -111,6 +112,7 @@ function Layout({ children }) {
           </div>
 
           <div className="dashboard-layout__topbar-right">
+            <ThemeToggle />
             <div className="dashboard-layout__user-profile">
               <div className="dashboard-layout__user-info">
                 <span className="dashboard-layout__user-name">{displayName}</span>

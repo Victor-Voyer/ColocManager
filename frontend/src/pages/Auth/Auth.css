@@ -1,16 +1,8 @@
 .auth-page {
-  --color-primary: #3b82f6;
-  --color-primary-dark: #1e3a8a;
-  --color-bg: #f9fafb;
-  --color-text: #1f2937;
-  --color-text-muted: #6b7280;
-  --color-error: #ef4444;
-  --color-white: #ffffff;
-  --color-neutral: #e5e7eb;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --shadow-md: var(--shadow-md);
+  --font-sans: var(--font-sans);
 
   font-family: var(--font-sans);
   color: var(--color-text);
@@ -21,6 +13,9 @@
 }
 
 .auth-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: var(--color-primary-dark);
   padding: 1rem 1.25rem;
 }
@@ -46,7 +41,7 @@
 .auth-page__card {
   width: 100%;
   max-width: 420px;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   padding: 2rem;
@@ -68,7 +63,7 @@
 .auth-page__error {
   margin: 0 0 1rem;
   padding: 0.75rem 1rem;
-  background: #fef2f2;
+  background: var(--color-error-bg);
   color: var(--color-error);
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
@@ -125,7 +120,7 @@
 }
 
 .auth-page__submit:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--color-primary-hover);
 }
 
 .auth-page__submit:disabled {

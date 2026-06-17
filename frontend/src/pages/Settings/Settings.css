@@ -6,6 +6,12 @@
   gap: 1.5rem;
 }
 
+.settings-appearance__desc {
+  margin: 0 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -20,13 +26,15 @@
 .form-group input {
   width: 100%;
   padding: 0.625rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   outline: none;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .form-group input:focus {
-  border-color: #3b82f6;
+  border-color: var(--color-primary);
 }
 
 @media (max-width: 1024px) {

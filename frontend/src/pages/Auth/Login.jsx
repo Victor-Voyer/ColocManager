@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
+import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
 import './Auth.css'
 
 function Login() {
@@ -41,6 +42,7 @@ function Login() {
           <span aria-hidden="true">🏠</span>
           ColocManager
         </Link>
+        <ThemeToggle className="theme-toggle--on-dark" />
       </header>
 
       <main className="auth-page__main">

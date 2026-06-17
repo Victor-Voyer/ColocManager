@@ -22,14 +22,14 @@
 
 .page-header p {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .card {
-  background: white;
+  background: var(--color-surface);
   padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn {
@@ -43,18 +43,18 @@
 }
 
 .btn--primary {
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 .btn--primary:hover {
-  background-color: #2563eb;
+  background-color: var(--color-primary-hover);
 }
 
 .btn--neutral {
-  background-color: white;
-  color: #1f2937;
-  border: 1px solid #e5e7eb;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
 }
 
 .badge {
