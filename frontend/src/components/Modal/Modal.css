@@ -63,7 +63,7 @@
 }
 
 .modal__close {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2rem;
@@ -73,8 +73,6 @@
   border-radius: 8px;
   background: transparent;
   color: var(--color-text-muted);
-  font-size: 1.5rem;
-  line-height: 1;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
+import { Banknote, Sparkles, ShoppingCart, Check } from 'lucide-react'
 import BurgerButton from '../../components/BurgerButton/BurgerButton'
+import Logo from '../../components/Logo/Logo'
 import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
 import './Homepage.css'
 
@@ -11,11 +13,7 @@ const features = [
       'Suivez qui paie quoi, visualisez les soldes et remboursez-vous en toute transparence.',
     color: 'blue',
     path: '/expenses',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375a1.125 1.125 0 0 1 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-      </svg>
-    ),
+    icon: Banknote,
   },
   {
     title: 'Tâches ménagères',
@@ -23,11 +21,7 @@ const features = [
       'Organisez les corvées, planifiez les rotations et gardez un foyer toujours au top.',
     color: 'yellow',
     path: '/tasks',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
-      </svg>
-    ),
+    icon: Sparkles,
   },
   {
     title: 'Liste de courses',
@@ -35,11 +29,7 @@ const features = [
       'Partagez vos listes en temps réel et cochez les articles au fil de vos achats.',
     color: 'green',
     path: '/shopping',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-      </svg>
-    ),
+    icon: ShoppingCart,
   },
 ]
 
@@ -92,8 +82,11 @@ function Homepage() {
       <header className="homepage__header">
         <div className="homepage__container homepage__header-inner">
           <Link to="/" className="homepage__logo" aria-label="ColocManager — Accueil">
-            <span className="homepage__logo-icon" aria-hidden="true">🏠</span>
-            <span className="homepage__logo-text">ColocManager</span>
+            <Logo
+              iconSize={22}
+              iconClassName="homepage__logo-icon"
+              textClassName="homepage__logo-text"
+            />
           </Link>
 
           <nav className="homepage__nav" aria-label="Navigation principale">
@@ -175,18 +168,23 @@ function Homepage() {
             </div>
 
             <div className="homepage__features-grid">
-              {features.map((feature) => (
-                <Link
-                  key={feature.title}
-                  to={feature.path}
-                  className={`homepage__feature-card homepage__feature-card--${feature.color}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <div className="homepage__feature-icon">{feature.icon}</div>
-                  <h3 className="homepage__feature-title">{feature.title}</h3>
-                  <p className="homepage__feature-text">{feature.description}</p>
-                </Link>
-              ))}
+              {features.map((feature) => {
+                const FeatureIcon = feature.icon
+                return (
+                  <Link
+                    key={feature.title}
+                    to={feature.path}
+                    className={`homepage__feature-card homepage__feature-card--${feature.color}`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <div className="homepage__feature-icon">
+                      <FeatureIcon size={24} aria-hidden="true" />
+                    </div>
+                    <h3 className="homepage__feature-title">{feature.title}</h3>
+                    <p className="homepage__feature-text">{feature.description}</p>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </section>
@@ -204,7 +202,9 @@ function Homepage() {
             <ul className="homepage__benefits-list">
               {benefits.map((benefit) => (
                 <li key={benefit.title} className="homepage__benefit-item">
-                  <span className="homepage__benefit-check" aria-hidden="true">✓</span>
+                  <span className="homepage__benefit-check" aria-hidden="true">
+                    <Check size={16} strokeWidth={3} />
+                  </span>
                   <div>
                     <h3 className="homepage__benefit-title">{benefit.title}</h3>
                     <p className="homepage__benefit-text">{benefit.text}</p>
@@ -236,7 +236,7 @@ function Homepage() {
       <footer className="homepage__footer">
         <div className="homepage__container homepage__footer-inner">
           <p className="homepage__footer-brand">
-            <span aria-hidden="true">🏠</span> ColocManager
+            <Logo iconSize={18} showText />
           </p>
           <p className="homepage__footer-copy">
             &copy; {new Date().getFullYear()} ColocManager — Projet de fin d&apos;année RNCP 5
@@ -248,4 +248,3 @@ function Homepage() {
 }
 
 export default Homepage
-

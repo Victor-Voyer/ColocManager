@@ -1,3 +1,15 @@
+import {
+  DollarSign,
+  ArrowDownLeft,
+  ArrowUpRight,
+  ListTodo,
+  CreditCard,
+  CircleCheck,
+  ShoppingCart,
+  Clock,
+  ArrowRight,
+  Hand,
+} from 'lucide-react'
 import './Dashboard.css'
 
 const stats = [
@@ -6,11 +18,7 @@ const stats = [
     value: '1,845.00€',
     trend: '+12% from last month',
     trendColor: 'green',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
+    icon: DollarSign,
     iconBg: 'rgba(59, 130, 246, 0.1)',
     iconColor: '#3B82F6',
   },
@@ -19,12 +27,7 @@ const stats = [
     value: '240.50€',
     trend: '3 roommates owe you',
     trendColor: 'green',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="m7 10 5 5 5-5" />
-        <path d="M12 15V3" />
-      </svg>
-    ),
+    icon: ArrowDownLeft,
     iconBg: 'rgba(16, 185, 129, 0.1)',
     iconColor: '#10B981',
   },
@@ -33,12 +36,7 @@ const stats = [
     value: '45.00€',
     trend: 'To Sarah & Mark',
     trendColor: 'red',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="m17 14-5-5-5 5" />
-        <path d="M12 9v12" />
-      </svg>
-    ),
+    icon: ArrowUpRight,
     iconBg: 'rgba(239, 68, 68, 0.1)',
     iconColor: '#EF4444',
   },
@@ -47,12 +45,7 @@ const stats = [
     value: '12',
     trend: '3 tasks due today',
     trendColor: 'orange',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-      </svg>
-    ),
+    icon: ListTodo,
     iconBg: 'rgba(245, 158, 11, 0.1)',
     iconColor: '#F59E0B',
   },
@@ -65,7 +58,7 @@ const recentActivity = [
     target: 'Weekly Groceries',
     time: '2H AGO',
     amount: '84.50€',
-    icon: '💳',
+    icon: CreditCard,
     iconBg: 'rgba(59, 130, 246, 0.1)',
   },
   {
@@ -73,7 +66,7 @@ const recentActivity = [
     action: 'completed a task',
     target: 'Clean the kitchen',
     time: '5H AGO',
-    icon: '✅',
+    icon: CircleCheck,
     iconBg: 'rgba(16, 185, 129, 0.1)',
   },
   {
@@ -81,7 +74,7 @@ const recentActivity = [
     action: 'added to shopping list',
     target: 'Dish soap',
     time: '8H AGO',
-    icon: '🛒',
+    icon: ShoppingCart,
     iconBg: 'rgba(245, 158, 11, 0.1)',
   },
   {
@@ -91,7 +84,7 @@ const recentActivity = [
     target: 'Electricity bill',
     time: 'YESTERDAY',
     amount: '120.00€',
-    icon: '💳',
+    icon: CreditCard,
     iconBg: 'rgba(59, 130, 246, 0.1)',
   },
 ]
@@ -101,7 +94,9 @@ function Dashboard() {
     <div className="dashboard-content">
       <div className="dashboard-content__greeting">
         <div className="dashboard-content__greeting-text">
-          <h1>Bonjour, Alex 👋</h1>
+          <h1>
+            Bonjour, Alex <Hand size={28} className="dashboard-content__wave" aria-hidden="true" />
+          </h1>
           <p>Here&apos;s what&apos;s happening in your flat today.</p>
         </div>
         <div className="dashboard-content__greeting-actions">
@@ -110,33 +105,33 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="dashboard-content__stats-grid">
-        {stats.map((stat, index) => (
-          <div key={index} className="dashboard-content__stat-card">
-            <div className="dashboard-content__stat-header">
-              <div
-                className="dashboard-content__stat-icon"
-                style={{ backgroundColor: stat.iconBg, color: stat.iconColor }}
-              >
-                {stat.icon}
+        {stats.map((stat) => {
+          const StatIcon = stat.icon
+          return (
+            <div key={stat.label} className="dashboard-content__stat-card">
+              <div className="dashboard-content__stat-header">
+                <div
+                  className="dashboard-content__stat-icon"
+                  style={{ backgroundColor: stat.iconBg, color: stat.iconColor }}
+                >
+                  <StatIcon size={20} aria-hidden="true" />
+                </div>
+                <ArrowRight className="dashboard-content__stat-arrow" size={18} aria-hidden="true" />
               </div>
-              <span className="dashboard-content__stat-arrow">→</span>
+              <div className="dashboard-content__stat-body">
+                <span className="dashboard-content__stat-label">{stat.label}</span>
+                <span className="dashboard-content__stat-value">{stat.value}</span>
+                <span className={`dashboard-content__stat-trend dashboard-content__stat-trend--${stat.trendColor}`}>
+                  {stat.trend}
+                </span>
+              </div>
             </div>
-            <div className="dashboard-content__stat-body">
-              <span className="dashboard-content__stat-label">{stat.label}</span>
-              <span className="dashboard-content__stat-value">{stat.value}</span>
-              <span className={`dashboard-content__stat-trend dashboard-content__stat-trend--${stat.trendColor}`}>
-                {stat.trend}
-              </span>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
-      {/* Main Grid */}
       <div className="dashboard-content__main-grid">
-        {/* Expense Distribution */}
         <section className="dashboard-content__chart-section">
           <div className="dashboard-content__section-header">
             <h2>Expense Distribution</h2>
@@ -170,29 +165,38 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* Recent Activity */}
         <section className="dashboard-content__activity-section">
           <div className="dashboard-content__section-header">
             <h2>Recent Activity</h2>
             <button className="dashboard-content__link-btn">View All</button>
           </div>
           <div className="dashboard-content__activity-list">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="dashboard-content__activity-item">
-                <div className="dashboard-content__activity-icon" style={{ backgroundColor: activity.iconBg }}>
-                  {activity.icon}
+            {recentActivity.map((activity) => {
+              const ActivityIcon = activity.icon
+              return (
+                <div key={`${activity.user}-${activity.target}-${activity.time}`} className="dashboard-content__activity-item">
+                  <div className="dashboard-content__activity-icon" style={{ backgroundColor: activity.iconBg }}>
+                    <ActivityIcon size={18} aria-hidden="true" />
+                  </div>
+                  <div className="dashboard-content__activity-content">
+                    <p>
+                      <strong>{activity.user}</strong> {activity.action}{' '}
+                      <span className="dashboard-content__activity-target">{activity.target}</span>
+                    </p>
+                    <span className="dashboard-content__activity-time">
+                      <Clock size={14} aria-hidden="true" />
+                      {activity.time}
+                      {activity.amount && (
+                        <span>
+                          {' '}
+                          • <strong>{activity.amount}</strong>
+                        </span>
+                      )}
+                    </span>
+                  </div>
                 </div>
-                <div className="dashboard-content__activity-content">
-                  <p>
-                    <strong>{activity.user}</strong> {activity.action}{' '}
-                    <span className="dashboard-content__activity-target">{activity.target}</span>
-                  </p>
-                  <span className="dashboard-content__activity-time">
-                    🕒 {activity.time} {activity.amount && <span> • <strong>{activity.amount}</strong></span>}
-                  </span>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </section>
       </div>

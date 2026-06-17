@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Trash2 } from 'lucide-react'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 import Modal from '../../components/Modal/Modal.jsx'
 import TaskDetailModal from '../../components/TaskDetailModal/TaskDetailModal.jsx'
@@ -206,7 +207,7 @@ function Tasks() {
                   aria-label={`Supprimer ${task.title}`}
                   onClick={() => setTaskToDelete(task)}
                 >
-                  ×
+                  <Trash2 size={16} aria-hidden="true" />
                 </button>
               </div>
             ))

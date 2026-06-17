@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import {
+  LayoutDashboard,
+  Wallet,
+  ListChecks,
+  ShoppingCart,
+  Settings,
+  LogOut,
+  Search,
+} from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BurgerButton from '../BurgerButton/BurgerButton'
+import Logo from '../Logo/Logo'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import './Layout.css'
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
-  { id: 'expenses', label: 'Expenses', icon: '💸', path: '/expenses' },
-  { id: 'tasks', label: 'Tasks', icon: '✅', path: '/tasks' },
-  { id: 'shopping', label: 'Shopping List', icon: '🛒', path: '/shopping' },
-  { id: 'settings', label: 'Settings', icon: '⚙️', path: '/settings' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { id: 'expenses', label: 'Expenses', icon: Wallet, path: '/expenses' },
+  { id: 'tasks', label: 'Tasks', icon: ListChecks, path: '/tasks' },
+  { id: 'shopping', label: 'Shopping List', icon: ShoppingCart, path: '/shopping' },
+  { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
 ]
 
 function Layout({ children }) {
@@ -66,24 +76,30 @@ function Layout({ children }) {
 
       <aside className="dashboard-layout__sidebar">
         <Link to="/" className="dashboard-layout__logo" onClick={closeMenu}>
-          <span className="dashboard-layout__logo-icon">🏠</span>
-          <span className="dashboard-layout__logo-text">ColocManager</span>
+          <Logo
+            iconSize={24}
+            iconClassName="dashboard-layout__logo-icon"
+            textClassName="dashboard-layout__logo-text"
+          />
         </Link>
 
         <nav className="dashboard-layout__nav" aria-label="Navigation principale">
-          {navItems.map((item) => (
-            <Link
-              key={item.id}
-              to={item.path}
-              onClick={closeMenu}
-              className={`dashboard-layout__nav-item ${
-                location.pathname === item.path ? 'dashboard-layout__nav-item--active' : ''
-              }`}
-            >
-              <span className="dashboard-layout__nav-icon">{item.icon}</span>
-              <span className="dashboard-layout__nav-label">{item.label}</span>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const NavIcon = item.icon
+            return (
+              <Link
+                key={item.id}
+                to={item.path}
+                onClick={closeMenu}
+                className={`dashboard-layout__nav-item ${
+                  location.pathname === item.path ? 'dashboard-layout__nav-item--active' : ''
+                }`}
+              >
+                <NavIcon className="dashboard-layout__nav-icon" size={20} aria-hidden="true" />
+                <span className="dashboard-layout__nav-label">{item.label}</span>
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="dashboard-layout__invite-card">
@@ -97,7 +113,7 @@ function Layout({ children }) {
           type="button"
           onClick={handleLogout}
         >
-          <span className="dashboard-layout__logout-icon">🚪</span>
+          <LogOut className="dashboard-layout__logout-icon" size={20} aria-hidden="true" />
           <span>Déconnexion</span>
         </button>
       </aside>
@@ -106,7 +122,7 @@ function Layout({ children }) {
         <header className="dashboard-layout__topbar">
           <div className="dashboard-layout__topbar-center">
             <div className="dashboard-layout__search">
-              <span className="dashboard-layout__search-icon">🔍</span>
+              <Search className="dashboard-layout__search-icon" size={18} aria-hidden="true" />
               <input type="text" placeholder="Search anything..." />
             </div>
           </div>

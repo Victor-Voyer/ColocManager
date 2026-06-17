@@ -32,7 +32,8 @@
 }
 
 .dashboard-layout__logo-icon {
-  font-size: 1.5rem;
+  flex-shrink: 0;
+  color: var(--color-primary);
 }
 
 .dashboard-layout__logo-text {
@@ -109,6 +110,14 @@
   color: var(--color-error);
 }
 
+.dashboard-layout__logout-icon {
+  flex-shrink: 0;
+}
+
+.dashboard-layout__nav-icon {
+  flex-shrink: 0;
+}
+
 /* Main Content */
 .dashboard-layout__main {
   flex: 1;
@@ -173,6 +182,11 @@
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   width: 100%;
+}
+
+.dashboard-layout__search-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .dashboard-layout__search input {
@@ -339,7 +353,7 @@
   }
 
   .dashboard-layout__nav-icon {
-    font-size: 1.125rem;
+    flex-shrink: 0;
   }
 
   .dashboard-layout__nav-label {

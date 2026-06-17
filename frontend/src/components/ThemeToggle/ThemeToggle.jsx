@@ -1,3 +1,4 @@
+import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
 import './ThemeToggle.css'
 
@@ -13,9 +14,11 @@ function ThemeToggle({ className = '' }) {
       aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
       title={isDark ? 'Mode clair' : 'Mode sombre'}
     >
-      <span className="theme-toggle__icon" aria-hidden="true">
-        {isDark ? '☀️' : '🌙'}
-      </span>
+      {isDark ? (
+        <Sun className="theme-toggle__icon" size={18} aria-hidden="true" />
+      ) : (
+        <Moon className="theme-toggle__icon" size={18} aria-hidden="true" />
+      )}
     </button>
   )
 }

@@ -1,4 +1,4 @@
-import ThemeToggle from '../../components/ThemeToggle/ThemeToggle'
+import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
 import './Settings.css'
 
@@ -20,8 +20,18 @@ function Settings() {
           <p className="settings-appearance__desc">
             Thème actuel : <strong>{isDark ? 'Sombre' : 'Clair'}</strong>
           </p>
-          <button type="button" className="btn btn--neutral" onClick={toggle}>
-            {isDark ? '☀️ Passer en mode clair' : '🌙 Passer en mode sombre'}
+          <button type="button" className="btn btn--neutral settings-appearance__btn" onClick={toggle}>
+            {isDark ? (
+              <>
+                <Sun size={18} aria-hidden="true" />
+                Passer en mode clair
+              </>
+            ) : (
+              <>
+                <Moon size={18} aria-hidden="true" />
+                Passer en mode sombre
+              </>
+            )}
           </button>
         </div>
         <div className="card">
