@@ -2,7 +2,6 @@ import {
   formatMemberName,
   formatTaskDate,
   getTaskPriority,
-  getTaskRecurrence,
   getTaskStatus,
 } from '../../utils/taskUtils'
 
@@ -35,7 +34,6 @@ function TasksTable({
             <th>Echeance</th>
             <th>Priorite</th>
             <th>Statut</th>
-            <th>Recurrence</th>
             <th>Faite</th>
           </tr>
         </thead>
@@ -63,7 +61,6 @@ function TasksTable({
                     {status.label}
                   </span>
                 </td>
-                <td>{getTaskRecurrence(task.recurrence)}</td>
                 <td>
                   <input
                     type="checkbox"

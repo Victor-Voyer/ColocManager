@@ -28,13 +28,6 @@ export function createExpense(colocationId, payload) {
   })
 }
 
-export function updateExpense(colocationId, expenseId, payload) {
-  return apiRequest(`/colocations/${colocationId}/expenses/${expenseId}`, {
-    method: 'PUT',
-    body: JSON.stringify(payload),
-  })
-}
-
 export function deleteExpense(colocationId, expenseId) {
   return apiRequest(`/colocations/${colocationId}/expenses/${expenseId}`, {
     method: 'DELETE',

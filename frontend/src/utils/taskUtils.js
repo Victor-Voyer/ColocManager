@@ -1,5 +1,6 @@
 export const TASK_STATUS_OPTIONS = [
   { value: 'pending', label: 'A faire' },
+  { value: 'in_progress', label: 'En cours' },
   { value: 'done', label: 'Terminee' },
 ]
 
@@ -7,13 +8,6 @@ export const TASK_PRIORITY_OPTIONS = [
   { value: 'low', label: 'Basse' },
   { value: 'medium', label: 'Moyenne' },
   { value: 'high', label: 'Haute' },
-]
-
-export const TASK_RECURRENCE_OPTIONS = [
-  { value: 'none', label: 'Ponctuelle' },
-  { value: 'daily', label: 'Quotidienne' },
-  { value: 'weekly', label: 'Hebdomadaire' },
-  { value: 'monthly', label: 'Mensuelle' },
 ]
 
 export function formatMemberName(member) {
@@ -40,6 +34,7 @@ export function getTaskStatus(status) {
   return (
     {
       pending: { label: 'A faire', variant: 'warning' },
+      in_progress: { label: 'En cours', variant: 'info' },
       done: { label: 'Terminee', variant: 'success' },
     }[status] ?? { label: status, variant: 'neutral' }
   )
@@ -52,12 +47,5 @@ export function getTaskPriority(priority) {
       medium: { label: 'Moyenne', variant: 'warning' },
       high: { label: 'Haute', variant: 'danger' },
     }[priority] ?? { label: priority, variant: 'neutral' }
-  )
-}
-
-export function getTaskRecurrence(recurrence) {
-  return (
-    TASK_RECURRENCE_OPTIONS.find((option) => option.value === recurrence)
-      ?.label ?? recurrence
   )
 }

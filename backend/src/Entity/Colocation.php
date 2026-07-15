@@ -33,10 +33,6 @@ class Colocation
     #[ORM\OneToMany(targetEntity: ColocationUser::class, mappedBy: 'colocation', orphanRemoval: true)]
     private Collection $memberships;
 
-    /** @var Collection<int, InvitationToken> */
-    #[ORM\OneToMany(targetEntity: InvitationToken::class, mappedBy: 'colocation', orphanRemoval: true)]
-    private Collection $invitationTokens;
-
     /** @var Collection<int, Expense> */
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'colocation')]
     private Collection $expenses;
@@ -45,22 +41,11 @@ class Colocation
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'colocation', orphanRemoval: true)]
     private Collection $tasks;
 
-    /** @var Collection<int, ShoppingList> */
-    #[ORM\OneToMany(targetEntity: ShoppingList::class, mappedBy: 'colocation', orphanRemoval: true)]
-    private Collection $shoppingLists;
-
-    /** @var Collection<int, Message> */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'colocation', orphanRemoval: true)]
-    private Collection $messages;
-
     public function __construct()
     {
         $this->memberships = new ArrayCollection();
-        $this->invitationTokens = new ArrayCollection();
         $this->expenses = new ArrayCollection();
         $this->tasks = new ArrayCollection();
-        $this->shoppingLists = new ArrayCollection();
-        $this->messages = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -143,12 +128,6 @@ class Colocation
         return $this;
     }
 
-    /** @return Collection<int, InvitationToken> */
-    public function getInvitationTokens(): Collection
-    {
-        return $this->invitationTokens;
-    }
-
     /** @return Collection<int, Expense> */
     public function getExpenses(): Collection
     {
@@ -159,34 +138,5 @@ class Colocation
     public function getTasks(): Collection
     {
         return $this->tasks;
-    }
-
-    /** @return Collection<int, ShoppingList> */
-    public function getShoppingLists(): Collection
-    {
-        return $this->shoppingLists;
-    }
-
-    public function addShoppingList(ShoppingList $shoppingList): static
-    {
-        if (!$this->shoppingLists->contains($shoppingList)) {
-            $this->shoppingLists->add($shoppingList);
-            $shoppingList->setColocation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeShoppingList(ShoppingList $shoppingList): static
-    {
-        $this->shoppingLists->removeElement($shoppingList);
-
-        return $this;
-    }
-
-    /** @return Collection<int, Message> */
-    public function getMessages(): Collection
-    {
-        return $this->messages;
     }
 }

@@ -6,10 +6,8 @@ use App\DTO\Task\CreateTaskDto;
 use App\DTO\Task\UpdateTaskDto;
 use App\Entity\Colocation;
 use App\Entity\Task;
-use App\Entity\TaskRotationMember;
 use App\Entity\User;
 use App\Enum\TaskPriority;
-use App\Enum\TaskRecurrence;
 use App\Enum\TaskStatus;
 use App\Exception\ApiException;
 use App\Repository\TaskRepository;
@@ -98,10 +96,6 @@ final class TaskService
         $task->setCompletedAt(new \DateTimeImmutable());
         $task->setStatus(TaskStatus::Done);
 
-        if ($task->getRecurrence() !== TaskRecurrence::None) {
-            $this->entityManager->persist($this->createNextRecurringTask($task));
-        }
-
         $this->entityManager->flush();
 
         return $this->serializer->serialize($task);
@@ -123,23 +117,15 @@ final class TaskService
     {
         $status = TaskStatus::from($dto->status);
         $priority = TaskPriority::from($dto->priority);
-        $recurrence = TaskRecurrence::from($dto->recurrence);
         $assignedTo = $dto->assignedToUserId === null ? null : $this->resolveMember($dto->assignedToUserId, $colocation);
-
-        if ($assignedTo !== null && $recurrence !== TaskRecurrence::None) {
-            $this->assertNoRecurringConflict($task, $colocation, $assignedTo, $priority);
-        }
 
         $task->setTitle($dto->title);
         $task->setDescription($dto->description);
         $task->setStatus($status);
         $task->setPriority($priority);
-        $task->setRecurrence($recurrence);
         $task->setDueDate($this->parseDate($dto->dueDate));
         $task->setCompletedAt($status === TaskStatus::Done ? ($task->getCompletedAt() ?? new \DateTimeImmutable()) : null);
-
-        $this->replaceRotationMembers($task, $dto->rotationMemberUserIds, $colocation);
-        $task->setAssignedTo($assignedTo ?? $this->assignedUserFromRotation($task));
+        $task->setAssignedTo($assignedTo);
     }
 
     private function resolveMember(int $userId, Colocation $colocation): User
@@ -152,111 +138,6 @@ final class TaskService
         $this->accessChecker->requireMembership($member, $colocation);
 
         return $member;
-    }
-
-    private function assertNoRecurringConflict(Task $task, Colocation $colocation, User $assignedTo, TaskPriority $priority): void
-    {
-        $taskId = $task->getId();
-        $conflictCount = $this->taskRepository->countActiveRecurringByAssigneeAndPriority(
-            $colocation,
-            $assignedTo,
-            $priority,
-            $taskId,
-        );
-
-        if ($conflictCount > 0) {
-            throw ApiException::conflict('Ce membre a deja une tache recurrente active de meme priorite.');
-        }
-    }
-
-    /** @param list<int> $userIds */
-    private function replaceRotationMembers(Task $task, array $userIds, Colocation $colocation): void
-    {
-        $uniqueUserIds = array_values(array_unique($userIds));
-        $users = array_map(
-            fn (int $userId): User => $this->resolveMember($userId, $colocation),
-            array_map('intval', $uniqueUserIds),
-        );
-
-        foreach ($task->getRotationMembers()->toArray() as $rotationMember) {
-            $task->removeRotationMember($rotationMember);
-            $this->entityManager->remove($rotationMember);
-        }
-
-        if ($task->getId() !== null) {
-            $this->entityManager->flush();
-        }
-
-        foreach ($users as $position => $user) {
-            $rotationMember = new TaskRotationMember();
-            $rotationMember->setUser($user);
-            $rotationMember->setPosition($position);
-            $task->addRotationMember($rotationMember);
-        }
-
-        if ($task->getRotationIndex() >= count($uniqueUserIds)) {
-            $task->setRotationIndex(0);
-        }
-    }
-
-    private function assignedUserFromRotation(Task $task): ?User
-    {
-        $members = $task->getRotationMembers()->toArray();
-        usort($members, fn (TaskRotationMember $a, TaskRotationMember $b): int => $a->getPosition() <=> $b->getPosition());
-
-        return $members[$task->getRotationIndex()]?->getUser() ?? null;
-    }
-
-    private function advanceRotation(Task $task): void
-    {
-        $members = $task->getRotationMembers()->toArray();
-        if (count($members) === 0) {
-            return;
-        }
-
-        $task->setRotationIndex(($task->getRotationIndex() + 1) % count($members));
-        $task->setAssignedTo($this->assignedUserFromRotation($task));
-    }
-
-    private function createNextRecurringTask(Task $completedTask): Task
-    {
-        $nextTask = new Task();
-        $nextTask->setColocation($completedTask->getColocation());
-        $nextTask->setTitle($completedTask->getTitle());
-        $nextTask->setDescription($completedTask->getDescription());
-        $nextTask->setStatus(TaskStatus::Pending);
-        $nextTask->setPriority($completedTask->getPriority());
-        $nextTask->setRecurrence($completedTask->getRecurrence());
-        $nextTask->setDueDate($this->nextDueDate($completedTask));
-
-        foreach ($completedTask->getRotationMembers()->toArray() as $rotationMember) {
-            $nextRotationMember = new TaskRotationMember();
-            $nextRotationMember->setUser($rotationMember->getUser());
-            $nextRotationMember->setPosition($rotationMember->getPosition());
-            $nextTask->addRotationMember($nextRotationMember);
-        }
-
-        $memberCount = count($nextTask->getRotationMembers());
-        if ($memberCount > 0) {
-            $nextTask->setRotationIndex(($completedTask->getRotationIndex() + 1) % $memberCount);
-            $nextTask->setAssignedTo($this->assignedUserFromRotation($nextTask));
-        } else {
-            $nextTask->setAssignedTo($completedTask->getAssignedTo());
-        }
-
-        return $nextTask;
-    }
-
-    private function nextDueDate(Task $task): ?\DateTimeImmutable
-    {
-        $current = $task->getDueDate() ?? new \DateTimeImmutable('today');
-
-        return match ($task->getRecurrence()) {
-            TaskRecurrence::Daily => $current->modify('+1 day'),
-            TaskRecurrence::Weekly => $current->modify('+1 week'),
-            TaskRecurrence::Monthly => $current->modify('+1 month'),
-            TaskRecurrence::None => $task->getDueDate(),
-        };
     }
 
     private function parseDate(?string $date): ?\DateTimeImmutable

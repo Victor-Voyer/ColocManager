@@ -5,32 +5,15 @@ function todayIso() {
   return new Date().toISOString().slice(0, 10)
 }
 
-function buildInitialState(expense, currentUserId) {
-  if (expense) {
-    return {
-      amount: expense.amount,
-      description: expense.description,
-      category: expense.category ?? '',
-      expenseDate: expense.expenseDate,
-      paidByUserId: String(expense.paidBy.id),
-      splitMode: expense.splitMode,
-      participantUserIds: expense.shares.map((share) => share.userId),
-    }
-  }
-
-  return {
-    amount: '',
-    description: '',
-    category: '',
-    expenseDate: todayIso(),
-    paidByUserId: currentUserId ? String(currentUserId) : '',
-    splitMode: 'equal',
-    participantUserIds: [],
-  }
+function buildInitialShares(members, currentUserId) {
+  return members.map((member) => ({
+    userId: member.id,
+    included: member.id === currentUserId,
+    amountOwed: '',
+  }))
 }
 
 function ExpenseForm({
-  expense = null,
   members = [],
   currentUserId,
   onSubmit,
@@ -38,35 +21,58 @@ function ExpenseForm({
   isSubmitting = false,
   error = '',
 }) {
-  const [form, setForm] = useState(() =>
-    buildInitialState(expense, currentUserId),
+  const [amount, setAmount] = useState('')
+  const [description, setDescription] = useState('')
+  const [category, setCategory] = useState('')
+  const [expenseDate, setExpenseDate] = useState(todayIso())
+  const [paidByUserId, setPaidByUserId] = useState(
+    currentUserId ? String(currentUserId) : '',
+  )
+  const [shares, setShares] = useState(() =>
+    buildInitialShares(members, currentUserId),
   )
 
-  const updateField = (field, value) => {
-    setForm((prev) => ({ ...prev, [field]: value }))
+  const toggleShare = (userId) => {
+    setShares((prev) =>
+      prev.map((share) =>
+        share.userId === userId
+          ? { ...share, included: !share.included }
+          : share,
+      ),
+    )
   }
 
-  const toggleParticipant = (userId) => {
-    setForm((prev) => {
-      const ids = prev.participantUserIds
-      const next = ids.includes(userId)
-        ? ids.filter((id) => id !== userId)
-        : [...ids, userId]
-      return { ...prev, participantUserIds: next }
-    })
+  const updateShareAmount = (userId, value) => {
+    setShares((prev) =>
+      prev.map((share) =>
+        share.userId === userId ? { ...share, amountOwed: value } : share,
+      ),
+    )
   }
+
+  const includedShares = shares.filter((share) => share.included)
+  const sharesTotal = includedShares.reduce(
+    (sum, share) => sum + (Number(share.amountOwed.replace(',', '.')) || 0),
+    0,
+  )
+  const targetAmount = Number(amount.replace(',', '.')) || 0
+  const totalsMatch =
+    includedShares.length > 0 &&
+    Math.abs(sharesTotal - targetAmount) < 0.005
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+
     await onSubmit({
-      amount: form.amount.trim().replace(',', '.'),
-      description: form.description.trim(),
-      category: form.category.trim() || null,
-      expenseDate: form.expenseDate,
-      paidByUserId: form.paidByUserId ? Number(form.paidByUserId) : null,
-      splitMode: form.splitMode,
-      participantUserIds: form.participantUserIds,
-      shares: [],
+      amount: amount.trim().replace(',', '.'),
+      description: description.trim(),
+      category: category.trim() || null,
+      expenseDate,
+      paidByUserId: paidByUserId ? Number(paidByUserId) : null,
+      shares: includedShares.map((share) => ({
+        userId: share.userId,
+        amountOwed: share.amountOwed.trim().replace(',', '.'),
+      })),
     })
   }
 
@@ -87,8 +93,8 @@ function ExpenseForm({
             inputMode="decimal"
             required
             placeholder="84.50"
-            value={form.amount}
-            onChange={(event) => updateField('amount', event.target.value)}
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
           />
         </div>
         <div className="expense-form__field">
@@ -97,8 +103,8 @@ function ExpenseForm({
             id="expense-date"
             type="date"
             required
-            value={form.expenseDate}
-            onChange={(event) => updateField('expenseDate', event.target.value)}
+            value={expenseDate}
+            onChange={(event) => setExpenseDate(event.target.value)}
           />
         </div>
       </div>
@@ -110,8 +116,8 @@ function ExpenseForm({
           type="text"
           required
           maxLength={500}
-          value={form.description}
-          onChange={(event) => updateField('description', event.target.value)}
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
         />
       </div>
 
@@ -123,8 +129,8 @@ function ExpenseForm({
             type="text"
             maxLength={100}
             placeholder="Alimentation"
-            value={form.category}
-            onChange={(event) => updateField('category', event.target.value)}
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
           />
         </div>
         <div className="expense-form__field">
@@ -132,10 +138,8 @@ function ExpenseForm({
           <select
             id="expense-paid-by"
             required
-            value={form.paidByUserId}
-            onChange={(event) =>
-              updateField('paidByUserId', event.target.value)
-            }
+            value={paidByUserId}
+            onChange={(event) => setPaidByUserId(event.target.value)}
           >
             {members.map((member) => (
               <option key={member.id} value={member.id}>
@@ -147,22 +151,53 @@ function ExpenseForm({
       </div>
 
       <div className="expense-form__field">
-        <label>Participants (répartition égale)</label>
+        <label>Répartition (saisie manuelle)</label>
         <p className="expense-form__hint">
-          Aucune sélection = tous les membres de la colocation.
+          Cochez les membres concernés et indiquez le montant dû par chacun.
+          La somme doit être égale au montant total.
         </p>
         <div className="expense-form__participants">
-          {members.map((member) => (
-            <label key={member.id} className="expense-form__participant">
-              <input
-                type="checkbox"
-                checked={form.participantUserIds.includes(member.id)}
-                onChange={() => toggleParticipant(member.id)}
-              />
-              {member.firstName} {member.lastName}
-            </label>
-          ))}
+          {shares.map((share) => {
+            const member = members.find((m) => m.id === share.userId)
+            if (!member) {
+              return null
+            }
+
+            return (
+              <div key={share.userId} className="expense-form__share-row">
+                <label className="expense-form__participant">
+                  <input
+                    type="checkbox"
+                    checked={share.included}
+                    onChange={() => toggleShare(share.userId)}
+                  />
+                  {member.firstName} {member.lastName}
+                </label>
+                {share.included && (
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    className="expense-form__share-amount"
+                    placeholder="0.00"
+                    value={share.amountOwed}
+                    onChange={(event) =>
+                      updateShareAmount(share.userId, event.target.value)
+                    }
+                  />
+                )}
+              </div>
+            )
+          })}
         </div>
+        <p
+          className={
+            totalsMatch
+              ? 'expense-form__total expense-form__total--ok'
+              : 'expense-form__total expense-form__total--mismatch'
+          }
+        >
+          Total saisi : {sharesTotal.toFixed(2)} € / {targetAmount.toFixed(2)} €
+        </p>
       </div>
 
       <footer className="modal__footer">
@@ -177,13 +212,9 @@ function ExpenseForm({
         <button
           type="submit"
           className="btn btn--primary"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !totalsMatch}
         >
-          {isSubmitting
-            ? 'Enregistrement…'
-            : expense
-              ? 'Enregistrer'
-              : 'Ajouter'}
+          {isSubmitting ? 'Enregistrement…' : 'Ajouter'}
         </button>
       </footer>
     </form>

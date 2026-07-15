@@ -127,9 +127,6 @@ function Expenses() {
         isOpen={Boolean(selectedExpense)}
         onClose={() => setSelectedExpense(null)}
         expense={selectedExpense}
-        colocationId={colocationId}
-        members={members}
-        currentUserId={user?.id}
         onUpdated={handleExpenseUpdated}
         onDeleteRequest={setExpenseToDelete}
       />

@@ -8,10 +8,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * DTO pour créer une dépense.
  * Représente le JSON envoyé sur POST /api/colocations/{id}/expenses.
  *
- * splitMode :
- * - equal    → participantUserIds (ou tous les membres si vide)
- * - weighted → shares[].percentage (somme = 100)
- * - custom   → shares[].amountOwed (somme = amount)
+ * La répartition est saisie manuellement par le créateur : une ligne par
+ * membre concerné (payeur inclus), avec un montant explicite. La somme des
+ * montants doit être strictement égale au montant total (règle 5).
  */
 class CreateExpenseDto
 {
@@ -26,10 +25,6 @@ class CreateExpenseDto
     #[Assert\Length(max: 100)]
     public ?string $category = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Choice(choices: ['equal', 'weighted', 'custom'])]
-    public string $splitMode = 'equal';
-
     /** Format Y-m-d — par défaut aujourd'hui si omis */
     public ?string $expenseDate = null;
 
@@ -37,11 +32,12 @@ class CreateExpenseDto
     #[Assert\Positive]
     public ?int $paidByUserId = null;
 
-    /** Membres concernés (mode equal) — tous les membres si vide */
-    #[Assert\All([new Assert\Positive()])]
-    public array $participantUserIds = [];
-
-    /** Parts détaillées (modes weighted et custom) */
+    /**
+     * Parts saisies manuellement — une ligne par membre concerné, payeur inclus.
+     *
+     * @var ExpenseShareInputDto[]
+     */
+    #[Assert\Count(min: 1)]
     #[Assert\Valid]
     public array $shares = [];
 }

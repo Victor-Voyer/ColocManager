@@ -77,14 +77,6 @@ const recentActivity = [
     iconBg: 'rgba(16, 185, 129, 0.1)',
   },
   {
-    user: 'Mark',
-    action: 'added to shopping list',
-    target: 'Dish soap',
-    time: '8H AGO',
-    icon: '🛒',
-    iconBg: 'rgba(245, 158, 11, 0.1)',
-  },
-  {
     user: 'Alex',
     paid: true,
     action: 'paid for',

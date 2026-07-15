@@ -38,13 +38,6 @@
   white-space: pre-wrap;
 }
 
-.task-detail__rotation {
-  margin: 0;
-  padding-left: 1.25rem;
-  color: #374151;
-  line-height: 1.7;
-}
-
 .task-detail__actions {
   display: flex;
   flex-wrap: wrap;

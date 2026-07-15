@@ -3,11 +3,8 @@
 namespace App\Entity;
 
 use App\Enum\TaskPriority;
-use App\Enum\TaskRecurrence;
 use App\Enum\TaskStatus;
 use App\Repository\TaskRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,12 +38,6 @@ class Task
     #[ORM\Column(enumType: TaskPriority::class)]
     private TaskPriority $priority = TaskPriority::Medium;
 
-    #[ORM\Column(enumType: TaskRecurrence::class)]
-    private TaskRecurrence $recurrence = TaskRecurrence::None;
-
-    #[ORM\Column]
-    private int $rotationIndex = 0;
-
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dueDate = null;
 
@@ -58,15 +49,6 @@ class Task
 
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
-
-    /** @var Collection<int, TaskRotationMember> */
-    #[ORM\OneToMany(targetEntity: TaskRotationMember::class, mappedBy: 'task', orphanRemoval: true, cascade: ['persist', 'remove'])]
-    private Collection $rotationMembers;
-
-    public function __construct()
-    {
-        $this->rotationMembers = new ArrayCollection();
-    }
 
     #[ORM\PrePersist]
     public function onPrePersist(): void
@@ -159,30 +141,6 @@ class Task
         return $this;
     }
 
-    public function getRecurrence(): TaskRecurrence
-    {
-        return $this->recurrence;
-    }
-
-    public function setRecurrence(TaskRecurrence $recurrence): static
-    {
-        $this->recurrence = $recurrence;
-
-        return $this;
-    }
-
-    public function getRotationIndex(): int
-    {
-        return $this->rotationIndex;
-    }
-
-    public function setRotationIndex(int $rotationIndex): static
-    {
-        $this->rotationIndex = $rotationIndex;
-
-        return $this;
-    }
-
     public function getDueDate(): ?\DateTimeImmutable
     {
         return $this->dueDate;
@@ -215,32 +173,5 @@ class Task
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    /** @return Collection<int, TaskRotationMember> */
-    public function getRotationMembers(): Collection
-    {
-        return $this->rotationMembers;
-    }
-
-    public function addRotationMember(TaskRotationMember $rotationMember): static
-    {
-        if (!$this->rotationMembers->contains($rotationMember)) {
-            $this->rotationMembers->add($rotationMember);
-            $rotationMember->setTask($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRotationMember(TaskRotationMember $rotationMember): static
-    {
-        if ($this->rotationMembers->removeElement($rotationMember)) {
-            if ($rotationMember->getTask() === $this) {
-                $rotationMember->setTask($this);
-            }
-        }
-
-        return $this;
     }
 }

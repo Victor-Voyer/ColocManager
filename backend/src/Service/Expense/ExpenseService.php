@@ -3,12 +3,12 @@
 namespace App\Service\Expense;
 
 use App\DTO\Expense\CreateExpenseDto;
-use App\DTO\Expense\UpdateExpenseDto;
+use App\DTO\Expense\ExpenseShareInputDto;
 use App\Entity\Colocation;
+use App\Entity\ColocationUser;
 use App\Entity\Expense;
 use App\Entity\ExpenseShare;
 use App\Entity\User;
-use App\Enum\SplitMode;
 use App\Exception\ApiException;
 use App\Model\Expense\ExpenseListFilters;
 use App\Repository\ExpenseRepository;
@@ -19,7 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Logique métier des dépenses.
- * Orchestre l'accès coloc, le calcul des parts, la persistance et la sérialisation.
+ * Orchestre l'accès coloc, la validation de la répartition manuelle, la persistance et la sérialisation.
  */
 final class ExpenseService
 {
@@ -29,21 +29,38 @@ final class ExpenseService
         private readonly ExpenseRepository $expenseRepository,
         private readonly ExpenseShareRepository $expenseShareRepository,
         private readonly UserRepository $userRepository,
-        private readonly ExpenseShareCalculator $shareCalculator,
         private readonly ExpenseSerializer $serializer,
     ) {
     }
 
-    /** Crée une dépense et calcule les parts selon le splitMode */
+    /** Crée une dépense avec sa répartition saisie manuellement par le créateur */
     public function create(User $user, int $colocationId, CreateExpenseDto $dto): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
         $payer = $this->resolvePayer($dto->paidByUserId, $user, $context->colocation);
-        $splitMode = SplitMode::from($dto->splitMode);
+        $amount = number_format((float) $dto->amount, 2, '.', '');
+
+        $this->assertShares($dto->shares, $amount, $payer, $context->colocation);
 
         $expense = new Expense();
         $expense->setColocation($context->colocation);
-        $this->fillExpense($expense, $dto, $payer, $splitMode);
+        $expense->setPaidBy($payer);
+        $expense->setAmount($amount);
+        $expense->setDescription($dto->description);
+        $expense->setCategory($dto->category);
+        $expense->setExpenseDate($this->parseDate($dto->expenseDate));
+
+        foreach ($dto->shares as $shareInput) {
+            $member = $this->userRepository->find($shareInput->userId);
+            $isPayer = $member->getId() === $payer->getId();
+
+            $share = new ExpenseShare();
+            $share->setUser($member);
+            $share->setAmountOwed(number_format((float) $shareInput->amountOwed, 2, '.', ''));
+            $share->setIsPaid($isPayer);
+            $share->setPaidAt($isPayer ? new \DateTimeImmutable() : null);
+            $expense->addShare($share);
+        }
 
         $this->entityManager->persist($expense);
         $this->entityManager->flush();
@@ -128,7 +145,7 @@ final class ExpenseService
                 'lastName' => $member->getLastName(),
                 'totalPaid' => $paid,
                 'totalOwed' => $owed,
-                'balance' => bcsub($paid, $owed, 2), // positif = créditeur, négatif = débiteur
+                'balance' => $this->centsToAmount($this->toCents($paid) - $this->toCents($owed)), // positif = créditeur, négatif = débiteur
             ];
         }
 
@@ -139,20 +156,6 @@ final class ExpenseService
     public function show(User $user, int $colocationId, int $expenseId): array
     {
         $expense = $this->resolveExpense($user, $colocationId, $expenseId);
-
-        return $this->serializer->serialize($expense);
-    }
-
-    /** Modifie une dépense — supprime les anciennes parts et recalcule */
-    public function update(User $user, int $colocationId, int $expenseId, UpdateExpenseDto $dto): array
-    {
-        $expense = $this->resolveExpense($user, $colocationId, $expenseId);
-        $payer = $this->resolvePayer($dto->paidByUserId, $user, $expense->getColocation());
-        $splitMode = SplitMode::from($dto->splitMode);
-
-        $this->clearShares($expense);
-        $this->fillExpense($expense, $dto, $payer, $splitMode);
-        $this->entityManager->flush();
 
         return $this->serializer->serialize($expense);
     }
@@ -242,44 +245,56 @@ final class ExpenseService
         return $payer;
     }
 
-    /** Remplit une dépense et crée ses parts via ExpenseShareCalculator */
-    private function fillExpense(
-        Expense $expense,
-        CreateExpenseDto|UpdateExpenseDto $dto,
-        User $payer,
-        SplitMode $splitMode,
-    ): void {
-        $amount = number_format((float) $dto->amount, 2, '.', '');
-        $shareData = $this->shareCalculator->compute($amount, $splitMode, $expense->getColocation(), $dto, $payer);
+    /**
+     * Valide la répartition saisie manuellement (règle 4 et 5) :
+     * - chaque userId doit être membre de la colocation,
+     * - un seul montant par membre,
+     * - le payeur doit avoir une ligne explicite,
+     * - la somme des montants doit être strictement égale au montant total.
+     *
+     * @param list<ExpenseShareInputDto> $shares
+     */
+    private function assertShares(array $shares, string $amount, User $payer, Colocation $colocation): void
+    {
+        $memberIds = array_map(
+            fn (ColocationUser $membership): int => $membership->getUser()->getId(),
+            $colocation->getMemberships()->toArray(),
+        );
 
-        $expense->setPaidBy($payer);
-        $expense->setAmount($amount);
-        $expense->setDescription($dto->description);
-        $expense->setCategory($dto->category);
-        $expense->setSplitMode($splitMode);
-        $expense->setExpenseDate($this->parseDate($dto->expenseDate));
+        $seenUserIds = [];
+        $totalCents = 0;
 
-        foreach ($shareData as $userId => $data) {
-            $member = $this->userRepository->find($userId);
-            if ($member === null) {
-                continue;
+        foreach ($shares as $shareInput) {
+            if (!in_array($shareInput->userId, $memberIds, true)) {
+                throw new ApiException(sprintf('L\'utilisateur %d n\'est pas membre de la colocation.', $shareInput->userId));
             }
 
-            $share = new ExpenseShare();
-            $share->setUser($member);
-            $share->setAmountOwed($data['amountOwed']);
-            $share->setPercentage($splitMode === SplitMode::Weighted ? $data['percentage'] : null);
-            $expense->addShare($share);
+            if (isset($seenUserIds[$shareInput->userId])) {
+                throw new ApiException('Un membre ne peut avoir qu\'une seule part.');
+            }
+            $seenUserIds[$shareInput->userId] = true;
+
+            $totalCents += $this->toCents($shareInput->amountOwed);
+        }
+
+        if (!isset($seenUserIds[$payer->getId()])) {
+            throw new ApiException('Le payeur doit avoir une part explicite dans la répartition.');
+        }
+
+        if ($totalCents !== $this->toCents($amount)) {
+            throw new ApiException('La somme des parts doit être égale au montant total.');
         }
     }
 
-    /** Supprime toutes les parts existantes avant recalcul (update) */
-    private function clearShares(Expense $expense): void
+    /** Convertit un montant décimal ("12.34") en centimes entiers, pour éviter les erreurs d'arrondi en float (pas d'ext bcmath disponible) */
+    private function toCents(string $amount): int
     {
-        foreach ($expense->getShares()->toArray() as $share) {
-            $expense->removeShare($share);
-            $this->entityManager->remove($share);
-        }
+        return (int) round((float) $amount * 100);
+    }
+
+    private function centsToAmount(int $cents): string
+    {
+        return number_format($cents / 100, 2, '.', '');
     }
 
     private function parseDate(?string $date): \DateTimeImmutable

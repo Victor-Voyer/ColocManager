@@ -97,7 +97,7 @@ class TaskController extends AbstractController
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    /** PATCH /api/tasks/{taskId}/complete - Marque une tache comme terminee et avance la rotation si besoin */
+    /** PATCH /api/tasks/{taskId}/complete - Marque une tache comme terminee */
     #[Route('/tasks/{taskId}/complete', name: 'api_task_complete', methods: ['PATCH'], requirements: ['taskId' => '\d+'])]
     public function complete(int $taskId): JsonResponse
     {

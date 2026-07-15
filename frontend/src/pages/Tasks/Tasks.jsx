@@ -13,20 +13,13 @@ import {
 import './Tasks.css'
 
 function buildTaskPayload(task, status = task.status) {
-  const isRecurring = task.recurrence !== 'none'
-
   return {
     title: task.title,
     description: task.description ?? null,
     status,
     priority: task.priority,
-    recurrence: task.recurrence,
     dueDate: task.dueDate ?? null,
-    assignedToUserId:
-      !isRecurring && task.assignedTo ? Number(task.assignedTo.id) : null,
-    rotationMemberUserIds: isRecurring
-      ? task.rotationMembers.map((member) => member.userId)
-      : [],
+    assignedToUserId: task.assignedTo ? Number(task.assignedTo.id) : null,
   }
 }
 

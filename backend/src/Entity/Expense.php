@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\SplitMode;
 use App\Repository\ExpenseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,9 +34,6 @@ class Expense
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $category = null;
-
-    #[ORM\Column(enumType: SplitMode::class)]
-    private SplitMode $splitMode = SplitMode::Equal;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private \DateTimeImmutable $expenseDate;
@@ -133,18 +129,6 @@ class Expense
     public function setCategory(?string $category): static
     {
         $this->category = $category;
-
-        return $this;
-    }
-
-    public function getSplitMode(): SplitMode
-    {
-        return $this->splitMode;
-    }
-
-    public function setSplitMode(SplitMode $splitMode): static
-    {
-        $this->splitMode = $splitMode;
 
         return $this;
     }

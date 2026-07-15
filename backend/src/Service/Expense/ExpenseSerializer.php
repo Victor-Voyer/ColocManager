@@ -18,7 +18,6 @@ final class ExpenseSerializer
             'amount' => $expense->getAmount(),
             'description' => $expense->getDescription(),
             'category' => $expense->getCategory(),
-            'splitMode' => $expense->getSplitMode()->value,
             'expenseDate' => $expense->getExpenseDate()->format('Y-m-d'),
             'paidBy' => [
                 'id' => $paidBy->getId(),
@@ -45,7 +44,6 @@ final class ExpenseSerializer
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
             'amountOwed' => $share->getAmountOwed(),
-            'percentage' => $share->getPercentage(),
             'isPaid' => $share->isPaid(),
             'paidAt' => $share->getPaidAt()?->format(\DateTimeInterface::ATOM),
         ];

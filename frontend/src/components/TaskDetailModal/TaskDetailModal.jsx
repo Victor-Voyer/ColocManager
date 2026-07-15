@@ -3,7 +3,6 @@ import {
   formatMemberName,
   formatTaskDate,
   getTaskPriority,
-  getTaskRecurrence,
   getTaskStatus,
 } from '../../utils/taskUtils'
 import Modal from '../Modal/Modal.jsx'
@@ -114,12 +113,6 @@ function TaskDetailModal({
                   </span>
                 </p>
               </div>
-              <div>
-                <span className="task-detail__label">Récurrence</span>
-                <p className="task-detail__value">
-                  {getTaskRecurrence(task.recurrence)}
-                </p>
-              </div>
             </div>
 
             <div className="task-detail__section">
@@ -128,19 +121,6 @@ function TaskDetailModal({
                 {task.description || 'Aucune description.'}
               </p>
             </div>
-
-            {task.rotationMembers.length > 0 && (
-              <div className="task-detail__section">
-                <span className="task-detail__label">Rotation</span>
-                <ol className="task-detail__rotation">
-                  {task.rotationMembers.map((member) => (
-                    <li key={member.userId}>
-                      {member.firstName} {member.lastName}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
           </div>
 
           <footer className="modal__footer task-detail__actions">

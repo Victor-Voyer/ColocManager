@@ -26,7 +26,6 @@
         "lexik/jwt-authentication-bundle": "^3.2",
         "nelmio/cors-bundle": "^2.6",
         "symfony/maker-bundle": "^1.67",
-        "symfony/mercure-bundle": "^0.4.2",
         "symfony/security-bundle": "7.3.*",
         "symfony/validator": "7.3.*"
     },

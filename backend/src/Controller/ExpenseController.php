@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\DTO\Expense\CreateExpenseDto;
-use App\DTO\Expense\UpdateExpenseDto;
 use App\Exception\ApiException;
 use App\Model\Expense\ExpenseListFilters;
 use App\Service\Expense\ExpenseService;
@@ -33,7 +32,7 @@ class ExpenseController extends AbstractController
     ) {
     }
 
-    /** POST /api/colocations/{colocationId}/expenses — Crée une dépense avec répartition automatique */
+    /** POST /api/colocations/{colocationId}/expenses — Crée une dépense avec répartition saisie manuellement */
     #[Route('/colocations/{colocationId}/expenses', name: 'api_expense_create', methods: ['POST'], requirements: ['colocationId' => '\d+'])]
     public function create(int $colocationId, #[MapRequestPayload] CreateExpenseDto $dto): JsonResponse
     {
@@ -82,17 +81,6 @@ class ExpenseController extends AbstractController
     {
         return $this->json(
             $this->expenseService->show($this->currentUserProvider->getUser(), $colocationId, $expenseId),
-        );
-    }
-
-    /** PUT /api/colocations/{colocationId}/expenses/{expenseId} — Modifie une dépense et recalcule les parts */
-    #[Route('/colocations/{colocationId}/expenses/{expenseId}', name: 'api_expense_update', methods: ['PUT'], requirements: ['colocationId' => '\d+', 'expenseId' => '\d+'])]
-    public function update(int $colocationId, int $expenseId, #[MapRequestPayload] UpdateExpenseDto $dto): JsonResponse
-    {
-        $this->validate($dto);
-
-        return $this->json(
-            $this->expenseService->update($this->currentUserProvider->getUser(), $colocationId, $expenseId, $dto),
         );
     }
 

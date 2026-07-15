@@ -23,9 +23,6 @@ services:
     environment:
       APP_ENV: dev
       DATABASE_URL: mysql://${MYSQL_USER:-coloc}:${MYSQL_PASSWORD:-coloc}@db:3306/${MYSQL_DATABASE:-colocmanager}?serverVersion=8.0&charset=utf8mb4
-      MERCURE_URL: http://mercure/.well-known/mercure
-      MERCURE_PUBLIC_URL: http://localhost:3001/.well-known/mercure
-      MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET:-!ChangeThisMercureJWTSecretKey!}
     depends_on:
       db:
         condition: service_healthy
@@ -49,17 +46,7 @@ services:
       - /app/node_modules
     environment:
       VITE_API_URL: http://localhost:${API_PORT:-8088}/api
-      VITE_MERCURE_URL: http://localhost:3001/.well-known/mercure
 
-  mercure:
-    image: dunglas/mercure
-    ports:
-      - "${MERCURE_PORT:-3001}:80"
-    environment:
-      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET:-!ChangeThisMercureJWTSecretKey!}
-      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET:-!ChangeThisMercureJWTSecretKey!}
-      MERCURE_EXTRA_DIRECTIVES: |
-        cors_origins http://localhost:5173
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

@@ -44,10 +44,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ColocationUser::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $colocationMemberships;
 
-    /** @var Collection<int, InvitationToken> */
-    #[ORM\OneToMany(targetEntity: InvitationToken::class, mappedBy: 'createdBy')]
-    private Collection $invitationTokensCreated;
-
     /** @var Collection<int, Expense> */
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'paidBy')]
     private Collection $expensesPaid;
@@ -60,38 +56,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'assignedTo')]
     private Collection $tasksAssigned;
 
-    /** @var Collection<int, TaskRotationMember> */
-    #[ORM\OneToMany(targetEntity: TaskRotationMember::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $taskRotationMemberships;
-
-    /** @var Collection<int, ShoppingList> */
-    #[ORM\OneToMany(targetEntity: ShoppingList::class, mappedBy: 'createdBy')]
-    private Collection $shoppingListsCreated;
-
-    /** @var Collection<int, ShoppingItem> */
-    #[ORM\OneToMany(targetEntity: ShoppingItem::class, mappedBy: 'createdBy')]
-    private Collection $shoppingItemsCreated;
-
-    /** @var Collection<int, ShoppingItem> */
-    #[ORM\OneToMany(targetEntity: ShoppingItem::class, mappedBy: 'assignedTo')]
-    private Collection $shoppingItemsAssigned;
-
-    /** @var Collection<int, Message> */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
-    private Collection $messages;
-
     public function __construct()
     {
         $this->colocationMemberships = new ArrayCollection();
-        $this->invitationTokensCreated = new ArrayCollection();
         $this->expensesPaid = new ArrayCollection();
         $this->expenseShares = new ArrayCollection();
         $this->tasksAssigned = new ArrayCollection();
-        $this->taskRotationMemberships = new ArrayCollection();
-        $this->shoppingListsCreated = new ArrayCollection();
-        $this->shoppingItemsCreated = new ArrayCollection();
-        $this->shoppingItemsAssigned = new ArrayCollection();
-        $this->messages = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -210,12 +180,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /** @return Collection<int, InvitationToken> */
-    public function getInvitationTokensCreated(): Collection
-    {
-        return $this->invitationTokensCreated;
-    }
-
     /** @return Collection<int, Expense> */
     public function getExpensesPaid(): Collection
     {
@@ -232,36 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getTasksAssigned(): Collection
     {
         return $this->tasksAssigned;
-    }
-
-    /** @return Collection<int, TaskRotationMember> */
-    public function getTaskRotationMemberships(): Collection
-    {
-        return $this->taskRotationMemberships;
-    }
-
-    /** @return Collection<int, ShoppingList> */
-    public function getShoppingListsCreated(): Collection
-    {
-        return $this->shoppingListsCreated;
-    }
-
-    /** @return Collection<int, ShoppingItem> */
-    public function getShoppingItemsCreated(): Collection
-    {
-        return $this->shoppingItemsCreated;
-    }
-
-    /** @return Collection<int, ShoppingItem> */
-    public function getShoppingItemsAssigned(): Collection
-    {
-        return $this->shoppingItemsAssigned;
-    }
-
-    /** @return Collection<int, Message> */
-    public function getMessages(): Collection
-    {
-        return $this->messages;
     }
 
     public function getUserIdentifier(): string

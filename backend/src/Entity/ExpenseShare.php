@@ -27,9 +27,6 @@ class ExpenseShare
     #[ORM\Column(name: 'amount_owed', type: Types::DECIMAL, precision: 10, scale: 2)]
     private string $amountOwed = '0.00';
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
-    private ?string $percentage = null;
-
     #[ORM\Column]
     private bool $isPaid = false;
 
@@ -73,18 +70,6 @@ class ExpenseShare
     public function setAmountOwed(string $amountOwed): static
     {
         $this->amountOwed = $amountOwed;
-
-        return $this;
-    }
-
-    public function getPercentage(): ?string
-    {
-        return $this->percentage;
-    }
-
-    public function setPercentage(?string $percentage): static
-    {
-        $this->percentage = $percentage;
 
         return $this;
     }
