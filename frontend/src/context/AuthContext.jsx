@@ -64,6 +64,12 @@ export function AuthProvider({ children }) {
     return profile
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    const profile = await authApi.getMe()
+    setUser(profile)
+    return profile
+  }, [])
+
   const logout = useCallback(async () => {
     try {
       await authApi.logout()
@@ -79,9 +85,10 @@ export function AuthProvider({ children }) {
       isBootstrapping,
       login,
       register,
+      refreshUser,
       logout,
     }),
-    [user, isBootstrapping, login, register, logout],
+    [user, isBootstrapping, login, register, refreshUser, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
