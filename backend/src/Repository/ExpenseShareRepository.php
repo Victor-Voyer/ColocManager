@@ -19,7 +19,6 @@ class ExpenseShareRepository extends ServiceEntityRepository
         parent::__construct($registry, ExpenseShare::class);
     }
 
-    /** Trouve la part d'un membre pour une dépense donnée */
     public function findOneByExpenseAndUser(Expense $expense, User $user): ?ExpenseShare
     {
         return $this->findOneBy([
@@ -46,5 +45,37 @@ class ExpenseShareRepository extends ServiceEntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * Retourne true si l'utilisateur a une dette active :
+     * - débiteur : il doit de l'argent (sa part n'est pas payée)
+     * - créancier : il a payé et d'autres membres lui doivent encore de l'argent
+     */
+    public function hasActiveDebt(User $user): bool
+    {
+        $asDebtor = (int) $this->createQueryBuilder('es')
+            ->select('COUNT(es.id)')
+            ->where('es.user = :user')
+            ->andWhere('es.isPaid = false')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($asDebtor > 0) {
+            return true;
+        }
+
+        $asCreditor = (int) $this->createQueryBuilder('es')
+            ->select('COUNT(es.id)')
+            ->join('es.expense', 'e')
+            ->where('e.paidBy = :user')
+            ->andWhere('es.user != :user')
+            ->andWhere('es.isPaid = false')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $asCreditor > 0;
     }
 }

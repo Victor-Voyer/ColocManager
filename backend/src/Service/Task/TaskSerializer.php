@@ -4,12 +4,12 @@ namespace App\Service\Task;
 
 use App\Entity\Task;
 
-/** Transforme l'entite Task en tableau JSON */
 final class TaskSerializer
 {
     public function serialize(Task $task): array
     {
         $assignedTo = $task->getAssignedTo();
+        $createdBy = $task->getCreatedBy();
 
         return [
             'id' => $task->getId(),
@@ -23,6 +23,11 @@ final class TaskSerializer
                 'id' => $assignedTo->getId(),
                 'firstName' => $assignedTo->getFirstName(),
                 'lastName' => $assignedTo->getLastName(),
+            ],
+            'createdBy' => $createdBy === null ? null : [
+                'id' => $createdBy->getId(),
+                'firstName' => $createdBy->getFirstName(),
+                'lastName' => $createdBy->getLastName(),
             ],
             'createdAt' => $task->getCreatedAt()->format(\DateTimeInterface::ATOM),
             'updatedAt' => $task->getUpdatedAt()->format(\DateTimeInterface::ATOM),

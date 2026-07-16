@@ -19,12 +19,16 @@ class Task
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Colocation::class, inversedBy: 'tasks')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Colocation $colocation;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tasksAssigned')]
     #[ORM\JoinColumn(name: 'assigned_to', nullable: true, onDelete: 'SET NULL')]
     private ?User $assignedTo = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tasksCreated')]
+    #[ORM\JoinColumn(name: 'created_by', nullable: true, onDelete: 'SET NULL')]
+    private ?User $createdBy = null;
 
     #[ORM\Column(length: 255)]
     private string $title = '';
@@ -89,6 +93,18 @@ class Task
     public function setAssignedTo(?User $assignedTo): static
     {
         $this->assignedTo = $assignedTo;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }

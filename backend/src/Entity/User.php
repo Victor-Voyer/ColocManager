@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\ColocationRole;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,15 +35,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatarUrl = null;
 
+    #[ORM\ManyToOne(targetEntity: Colocation::class, inversedBy: 'members')]
+    #[ORM\JoinColumn(name: 'colocation_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Colocation $colocation = null;
+
+    #[ORM\Column(enumType: ColocationRole::class, nullable: true)]
+    private ?ColocationRole $role = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
-
-    /** @var Collection<int, ColocationUser> */
-    #[ORM\OneToMany(targetEntity: ColocationUser::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $colocationMemberships;
 
     /** @var Collection<int, Expense> */
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'paidBy')]
@@ -56,12 +60,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'assignedTo')]
     private Collection $tasksAssigned;
 
+    /** @var Collection<int, Task> */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'createdBy')]
+    private Collection $tasksCreated;
+
     public function __construct()
     {
-        $this->colocationMemberships = new ArrayCollection();
         $this->expensesPaid = new ArrayCollection();
         $this->expenseShares = new ArrayCollection();
         $this->tasksAssigned = new ArrayCollection();
+        $this->tasksCreated = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -143,6 +151,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getColocation(): ?Colocation
+    {
+        return $this->colocation;
+    }
+
+    public function setColocation(?Colocation $colocation): static
+    {
+        $this->colocation = $colocation;
+
+        return $this;
+    }
+
+    public function getRole(): ?ColocationRole
+    {
+        return $this->role;
+    }
+
+    public function setRole(?ColocationRole $role): static
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
@@ -151,33 +183,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    /** @return Collection<int, ColocationUser> */
-    public function getColocationMemberships(): Collection
-    {
-        return $this->colocationMemberships;
-    }
-
-    public function addColocationMembership(ColocationUser $membership): static
-    {
-        if (!$this->colocationMemberships->contains($membership)) {
-            $this->colocationMemberships->add($membership);
-            $membership->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeColocationMembership(ColocationUser $membership): static
-    {
-        if ($this->colocationMemberships->removeElement($membership)) {
-            if ($membership->getUser() === $this) {
-                $membership->setUser($this);
-            }
-        }
-
-        return $this;
     }
 
     /** @return Collection<int, Expense> */
@@ -196,6 +201,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getTasksAssigned(): Collection
     {
         return $this->tasksAssigned;
+    }
+
+    /** @return Collection<int, Task> */
+    public function getTasksCreated(): Collection
+    {
+        return $this->tasksCreated;
     }
 
     public function getUserIdentifier(): string

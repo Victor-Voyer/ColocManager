@@ -23,15 +23,18 @@ class Colocation
     #[ORM\Column(length: 64, unique: true)]
     private string $invitationCode = '';
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $invitationCodeExpiresAt = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
 
-    /** @var Collection<int, ColocationUser> */
-    #[ORM\OneToMany(targetEntity: ColocationUser::class, mappedBy: 'colocation', orphanRemoval: true)]
-    private Collection $memberships;
+    /** @var Collection<int, User> */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'colocation')]
+    private Collection $members;
 
     /** @var Collection<int, Expense> */
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'colocation')]
@@ -43,7 +46,7 @@ class Colocation
 
     public function __construct()
     {
-        $this->memberships = new ArrayCollection();
+        $this->members = new ArrayCollection();
         $this->expenses = new ArrayCollection();
         $this->tasks = new ArrayCollection();
     }
@@ -91,6 +94,18 @@ class Colocation
         return $this;
     }
 
+    public function getInvitationCodeExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->invitationCodeExpiresAt;
+    }
+
+    public function setInvitationCodeExpiresAt(?\DateTimeImmutable $invitationCodeExpiresAt): static
+    {
+        $this->invitationCodeExpiresAt = $invitationCodeExpiresAt;
+
+        return $this;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
@@ -101,31 +116,10 @@ class Colocation
         return $this->updatedAt;
     }
 
-    /** @return Collection<int, ColocationUser> */
-    public function getMemberships(): Collection
+    /** @return Collection<int, User> */
+    public function getMembers(): Collection
     {
-        return $this->memberships;
-    }
-
-    public function addMembership(ColocationUser $membership): static
-    {
-        if (!$this->memberships->contains($membership)) {
-            $this->memberships->add($membership);
-            $membership->setColocation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMembership(ColocationUser $membership): static
-    {
-        if ($this->memberships->removeElement($membership)) {
-            if ($membership->getColocation() === $this) {
-                $membership->setColocation($this);
-            }
-        }
-
-        return $this;
+        return $this->members;
     }
 
     /** @return Collection<int, Expense> */

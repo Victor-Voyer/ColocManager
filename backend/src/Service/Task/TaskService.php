@@ -7,6 +7,7 @@ use App\DTO\Task\UpdateTaskDto;
 use App\Entity\Colocation;
 use App\Entity\Task;
 use App\Entity\User;
+use App\Enum\ColocationRole;
 use App\Enum\TaskPriority;
 use App\Enum\TaskStatus;
 use App\Exception\ApiException;
@@ -15,7 +16,6 @@ use App\Repository\UserRepository;
 use App\Service\Colocation\ColocationAccessChecker;
 use Doctrine\ORM\EntityManagerInterface;
 
-/** Logique metier des taches menageres. */
 final class TaskService
 {
     public function __construct(
@@ -33,6 +33,7 @@ final class TaskService
 
         $task = new Task();
         $task->setColocation($context->colocation);
+        $task->setCreatedBy($user);
         $this->fillTask($task, $dto, $context->colocation);
 
         $this->entityManager->persist($task);
@@ -66,12 +67,18 @@ final class TaskService
 
     public function show(User $user, int $colocationId, int $taskId): array
     {
-        return $this->serializer->serialize($this->resolveTask($user, $colocationId, $taskId));
+        $context = $this->accessChecker->resolveContext($user, $colocationId);
+
+        return $this->serializer->serialize($this->findTaskInColocation($colocationId, $taskId));
     }
 
     public function update(User $user, int $colocationId, int $taskId, UpdateTaskDto $dto): array
     {
-        $task = $this->resolveTask($user, $colocationId, $taskId);
+        $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $task = $this->findTaskInColocation($colocationId, $taskId);
+
+        $this->requireCreatorOrAdmin($user, $task, $context->role);
+
         $this->fillTask($task, $dto, $task->getColocation());
         $this->entityManager->flush();
 
@@ -80,7 +87,11 @@ final class TaskService
 
     public function delete(User $user, int $colocationId, int $taskId): void
     {
-        $task = $this->resolveTask($user, $colocationId, $taskId);
+        $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $task = $this->findTaskInColocation($colocationId, $taskId);
+
+        $this->requireCreatorOrAdmin($user, $task, $context->role);
+
         $this->entityManager->remove($task);
         $this->entityManager->flush();
     }
@@ -101,10 +112,18 @@ final class TaskService
         return $this->serializer->serialize($task);
     }
 
-    private function resolveTask(User $user, int $colocationId, int $taskId): Task
+    private function requireCreatorOrAdmin(User $user, Task $task, ColocationRole $role): void
     {
-        $this->accessChecker->resolveContext($user, $colocationId);
+        $isCreator = $task->getCreatedBy() !== null && $task->getCreatedBy()->getId() === $user->getId();
+        $isAdmin = $role === ColocationRole::Admin;
 
+        if (!$isCreator && !$isAdmin) {
+            throw ApiException::forbidden('Seul le créateur de la tâche ou un administrateur peut effectuer cette action.');
+        }
+    }
+
+    private function findTaskInColocation(int $colocationId, int $taskId): Task
+    {
         $task = $this->taskRepository->find($taskId);
         if ($task === null || $task->getColocation()->getId() !== $colocationId) {
             throw ApiException::notFound('Tache introuvable.');

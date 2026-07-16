@@ -6,6 +6,7 @@ use App\DTO\User\DeleteUserAccountDto;
 use App\DTO\User\UpdateUserProfileDto;
 use App\Entity\User;
 use App\Exception\ApiException;
+use App\Repository\ExpenseShareRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,6 +17,7 @@ final class UserService
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
+        private readonly ExpenseShareRepository $expenseShareRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserSerializer $serializer,
         private readonly ValidatorInterface $validator,
@@ -81,19 +83,9 @@ final class UserService
             throw new ApiException('Mot de passe incorrect.');
         }
 
-        $expensesPaidCount = $this->userRepository->countExpensesPaid($user);
-        if ($expensesPaidCount > 0) {
+        if ($this->expenseShareRepository->hasActiveDebt($user)) {
             throw ApiException::conflict(
-                'Impossible de supprimer le compte : vous avez enregistré des dépenses en tant que payeur.',
-                ['expensesPaidCount' => $expensesPaidCount],
-            );
-        }
-
-        $expenseSharesCount = $this->userRepository->countExpenseShares($user);
-        if ($expenseSharesCount > 0) {
-            throw ApiException::conflict(
-                'Impossible de supprimer le compte : vous avez des parts de dépenses enregistrées.',
-                ['expenseSharesCount' => $expenseSharesCount],
+                'Impossible de supprimer le compte : vous avez des dettes actives non réglées (montants dus ou à percevoir).',
             );
         }
 

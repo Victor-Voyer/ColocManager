@@ -5,7 +5,6 @@ namespace App\Service\Expense;
 use App\DTO\Expense\CreateExpenseDto;
 use App\DTO\Expense\ExpenseShareInputDto;
 use App\Entity\Colocation;
-use App\Entity\ColocationUser;
 use App\Entity\Expense;
 use App\Entity\ExpenseShare;
 use App\Entity\User;
@@ -17,10 +16,6 @@ use App\Repository\UserRepository;
 use App\Service\Colocation\ColocationAccessChecker;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Logique métier des dépenses.
- * Orchestre l'accès coloc, la validation de la répartition manuelle, la persistance et la sérialisation.
- */
 final class ExpenseService
 {
     public function __construct(
@@ -33,7 +28,6 @@ final class ExpenseService
     ) {
     }
 
-    /** Crée une dépense avec sa répartition saisie manuellement par le créateur */
     public function create(User $user, int $colocationId, CreateExpenseDto $dto): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
@@ -68,7 +62,6 @@ final class ExpenseService
         return $this->serializer->serialize($expense);
     }
 
-    /** Liste paginée avec filtres optionnels */
     public function list(User $user, int $colocationId, ExpenseListFilters $filters): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
@@ -103,7 +96,6 @@ final class ExpenseService
         ];
     }
 
-    /** Historique complet (max 1000 dépenses) */
     public function history(User $user, int $colocationId): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
@@ -123,7 +115,6 @@ final class ExpenseService
         ];
     }
 
-    /** Calcule les soldes : balance = total payé − total dû */
     public function balances(User $user, int $colocationId): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
@@ -133,8 +124,7 @@ final class ExpenseService
         $totalOwed = $this->expenseShareRepository->getTotalOwedByMember($colocation);
 
         $members = [];
-        foreach ($colocation->getMemberships() as $membership) {
-            $member = $membership->getUser();
+        foreach ($colocation->getMembers() as $member) {
             $userId = $member->getId();
             $paid = $totalPaid[$userId] ?? '0.00';
             $owed = $totalOwed[$userId] ?? '0.00';
@@ -145,14 +135,13 @@ final class ExpenseService
                 'lastName' => $member->getLastName(),
                 'totalPaid' => $paid,
                 'totalOwed' => $owed,
-                'balance' => $this->centsToAmount($this->toCents($paid) - $this->toCents($owed)), // positif = créditeur, négatif = débiteur
+                'balance' => $this->centsToAmount($this->toCents($paid) - $this->toCents($owed)),
             ];
         }
 
         return ['members' => $members];
     }
 
-    /** Détail d'une dépense */
     public function show(User $user, int $colocationId, int $expenseId): array
     {
         $expense = $this->resolveExpense($user, $colocationId, $expenseId);
@@ -160,7 +149,6 @@ final class ExpenseService
         return $this->serializer->serialize($expense);
     }
 
-    /** Supprime une dépense — les expense_shares sont supprimées en CASCADE */
     public function delete(User $user, int $colocationId, int $expenseId): void
     {
         $expense = $this->resolveExpense($user, $colocationId, $expenseId);
@@ -168,7 +156,6 @@ final class ExpenseService
         $this->entityManager->flush();
     }
 
-    /** Marque une part comme remboursée (isPaid = true, paidAt = now) */
     public function markShareAsPaid(User $user, int $expenseId, int $targetUserId): array
     {
         $share = $this->resolveShare($user, $expenseId, $targetUserId);
@@ -180,7 +167,6 @@ final class ExpenseService
         return $this->serializer->serializeShare($share);
     }
 
-    /** Annule le remboursement d'une part (isPaid = false, paidAt = null) */
     public function markShareAsUnpaid(User $user, int $expenseId, int $targetUserId): array
     {
         $share = $this->resolveShare($user, $expenseId, $targetUserId);
@@ -218,7 +204,6 @@ final class ExpenseService
         return $share;
     }
 
-    /** Vérifie l'accès coloc + que la dépense appartient bien à cette coloc */
     private function resolveExpense(User $user, int $colocationId, int $expenseId): Expense
     {
         $this->accessChecker->resolveContext($user, $colocationId);
@@ -231,7 +216,6 @@ final class ExpenseService
         return $expense;
     }
 
-    /** Résout le payeur — par défaut l'utilisateur connecté, doit être membre de la coloc */
     private function resolvePayer(?int $paidByUserId, User $currentUser, Colocation $colocation): User
     {
         $payer = $paidByUserId !== null ? $this->userRepository->find($paidByUserId) : $currentUser;
@@ -246,19 +230,13 @@ final class ExpenseService
     }
 
     /**
-     * Valide la répartition saisie manuellement (règle 4 et 5) :
-     * - chaque userId doit être membre de la colocation,
-     * - un seul montant par membre,
-     * - le payeur doit avoir une ligne explicite,
-     * - la somme des montants doit être strictement égale au montant total.
-     *
      * @param list<ExpenseShareInputDto> $shares
      */
     private function assertShares(array $shares, string $amount, User $payer, Colocation $colocation): void
     {
         $memberIds = array_map(
-            fn (ColocationUser $membership): int => $membership->getUser()->getId(),
-            $colocation->getMemberships()->toArray(),
+            fn (User $member): int => $member->getId(),
+            $colocation->getMembers()->toArray(),
         );
 
         $seenUserIds = [];
@@ -286,7 +264,6 @@ final class ExpenseService
         }
     }
 
-    /** Convertit un montant décimal ("12.34") en centimes entiers, pour éviter les erreurs d'arrondi en float (pas d'ext bcmath disponible) */
     private function toCents(string $amount): int
     {
         return (int) round((float) $amount * 100);

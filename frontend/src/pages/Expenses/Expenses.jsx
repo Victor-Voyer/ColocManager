@@ -10,7 +10,7 @@ import './Expenses.css'
 
 function Expenses() {
   const { user } = useAuth()
-  const colocationId = user?.colocations?.[0]?.id
+  const colocationId = user?.colocation?.id
 
   const {
     expenses,

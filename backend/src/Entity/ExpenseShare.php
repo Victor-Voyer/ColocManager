@@ -21,8 +21,8 @@ class ExpenseShare
     private Expense $expense;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expenseShares')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
-    private User $user;
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
 
     #[ORM\Column(name: 'amount_owed', type: Types::DECIMAL, precision: 10, scale: 2)]
     private string $amountOwed = '0.00';
@@ -50,12 +50,12 @@ class ExpenseShare
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 

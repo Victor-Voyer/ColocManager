@@ -5,10 +5,8 @@ namespace App\Service\Expense;
 use App\Entity\Expense;
 use App\Entity\ExpenseShare;
 
-/** Transforme les entités Expense et ExpenseShare en tableaux JSON */
 final class ExpenseSerializer
 {
-    /** Transforme une dépense complète (avec parts et payeur) en JSON */
     public function serialize(Expense $expense): array
     {
         $paidBy = $expense->getPaidBy();
@@ -19,7 +17,7 @@ final class ExpenseSerializer
             'description' => $expense->getDescription(),
             'category' => $expense->getCategory(),
             'expenseDate' => $expense->getExpenseDate()->format('Y-m-d'),
-            'paidBy' => [
+            'paidBy' => $paidBy === null ? null : [
                 'id' => $paidBy->getId(),
                 'firstName' => $paidBy->getFirstName(),
                 'lastName' => $paidBy->getLastName(),
@@ -33,16 +31,15 @@ final class ExpenseSerializer
         ];
     }
 
-    /** Transforme une part de dépense en JSON */
     public function serializeShare(ExpenseShare $share): array
     {
         $user = $share->getUser();
 
         return [
             'id' => $share->getId(),
-            'userId' => $user->getId(),
-            'firstName' => $user->getFirstName(),
-            'lastName' => $user->getLastName(),
+            'userId' => $user?->getId(),
+            'firstName' => $user?->getFirstName(),
+            'lastName' => $user?->getLastName(),
             'amountOwed' => $share->getAmountOwed(),
             'isPaid' => $share->isPaid(),
             'paidAt' => $share->getPaidAt()?->format(\DateTimeInterface::ATOM),

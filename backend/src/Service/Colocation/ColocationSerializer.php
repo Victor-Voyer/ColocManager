@@ -3,41 +3,39 @@
 namespace App\Service\Colocation;
 
 use App\Entity\Colocation;
-use App\Entity\ColocationUser;
+use App\Entity\User;
 use App\Enum\ColocationRole;
 
 final class ColocationSerializer
 {
-    public function serialize(Colocation $colocation, ColocationUser $membership): array
+    public function serialize(Colocation $colocation, ColocationRole $role): array
     {
         $data = [
             'id' => $colocation->getId(),
             'name' => $colocation->getName(),
-            'role' => $membership->getRole()->value,
-            'memberCount' => $colocation->getMemberships()->count(),
+            'role' => $role->value,
+            'memberCount' => $colocation->getMembers()->count(),
             'createdAt' => $colocation->getCreatedAt()->format(\DateTimeInterface::ATOM),
             'updatedAt' => $colocation->getUpdatedAt()->format(\DateTimeInterface::ATOM),
         ];
 
-        if ($membership->getRole() === ColocationRole::Admin) {
+        if ($role === ColocationRole::Admin) {
             $data['invitationCode'] = $colocation->getInvitationCode();
+            $data['invitationCodeExpiresAt'] = $colocation->getInvitationCodeExpiresAt()?->format(\DateTimeInterface::ATOM);
         }
 
         return $data;
     }
 
-    public function serializeMember(ColocationUser $membership): array
+    public function serializeMember(User $member): array
     {
-        $user = $membership->getUser();
-
         return [
-            'id' => $user->getId(),
-            'firstName' => $user->getFirstName(),
-            'lastName' => $user->getLastName(),
-            'email' => $user->getEmail(),
-            'avatarUrl' => $user->getAvatarUrl(),
-            'role' => $membership->getRole()->value,
-            'joinedAt' => $membership->getJoinedAt()->format(\DateTimeInterface::ATOM),
+            'id' => $member->getId(),
+            'firstName' => $member->getFirstName(),
+            'lastName' => $member->getLastName(),
+            'email' => $member->getEmail(),
+            'avatarUrl' => $member->getAvatarUrl(),
+            'role' => $member->getRole()?->value,
         ];
     }
 }

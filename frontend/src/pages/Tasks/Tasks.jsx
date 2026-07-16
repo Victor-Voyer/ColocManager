@@ -25,7 +25,7 @@ function buildTaskPayload(task, status = task.status) {
 
 function Tasks() {
   const { user } = useAuth()
-  const colocationId = user?.colocations?.[0]?.id
+  const colocationId = user?.colocation?.id
 
   const {
     tasks,

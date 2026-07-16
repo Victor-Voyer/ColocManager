@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Enum\ColocationRole;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,54 +17,26 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function countExpensesPaid(User $user): int
-    {
-        return (int) $this->createQueryBuilder('u')
-            ->select('COUNT(e.id)')
-            ->join('u.expensesPaid', 'e')
-            ->where('u = :user')
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-
-    public function countExpenseShares(User $user): int
-    {
-        return (int) $this->createQueryBuilder('u')
-            ->select('COUNT(es.id)')
-            ->join('u.expenseShares', 'es')
-            ->where('u = :user')
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-
     public function isSoleAdminOfColocationWithOtherMembers(User $user): bool
     {
-        foreach ($user->getColocationMemberships() as $membership) {
-            if ($membership->getRole() !== \App\Enum\ColocationRole::Admin) {
-                continue;
-            }
+        if ($user->getRole() !== ColocationRole::Admin || $user->getColocation() === null) {
+            return false;
+        }
 
-            $colocation = $membership->getColocation();
-            $members = $colocation->getMemberships();
+        $colocation = $user->getColocation();
+        $members = $colocation->getMembers();
 
-            if ($members->count() <= 1) {
-                continue;
-            }
+        if ($members->count() <= 1) {
+            return false;
+        }
 
-            $adminCount = 0;
-            foreach ($members as $member) {
-                if ($member->getRole() === \App\Enum\ColocationRole::Admin) {
-                    ++$adminCount;
-                }
-            }
-
-            if ($adminCount === 1) {
-                return true;
+        $adminCount = 0;
+        foreach ($members as $member) {
+            if ($member->getRole() === ColocationRole::Admin) {
+                ++$adminCount;
             }
         }
 
-        return false;
+        return $adminCount === 1;
     }
 }

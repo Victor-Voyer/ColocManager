@@ -19,12 +19,12 @@ class Expense
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Colocation::class, inversedBy: 'expenses')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Colocation $colocation;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expensesPaid')]
-    #[ORM\JoinColumn(name: 'paid_by', nullable: false, onDelete: 'RESTRICT')]
-    private User $paidBy;
+    #[ORM\JoinColumn(name: 'paid_by', nullable: true, onDelete: 'SET NULL')]
+    private ?User $paidBy = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private string $amount = '0.00';
@@ -85,12 +85,12 @@ class Expense
         return $this;
     }
 
-    public function getPaidBy(): User
+    public function getPaidBy(): ?User
     {
         return $this->paidBy;
     }
 
-    public function setPaidBy(User $paidBy): static
+    public function setPaidBy(?User $paidBy): static
     {
         $this->paidBy = $paidBy;
 

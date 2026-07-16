@@ -20,7 +20,7 @@ function Layout({ children }) {
   const displayName = user
     ? `${user.firstName} ${user.lastName}`.trim()
     : 'Utilisateur'
-  const colocationName = user?.colocations?.[0]?.name ?? 'Aucune colocation'
+  const colocationName = user?.colocation?.name ?? 'Aucune colocation'
   const avatarSrc =
     user?.avatarUrl ??
     `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
