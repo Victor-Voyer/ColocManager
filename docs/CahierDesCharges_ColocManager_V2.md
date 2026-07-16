@@ -18,7 +18,7 @@ L'application couvre deux axes fonctionnels : la gestion des dépenses partagée
 ## 2. Objectifs du projet
 
 - Fonctionnel : une interface simple pour suivre les finances et les tâches d'un foyer
-- Technique : une API REST Symfony, un frontend React, sans Docker, installation locale
+- Technique : une API REST Symfony, un frontend React, environnement dockerisé
 - Pédagogique : démontrer la maîtrise du cycle complet de développement (conception, sécurité, réalisation) dans le cadre du RNCP 5
 
 ---
@@ -28,7 +28,7 @@ L'application couvre deux axes fonctionnels : la gestion des dépenses partagée
 - Backend : Symfony (API REST), authentification JWT (LexikJWTAuthenticationBundle)
 - Frontend : React (SPA), consommation de l'API en JSON
 - Base de données : MySQL, ORM Doctrine
-- Pas de Docker : installation locale de Symfony et React sur la machine de chaque développeur, connectées à une même base MySQL locale
+- Environnement Docker : backend (PHP-FPM + Nginx), frontend et MySQL orchestrés via `docker-compose`, partagés entre les deux développeurs (plus un conteneur phpMyAdmin pour l'administration de la base)
 
 > Détail complet du modèle de données : voir MLD.md.
 
@@ -55,7 +55,7 @@ L'application couvre deux axes fonctionnels : la gestion des dépenses partagée
 | Régénérer le code | Réservé à l'admin, met à jour le code et sa date d'expiration | MOYENNE |
 | Liste des membres | Affichage des colocataires et de leur rôle (admin / membre) | MOYENNE |
 | Transférer le rôle admin | L'admin désigne un autre membre comme nouvel admin. Un seul admin à la fois | HAUTE |
-| Quitter le foyer | Bloqué en cas de dette active, ou si admin sans successeur désigné. Si l'admin est seul dans le foyer, quitter supprime la colocation | HAUTE |
+| Quitter le foyer | Bloqué en cas de dette active, ou si admin sans successeur désigné. Si l'admin est seul dans le foyer, quitter supprime la colocation. La suppression de la colocation qui en résulte est elle-même bloquée s'il reste des dépenses enregistrées dans le foyer | HAUTE |
 | Retirer un membre | Réservé à l'admin. Bloqué si le membre visé a une dette active | MOYENNE |
 
 ### 4.3 Dépenses & remboursements
@@ -94,6 +94,7 @@ Ces règles ont été validées en session de cadrage sur le modèle de données
 9. Si l'admin est le dernier membre de la colocation et souhaite la quitter ou supprimer son compte, la colocation est supprimée définitivement avec lui.
 10. L'admin ne peut pas retirer un membre qui a une dette active, même de force.
 11. La personne assignée à une tâche peut toujours changer son statut, même si elle n'en est pas la créatrice. Les autres actions sur une tâche (titre, description, assignation, suppression) restent réservées au créateur ou à l'admin.
+12. Une colocation ne peut pas être supprimée tant qu'il reste des dépenses enregistrées dans son historique, y compris dans le cas où l'admin, dernier membre, quitte le foyer ou supprime son compte (règle 9).
 
 ---
 
