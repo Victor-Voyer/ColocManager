@@ -26,3 +26,10 @@ export function logout() {
 export function getMe(options = {}) {
   return apiRequest('/me', options)
 }
+
+export function updateProfile({ firstName, lastName, email }) {
+  return apiRequest('/me', {
+    method: 'PUT',
+    body: JSON.stringify({ firstName, lastName, email }),
+  })
+}

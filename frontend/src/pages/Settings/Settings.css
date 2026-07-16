@@ -29,6 +29,23 @@
   border-color: #3b82f6;
 }
 
+.settings-feedback {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.settings-feedback--error {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.settings-feedback--success {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
 @media (max-width: 1024px) {
   .settings-grid {
     grid-template-columns: 1fr;

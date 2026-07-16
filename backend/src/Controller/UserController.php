@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\User\DeleteUserAccountDto;
 use App\DTO\User\UpdateUserProfileDto;
+use App\Security\JwtCookieManager;
 use App\Service\Security\CurrentUserProvider;
 use App\Service\User\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,7 @@ class UserController extends AbstractController
     public function __construct(
         private readonly CurrentUserProvider $currentUserProvider, // Récupère l'utilisateur connecté
         private readonly UserService $userService,                   // Logique métier du profil utilisateur
+        private readonly JwtCookieManager $jwtCookieManager,
     ) {
     }
 
@@ -41,9 +43,14 @@ class UserController extends AbstractController
     #[Route('/me', name: 'api_user_update', methods: ['PUT'])]
     public function update(#[MapRequestPayload] UpdateUserProfileDto $dto): JsonResponse
     {
-        return $this->json(
-            $this->userService->update($this->currentUserProvider->getUser(), $dto),
-        );
+        $user = $this->currentUserProvider->getUser();
+        $response = $this->json($this->userService->update($user, $dto));
+
+        // Le cookie JWT identifie l'utilisateur par email : un changement d'email
+        // sans réémission invaliderait la session en cours (401 à la requête suivante).
+        $this->jwtCookieManager->attachAuthCookie($response, $user);
+
+        return $response;
     }
 
     /** DELETE /api/me — Supprime le compte (mot de passe obligatoire pour confirmer) */

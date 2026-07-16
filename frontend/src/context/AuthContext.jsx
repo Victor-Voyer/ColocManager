@@ -72,6 +72,12 @@ export function AuthProvider({ children }) {
     }
   }, [clearSession])
 
+  const updateProfile = useCallback(async (payload) => {
+    const profile = await authApi.updateProfile(payload)
+    setUser(profile)
+    return profile
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -80,8 +86,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      updateProfile,
     }),
-    [user, isBootstrapping, login, register, logout],
+    [user, isBootstrapping, login, register, logout, updateProfile],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
