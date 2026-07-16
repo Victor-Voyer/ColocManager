@@ -98,8 +98,8 @@ function Dashboard() {
     <div className="dashboard-content">
       <div className="dashboard-content__greeting">
         <div className="dashboard-content__greeting-text">
-          <h1>Bonjour, Alex 👋</h1>
-          <p>Here&apos;s what&apos;s happening in your flat today.</p>
+          <h1>Bonjour, {user?.firstName?.[0].toUpperCase() + user?.firstName?.slice(1)}</h1>
+          <p>Voici quelques actualités</p>
         </div>
         <div className="dashboard-content__greeting-actions">
           {!user?.colocation && (
