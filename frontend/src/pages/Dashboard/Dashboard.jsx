@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router'
 import './Dashboard.css'
+import { useAuth } from '../../context/AuthContext'
 
 const stats = [
   {
@@ -91,6 +92,7 @@ const recentActivity = [
 
 function Dashboard() {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   return (
     <div className="dashboard-content">
@@ -100,13 +102,16 @@ function Dashboard() {
           <p>Here&apos;s what&apos;s happening in your flat today.</p>
         </div>
         <div className="dashboard-content__greeting-actions">
-          <button
-            type="button"
-            className="dashboard-content__btn dashboard-content__btn--neutral"
-            onClick={() => navigate('/collocations')}
-          >
-            Créer ou rejoindre une colocation
-          </button>
+          {!user?.colocation && (
+            <button
+              type="button"
+              className="dashboard-content__btn dashboard-content__btn--neutral"
+              onClick={() => navigate('/collocations')}
+            >
+              Créer ou rejoindre une colocation
+            </button>
+          )}
+
           <button className="dashboard-content__btn dashboard-content__btn--primary">+ Add Expense</button>
         </div>
       </div>
