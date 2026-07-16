@@ -17,6 +17,10 @@ export function listExpenses(colocationId, filters = {}) {
   )
 }
 
+export function getExpenseHistory(colocationId) {
+  return apiRequest(`/colocations/${colocationId}/expenses/history`)
+}
+
 export function getExpense(colocationId, expenseId) {
   return apiRequest(`/colocations/${colocationId}/expenses/${expenseId}`)
 }
