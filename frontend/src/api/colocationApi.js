@@ -34,7 +34,7 @@ export function updateMemberRole(colocationId, userId, payload) {
   return apiRequest(`/colocations/${colocationId}/members/${userId}/role`,
     {
       method: 'PATCH',
-      body: JSON.stringify(payload,)
+      body: JSON.stringify(payload),
     },
   )
 }

@@ -7,6 +7,7 @@ import DeleteAccountDialog from '../../components/DeleteAccountDialog/DeleteAcco
 import { getErrorMessage } from '../../utils/apiError'
 import './Settings.css'
 import { getMembers } from '../../api/colocationApi'
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 
 function Settings() {
   const { user, updateProfile, deleteAccount,refreshUser } = useAuth()
@@ -21,6 +22,8 @@ function Settings() {
   const [invitationCode, setInvitationCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [members, setMembers] = useState([])
+  const [memberToPromote, setMemberToPromote] = useState(null)
+  const [transferringMemberId, setTransferringMemberId] = useState(null)
 
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
@@ -51,7 +54,6 @@ function Settings() {
     loadMembers()
   }, [colocationId])
 
-  const [transferringMemberId, setTransferringMemberId] = useState(null)
 
   const handleTransferAdmin = async (memberId) => {
     setTransferringMemberId(memberId)
@@ -63,6 +65,7 @@ function Settings() {
       }
 
       await updateMemberRole(colocationId, memberId, payload)
+       setMemberToPromote(null)
       await refreshUser()
 
       const updatedMembers = await getMembers(colocationId)
@@ -249,7 +252,7 @@ function Settings() {
                             <button
                               type="button"
                               className="btn btn--neutral"
-                              onClick={() => handleTransferAdmin(member.id)}
+                              onClick={() => setMemberToPromote(member)}
                               disabled={transferringMemberId === member.id}
                             >
                               {transferringMemberId === member.id
@@ -283,6 +286,20 @@ function Settings() {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={Boolean(memberToPromote)}
+        onClose={() => setMemberToPromote(null)}
+        onConfirm={() => handleTransferAdmin(memberToPromote.id)}
+        title="Transférer le rôle administrateur"
+        message={
+          `Confirmer le transfert à ${memberToPromote?.firstName} ` +
+          `${memberToPromote?.lastName} ? Vous deviendrez membre.`
+        }
+        confirmLabel="Transférer"
+        loadingLabel="Transfert..."
+        isLoading={Boolean(transferringMemberId)}
+      />
 
       <DeleteAccountDialog
         isOpen={isDeleteDialogOpen}

@@ -7,6 +7,7 @@ function ConfirmDialog({
   onConfirm,
   title,
   message,
+  loadingLabel = 'Chargement...',
   confirmLabel = 'Confirmer',
   isLoading = false,
 }) {
@@ -30,7 +31,7 @@ function ConfirmDialog({
           onClick={onConfirm}
           disabled={isLoading}
         >
-          {isLoading ? 'Suppression…' : confirmLabel}
+          {isLoading ? loadingLabel : confirmLabel}
         </button>
       </footer>
     </Modal>
