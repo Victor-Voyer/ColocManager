@@ -243,6 +243,7 @@ function Tasks() {
         title="Supprimer la tache"
         message={`Supprimer "${taskToDelete?.title}" ? Cette action est irreversible.`}
         confirmLabel="Supprimer"
+        loadingLabel='Suppression...'
         isLoading={isDeleting}
       />
     </div>

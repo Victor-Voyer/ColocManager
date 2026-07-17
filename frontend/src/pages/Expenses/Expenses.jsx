@@ -138,6 +138,7 @@ function Expenses() {
         title="Supprimer la dépense"
         message={`Supprimer « ${expenseToDelete?.description} » ? Cette action est irréversible.`}
         confirmLabel="Supprimer"
+        loadingLabel='Suppression...'
         isLoading={isDeleting}
       />
     </div>

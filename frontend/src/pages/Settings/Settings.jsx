@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
-import { getColocation, regenerateInvitationCode } from '../../api/colocationApi'
+import { getColocation, regenerateInvitationCode, updateMemberRole } from '../../api/colocationApi'
 import { useNavigate } from 'react-router'
 import DeleteAccountDialog from '../../components/DeleteAccountDialog/DeleteAccountDialog.jsx'
 import { getErrorMessage } from '../../utils/apiError'
 import './Settings.css'
 import { getMembers } from '../../api/colocationApi'
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 
 function Settings() {
-  const { user, updateProfile, deleteAccount } = useAuth()
+  const { user, updateProfile, deleteAccount,refreshUser } = useAuth()
   const navigate = useNavigate()
 
   const [firstName, setFirstName] = useState(user?.firstName ?? '')
@@ -21,6 +22,8 @@ function Settings() {
   const [invitationCode, setInvitationCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [members, setMembers] = useState([])
+  const [memberToPromote, setMemberToPromote] = useState(null)
+  const [transferringMemberId, setTransferringMemberId] = useState(null)
 
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
@@ -50,6 +53,29 @@ function Settings() {
 
     loadMembers()
   }, [colocationId])
+
+
+  const handleTransferAdmin = async (memberId) => {
+    setTransferringMemberId(memberId)
+    setError('')
+
+    try {
+      const payload = {
+        role: 'admin',
+      }
+
+      await updateMemberRole(colocationId, memberId, payload)
+       setMemberToPromote(null)
+      await refreshUser()
+
+      const updatedMembers = await getMembers(colocationId)
+      setMembers(updatedMembers)
+    } catch (apiError) {
+      setError(apiError.message)
+    } finally {
+      setTransferringMemberId(null)
+    }
+  }
 
   const handleRegenerateCode = async () => {
     setLoading(true)
@@ -208,6 +234,7 @@ function Settings() {
                   <tr>
                     <th>Nom</th>
                     <th>Rôle</th>
+                    {isAdmin && <th>Action</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -217,6 +244,24 @@ function Settings() {
                       <td>
                         {member.role === 'admin' ? 'Administrateur' : 'Membre'}
                       </td>
+                      {isAdmin && (
+                        <td>
+                          {member.id === user?.id ? (
+                            <span>Vous</span>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn btn--neutral"
+                              onClick={() => setMemberToPromote(member)}
+                              disabled={transferringMemberId === member.id}
+                            >
+                              {transferringMemberId === member.id
+                                ? 'Transfert...'
+                                : 'Nommer administrateur'}
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -241,6 +286,20 @@ function Settings() {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={Boolean(memberToPromote)}
+        onClose={() => setMemberToPromote(null)}
+        onConfirm={() => handleTransferAdmin(memberToPromote.id)}
+        title="Transférer le rôle administrateur"
+        message={
+          `Confirmer le transfert à ${memberToPromote?.firstName} ` +
+          `${memberToPromote?.lastName} ? Vous deviendrez membre.`
+        }
+        confirmLabel="Transférer"
+        loadingLabel="Transfert..."
+        isLoading={Boolean(transferringMemberId)}
+      />
 
       <DeleteAccountDialog
         isOpen={isDeleteDialogOpen}
