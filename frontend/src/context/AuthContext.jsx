@@ -84,6 +84,15 @@ export function AuthProvider({ children }) {
     return profile
   }, [])
 
+  const deleteAccount = useCallback(async (password) => {
+    await authApi.deleteAccount(password)
+    try {
+      await authApi.logout()
+    } finally {
+      clearSession()
+    }
+  }, [clearSession])
+
   const value = useMemo(
     () => ({
       user,
@@ -94,8 +103,18 @@ export function AuthProvider({ children }) {
       refreshUser,
       logout,
       updateProfile,
+      deleteAccount,
     }),
-    [user, isBootstrapping, login, register, refreshUser, logout, updateProfile],
+    [
+      user,
+      isBootstrapping,
+      login,
+      register,
+      refreshUser,
+      logout,
+      updateProfile,
+      deleteAccount,
+    ],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
