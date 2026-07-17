@@ -46,6 +46,26 @@
   color: #16a34a;
 }
 
+.settings-danger-zone {
+  grid-column: 1 / -1;
+  border: 1px solid #fecaca;
+}
+
+.settings-danger-zone p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.settings-danger-zone__btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.settings-danger-zone__btn:hover {
+  background-color: #dc2626;
+}
+
 @media (max-width: 1024px) {
   .settings-grid {
     grid-template-columns: 1fr;

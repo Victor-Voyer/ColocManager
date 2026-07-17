@@ -33,3 +33,10 @@ export function updateProfile({ firstName, lastName, email }) {
     body: JSON.stringify({ firstName, lastName, email }),
   })
 }
+
+export function deleteAccount(password) {
+  return apiRequest('/me', {
+    method: 'DELETE',
+    body: JSON.stringify({ password }),
+  })
+}

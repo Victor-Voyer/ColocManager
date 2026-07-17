@@ -16,8 +16,8 @@ Le backend est globalement bien avancé et couvre la plupart des règles métier
 
 ## Dev A — Authentification, Profil, Dépenses
 
-- [ ] **Profil (frontend)** : la page Settings affiche des données en dur ("Alex Rivera" / "alex@example.com"). Remplacer par un vrai formulaire connecté à `GET/PUT /api/me`.
-- [ ] **Suppression de compte (frontend)** : aucune UI n'existe pour `DELETE /api/me`. Ajouter le bouton, la confirmation, et l'affichage des erreurs métier (dette active / admin sans successeur désigné).
+- [x] **Profil (frontend)** : la page Settings affiche désormais un vrai formulaire connecté à `GET/PUT /api/me` (déjà fait avant ce commit).
+- [x] **Suppression de compte (frontend)** : UI ajoutée (`DeleteAccountDialog` + carte "Zone dangereuse" dans Settings) pour `DELETE /api/me`, avec confirmation par mot de passe et affichage des erreurs métier (dette active / admin sans successeur désigné).
 - [ ] **Dépenses — validation somme des parts** : actuellement la vérification "somme des parts = montant total" est une vérification PHP manuelle (`ExpenseService::assertShares`), pas une contrainte du composant Validator comme demandé section 6. À transformer en Constraint/Validator Symfony réutilisable.
 - [ ] **Voter Dépenses** : créer `ExpenseVoter` (autorisation — distinct du JWT qui gère l'authentification) pour décider qui peut supprimer une dépense (créateur/payeur ou admin). Aujourd'hui `ExpenseService::delete()` ne vérifie que l'appartenance à la colocation (`resolveExpense` → `requireMembership`), donc n'importe quel membre peut supprimer la dépense de n'importe qui. À brancher via `denyAccessUnlessGranted()` dans le service ou `#[IsGranted]` sur le contrôleur.
 
