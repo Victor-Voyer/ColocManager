@@ -71,6 +71,15 @@
 .members-table td {
   font-size: 0.875rem;
 }
+.settings-leave-button {
+  margin-top: 1.5rem;
+  background-color: #ef4444;
+  color: white;
+}
+
+.settings-leave-button:hover {
+  background-color: #dc2626;
+}
 .settings-danger-zone {
   grid-column: 1 / -1;
   border: 1px solid #fecaca;

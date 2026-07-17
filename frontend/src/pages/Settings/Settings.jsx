@@ -8,6 +8,7 @@ import { getErrorMessage } from '../../utils/apiError'
 import './Settings.css'
 import { getMembers } from '../../api/colocationApi'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
+import { leaveColocation } from '../../api/colocationApi'
 
 function Settings() {
   const { user, updateProfile, deleteAccount,refreshUser } = useAuth()
@@ -24,6 +25,9 @@ function Settings() {
   const [members, setMembers] = useState([])
   const [memberToPromote, setMemberToPromote] = useState(null)
   const [transferringMemberId, setTransferringMemberId] = useState(null)
+  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
+  const [leaveError, setLeaveError] = useState('')
 
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
@@ -133,6 +137,24 @@ function Settings() {
     }
   }
 
+  const handleLeaveColocation = async () => {
+    setIsLeaving(true)
+    setLeaveError('')
+
+    try {
+      await leaveColocation(colocationId)
+      setIsLeaveDialogOpen(false)
+      await refreshUser()
+      navigate('/dashboard')
+    } catch (error) {
+      setLeaveError(
+        getErrorMessage(error, 'Impossible de quitter la colocation.'),
+      )
+    } finally {
+      setIsLeaving(false)
+    }
+  }
+
   const handleCloseDeleteDialog = () => {
     setIsDeleteDialogOpen(false)
     setDeleteError('')
@@ -207,7 +229,9 @@ function Settings() {
         </div>
         <div className="card">
           <h2>Colocation</h2>
-          <p>Nom : <strong>{user?.colocation?.name}</strong></p>
+          <p>
+            <strong>{user?.colocation?.name ?? 'Aucune colocation'}</strong>
+          </p>
           {isAdmin && (
             <div>
               <p>
@@ -266,6 +290,19 @@ function Settings() {
                   ))}
                 </tbody>
               </table>
+              <div>
+                <button
+                  type="button"
+                  className="btn settings-leave-button"
+                  onClick={() => {
+                    setLeaveError('')
+                    setIsLeaveDialogOpen(true)
+                  }}
+                >
+                  Quitter la colocation
+                </button>
+              </div>
+
             </div>
           )}
         </div>
@@ -299,6 +336,23 @@ function Settings() {
         confirmLabel="Transférer"
         loadingLabel="Transfert..."
         isLoading={Boolean(transferringMemberId)}
+      />
+
+      <ConfirmDialog
+        isOpen={isLeaveDialogOpen}
+        onClose={() => {
+          setIsLeaveDialogOpen(false)
+          setLeaveError('')
+        }}
+        onConfirm={handleLeaveColocation}
+        title="Quitter la colocation"
+        message={
+          leaveError ||
+          'Voulez-vous vraiment quitter cette colocation ?'
+        }
+        confirmLabel="Quitter"
+        loadingLabel="Départ..."
+        isLoading={isLeaving}
       />
 
       <DeleteAccountDialog
