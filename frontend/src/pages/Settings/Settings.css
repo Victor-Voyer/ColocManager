@@ -46,6 +46,31 @@
   color: #16a34a;
 }
 
+.members-table-container {
+  overflow-x: auto;
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.members-table th,
+.members-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.members-table th {
+  color: #6b7280;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.members-table td {
+  font-size: 0.875rem;
+}
 .settings-danger-zone {
   grid-column: 1 / -1;
   border: 1px solid #fecaca;
