@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
-import { getColocation, regenerateInvitationCode } from '../../api/colocationApi'
+import { getColocation, regenerateInvitationCode, updateMemberRole } from '../../api/colocationApi'
 import { useNavigate } from 'react-router'
 import DeleteAccountDialog from '../../components/DeleteAccountDialog/DeleteAccountDialog.jsx'
 import { getErrorMessage } from '../../utils/apiError'
@@ -9,7 +9,7 @@ import './Settings.css'
 import { getMembers } from '../../api/colocationApi'
 
 function Settings() {
-  const { user, updateProfile, deleteAccount } = useAuth()
+  const { user, updateProfile, deleteAccount,refreshUser } = useAuth()
   const navigate = useNavigate()
 
   const [firstName, setFirstName] = useState(user?.firstName ?? '')
@@ -50,6 +50,29 @@ function Settings() {
 
     loadMembers()
   }, [colocationId])
+
+  const [transferringMemberId, setTransferringMemberId] = useState(null)
+
+  const handleTransferAdmin = async (memberId) => {
+    setTransferringMemberId(memberId)
+    setError('')
+
+    try {
+      const payload = {
+        role: 'admin',
+      }
+
+      await updateMemberRole(colocationId, memberId, payload)
+      await refreshUser()
+
+      const updatedMembers = await getMembers(colocationId)
+      setMembers(updatedMembers)
+    } catch (apiError) {
+      setError(apiError.message)
+    } finally {
+      setTransferringMemberId(null)
+    }
+  }
 
   const handleRegenerateCode = async () => {
     setLoading(true)
@@ -208,6 +231,7 @@ function Settings() {
                   <tr>
                     <th>Nom</th>
                     <th>Rôle</th>
+                    {isAdmin && <th>Action</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -217,6 +241,24 @@ function Settings() {
                       <td>
                         {member.role === 'admin' ? 'Administrateur' : 'Membre'}
                       </td>
+                      {isAdmin && (
+                        <td>
+                          {member.id === user?.id ? (
+                            <span>Vous</span>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn btn--neutral"
+                              onClick={() => handleTransferAdmin(member.id)}
+                              disabled={transferringMemberId === member.id}
+                            >
+                              {transferringMemberId === member.id
+                                ? 'Transfert...'
+                                : 'Nommer administrateur'}
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
