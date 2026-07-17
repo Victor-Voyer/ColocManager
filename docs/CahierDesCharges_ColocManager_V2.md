@@ -62,7 +62,7 @@ L'application couvre deux axes fonctionnels : la gestion des dépenses partagée
 
 | Fonctionnalité | Description | Priorité |
 |---|---|---|
-| Ajouter une dépense | Montant, description, catégorie, date. Répartition saisie manuellement par le créateur, membre par membre, lui compris. La somme des parts doit être égale au montant total | HAUTE |
+| Ajouter une dépense | Montant, description, catégorie, date. Répartition égale automatique par défaut entre les membres sélectionnés par le créateur, lui compris ; possibilité de saisir un montant précis pour un ou plusieurs membres. La somme des parts doit être égale au montant total | HAUTE |
 | Historique | Liste des dépenses du foyer, filtrable par catégorie | MOYENNE |
 | Suppression | Une dépense n'est pas modifiable après création. Pour corriger une répartition, il faut supprimer et recréer | MOYENNE |
 | Marquer une part comme remboursée | Chaque membre signale le remboursement de sa propre part | HAUTE |
@@ -86,7 +86,7 @@ Ces règles ont été validées en session de cadrage sur le modèle de données
 1. Un seul admin par colocation à la fois. Le créateur du foyer l'est par défaut.
 2. Un admin ne peut pas supprimer son compte ni quitter le foyer sans avoir désigné un nouvel admin au préalable, tant qu'il reste d'autres membres dans la colocation.
 3. Aucun membre, admin ou non, ne peut quitter le foyer ni supprimer son compte s'il a une dette active, en tant que débiteur (il doit de l'argent) ou en tant que créancier (on lui doit de l'argent).
-4. La répartition d'une dépense est saisie manuellement par son créateur, montant par montant, membre par membre, lui compris. Aucun calcul de répartition automatique.
+4. La répartition d'une dépense est égale par défaut entre les membres sélectionnés par le créateur, lui compris. Le créateur peut remplacer ce calcul automatique par un montant précis pour un ou plusieurs membres ; le reste à répartir est alors partagé également entre les membres restés en calcul automatique.
 5. La somme des montants saisis pour une dépense doit être strictement égale au montant total de la dépense.
 6. Un membre peut signaler qu'il a remboursé sa part sur une dépense donnée.
 7. Le code d'invitation est unique, rattaché à la colocation, régénérable par l'admin, et valable 24 heures après sa génération. Aucune limite au nombre de membres d'un foyer.
@@ -143,7 +143,7 @@ Ces points ont été évoqués puis explicitement écartés pour garder le proje
 - Messagerie entre colocataires
 - Rotation automatique des tâches ménagères
 - Un utilisateur membre de plusieurs colocations en même temps
-- Répartition automatique (équitable ou pondérée) : la saisie reste manuelle
+- Répartition pondérée automatique (ex : au prorata des revenus) : seules la répartition égale automatique et la saisie manuelle d'un montant précis sont prévues
 - Invitation ciblée par email : seul le code partagé est prévu
 - Plusieurs admins simultanés sur une même colocation
 

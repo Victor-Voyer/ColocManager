@@ -34,7 +34,8 @@ final class ExpenseService
         $payer = $this->resolvePayer($dto->paidByUserId, $user, $context->colocation);
         $amount = number_format((float) $dto->amount, 2, '.', '');
 
-        $this->assertShares($dto->shares, $amount, $payer, $context->colocation);
+        $this->assertShares($dto->shares, $payer, $context->colocation);
+        $amountsByUserId = $this->resolveShareAmounts($dto->shares, $amount);
 
         $expense = new Expense();
         $expense->setColocation($context->colocation);
@@ -50,7 +51,7 @@ final class ExpenseService
 
             $share = new ExpenseShare();
             $share->setUser($member);
-            $share->setAmountOwed(number_format((float) $shareInput->amountOwed, 2, '.', ''));
+            $share->setAmountOwed($amountsByUserId[$shareInput->userId]);
             $share->setIsPaid($isPayer);
             $share->setPaidAt($isPayer ? new \DateTimeImmutable() : null);
             $expense->addShare($share);
@@ -232,7 +233,7 @@ final class ExpenseService
     /**
      * @param list<ExpenseShareInputDto> $shares
      */
-    private function assertShares(array $shares, string $amount, User $payer, Colocation $colocation): void
+    private function assertShares(array $shares, User $payer, Colocation $colocation): void
     {
         $memberIds = array_map(
             fn (User $member): int => $member->getId(),
@@ -240,7 +241,6 @@ final class ExpenseService
         );
 
         $seenUserIds = [];
-        $totalCents = 0;
 
         foreach ($shares as $shareInput) {
             if (!in_array($shareInput->userId, $memberIds, true)) {
@@ -251,17 +251,50 @@ final class ExpenseService
                 throw new ApiException('Un membre ne peut avoir qu\'une seule part.');
             }
             $seenUserIds[$shareInput->userId] = true;
-
-            $totalCents += $this->toCents($shareInput->amountOwed);
         }
 
         if (!isset($seenUserIds[$payer->getId()])) {
             throw new ApiException('Le payeur doit avoir une part explicite dans la répartition.');
         }
+    }
 
-        if ($totalCents !== $this->toCents($amount)) {
-            throw new ApiException('La somme des parts doit être égale au montant total.');
+    /**
+     * Calcule le montant dû par membre : les parts explicites sont reprises
+     * telles quelles, le reste du montant total est réparti également entre
+     * les parts automatiques (amountOwed = null), au centime près.
+     *
+     * @param list<ExpenseShareInputDto> $shares
+     *
+     * @return array<int, string> montant (format décimal) indexé par userId
+     */
+    private function resolveShareAmounts(array $shares, string $amount): array
+    {
+        $explicitCents = 0;
+        $autoUserIds = [];
+        $amounts = [];
+
+        foreach ($shares as $shareInput) {
+            if ($shareInput->amountOwed === null) {
+                $autoUserIds[] = $shareInput->userId;
+                continue;
+            }
+            $cents = $this->toCents($shareInput->amountOwed);
+            $explicitCents += $cents;
+            $amounts[$shareInput->userId] = $this->centsToAmount($cents);
         }
+
+        $autoCount = count($autoUserIds);
+        if ($autoCount > 0) {
+            $remainingCents = $this->toCents($amount) - $explicitCents;
+            $baseCents = intdiv($remainingCents, $autoCount);
+            $extraCents = $remainingCents % $autoCount;
+
+            foreach ($autoUserIds as $index => $userId) {
+                $amounts[$userId] = $this->centsToAmount($baseCents + ($index < $extraCents ? 1 : 0));
+            }
+        }
+
+        return $amounts;
     }
 
     private function toCents(string $amount): int

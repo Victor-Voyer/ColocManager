@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import {
+  computeShareAmounts,
+  isShareSplitValid,
+} from '../../utils/expenseUtils'
 import './ExpenseForm.css'
 
 function todayIso() {
@@ -9,6 +13,7 @@ function buildInitialShares(members, currentUserId) {
   return members.map((member) => ({
     userId: member.id,
     included: member.id === currentUserId,
+    isManual: false,
     amountOwed: '',
   }))
 }
@@ -50,15 +55,24 @@ function ExpenseForm({
     )
   }
 
+  const toggleManual = (userId, prefillAmount) => {
+    setShares((prev) =>
+      prev.map((share) => {
+        if (share.userId !== userId) {
+          return share
+        }
+        return share.isManual
+          ? { ...share, isManual: false, amountOwed: '' }
+          : { ...share, isManual: true, amountOwed: prefillAmount }
+      }),
+    )
+  }
+
   const includedShares = shares.filter((share) => share.included)
-  const sharesTotal = includedShares.reduce(
-    (sum, share) => sum + (Number(share.amountOwed.replace(',', '.')) || 0),
-    0,
-  )
+  const previewAmounts = computeShareAmounts(amount, includedShares)
+  const sharesTotal = previewAmounts.reduce((sum, value) => sum + Number(value), 0)
   const targetAmount = Number(amount.replace(',', '.')) || 0
-  const totalsMatch =
-    includedShares.length > 0 &&
-    Math.abs(sharesTotal - targetAmount) < 0.005
+  const totalsMatch = isShareSplitValid(amount, includedShares)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -71,7 +85,9 @@ function ExpenseForm({
       paidByUserId: paidByUserId ? Number(paidByUserId) : null,
       shares: includedShares.map((share) => ({
         userId: share.userId,
-        amountOwed: share.amountOwed.trim().replace(',', '.'),
+        amountOwed: share.isManual
+          ? share.amountOwed.trim().replace(',', '.')
+          : null,
       })),
     })
   }
@@ -151,10 +167,12 @@ function ExpenseForm({
       </div>
 
       <div className="expense-form__field">
-        <label>Répartition (saisie manuelle)</label>
+        <label>Répartition</label>
         <p className="expense-form__hint">
-          Cochez les membres concernés et indiquez le montant dû par chacun.
-          La somme doit être égale au montant total.
+          Cochez les membres concernés : le montant total est réparti à parts
+          égales entre eux. Cliquez sur « Précis » pour saisir un montant
+          particulier pour un membre — le reste continue d'être réparti
+          également entre les autres.
         </p>
         <div className="expense-form__participants">
           {shares.map((share) => {
@@ -162,6 +180,12 @@ function ExpenseForm({
             if (!member) {
               return null
             }
+
+            const previewIndex = includedShares.findIndex(
+              (s) => s.userId === share.userId,
+            )
+            const previewAmount =
+              previewIndex >= 0 ? previewAmounts[previewIndex] : '0.00'
 
             return (
               <div key={share.userId} className="expense-form__share-row">
@@ -174,16 +198,32 @@ function ExpenseForm({
                   {member.firstName} {member.lastName}
                 </label>
                 {share.included && (
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    className="expense-form__share-amount"
-                    placeholder="0.00"
-                    value={share.amountOwed}
-                    onChange={(event) =>
-                      updateShareAmount(share.userId, event.target.value)
-                    }
-                  />
+                  <div className="expense-form__share-controls">
+                    {share.isManual ? (
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        className="expense-form__share-amount"
+                        placeholder="0.00"
+                        value={share.amountOwed}
+                        onChange={(event) =>
+                          updateShareAmount(share.userId, event.target.value)
+                        }
+                        autoFocus
+                      />
+                    ) : (
+                      <span className="expense-form__share-auto">
+                        {previewAmount} €
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      className="expense-form__share-toggle"
+                      onClick={() => toggleManual(share.userId, previewAmount)}
+                    >
+                      {share.isManual ? 'Auto' : 'Précis'}
+                    </button>
+                  </div>
                 )}
               </div>
             )
@@ -196,7 +236,7 @@ function ExpenseForm({
               : 'expense-form__total expense-form__total--mismatch'
           }
         >
-          Total saisi : {sharesTotal.toFixed(2)} € / {targetAmount.toFixed(2)} €
+          Total réparti : {sharesTotal.toFixed(2)} € / {targetAmount.toFixed(2)} €
         </p>
       </div>
 
