@@ -172,7 +172,9 @@ function ExpenseForm({
           Cochez les membres concernés : le montant total est réparti à parts
           égales entre eux. Cliquez sur « Précis » pour saisir un montant
           particulier pour un membre — le reste continue d'être réparti
-          également entre les autres.
+          également entre les autres. Le payeur n'est pas obligé d'être
+          coché : décochez-le s'il a avancé la totalité pour quelqu'un
+          d'autre.
         </p>
         <div className="expense-form__participants">
           {shares.map((share) => {

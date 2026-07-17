@@ -34,7 +34,7 @@ final class ExpenseService
         $payer = $this->resolvePayer($dto->paidByUserId, $user, $context->colocation);
         $amount = number_format((float) $dto->amount, 2, '.', '');
 
-        $this->assertShares($dto->shares, $payer, $context->colocation);
+        $this->assertShares($dto->shares, $context->colocation);
         $amountsByUserId = $this->resolveShareAmounts($dto->shares, $amount);
 
         $expense = new Expense();
@@ -231,9 +231,13 @@ final class ExpenseService
     }
 
     /**
+     * Le payeur n'a pas besoin d'apparaître dans les parts : il a pu avancer
+     * la totalité de la dépense pour le compte d'un ou plusieurs autres
+     * membres, auquel cas il ne doit rien lui-même.
+     *
      * @param list<ExpenseShareInputDto> $shares
      */
-    private function assertShares(array $shares, User $payer, Colocation $colocation): void
+    private function assertShares(array $shares, Colocation $colocation): void
     {
         $memberIds = array_map(
             fn (User $member): int => $member->getId(),
@@ -251,10 +255,6 @@ final class ExpenseService
                 throw new ApiException('Un membre ne peut avoir qu\'une seule part.');
             }
             $seenUserIds[$shareInput->userId] = true;
-        }
-
-        if (!isset($seenUserIds[$payer->getId()])) {
-            throw new ApiException('Le payeur doit avoir une part explicite dans la répartition.');
         }
     }
 
