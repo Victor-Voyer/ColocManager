@@ -21,3 +21,11 @@ export function joinColocation(payload) {
     body: JSON.stringify(payload),
   })
 }
+
+export function regenerateInvitationCode(colocationId) {
+  return apiRequest(`/colocations/${colocationId}/invitation-code/regenerate`,
+    {
+      method: 'POST',
+    },
+  )
+}
