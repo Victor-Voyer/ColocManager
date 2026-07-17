@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\DTO\User\RegisterUserDto;
-use App\Exception\ApiException;
 use App\Security\JwtCookieManager;
 use App\Service\Auth\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,7 +10,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /** Inscription, connexion (json_login) et déconnexion via cookie httpOnly */
 #[Route('/api')]
@@ -20,7 +18,6 @@ class AuthController extends AbstractController
     public function __construct(
         private readonly AuthService $authService,
         private readonly JwtCookieManager $jwtCookieManager,
-        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -28,11 +25,6 @@ class AuthController extends AbstractController
     #[Route('/register', name: 'api_auth_register', methods: ['POST'])]
     public function register(#[MapRequestPayload] RegisterUserDto $dto): JsonResponse
     {
-        $errors = $this->validator->validate($dto);
-        if (count($errors) > 0) {
-            throw ApiException::validation($errors);
-        }
-
         $user = $this->authService->register($dto);
         $response = $this->json(
             ['message' => 'Compte créé avec succès.'],

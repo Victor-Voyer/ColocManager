@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\DTO\Expense\CreateExpenseDto;
-use App\Exception\ApiException;
 use App\Model\Expense\ExpenseListFilters;
 use App\Service\Expense\ExpenseService;
 use App\Service\Security\CurrentUserProvider;
@@ -14,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Gère les dépenses et les soldes d'une colocation.
@@ -28,7 +26,6 @@ class ExpenseController extends AbstractController
     public function __construct(
         private readonly CurrentUserProvider $currentUserProvider, // Récupère l'utilisateur connecté
         private readonly ExpenseService $expenseService,             // Logique métier des dépenses
-        private readonly ValidatorInterface $validator,                // Valide les DTO
     ) {
     }
 
@@ -36,8 +33,6 @@ class ExpenseController extends AbstractController
     #[Route('/colocations/{colocationId}/expenses', name: 'api_expense_create', methods: ['POST'], requirements: ['colocationId' => '\d+'])]
     public function create(int $colocationId, #[MapRequestPayload] CreateExpenseDto $dto): JsonResponse
     {
-        $this->validate($dto);
-
         return $this->json(
             $this->expenseService->create($this->currentUserProvider->getUser(), $colocationId, $dto),
             Response::HTTP_CREATED,
@@ -109,14 +104,5 @@ class ExpenseController extends AbstractController
         return $this->json(
             $this->expenseService->markShareAsUnpaid($this->currentUserProvider->getUser(), $expenseId, $userId),
         );
-    }
-
-    /** Valide un DTO — lève ApiException (422) si les données sont invalides */
-    private function validate(object $dto, ?array $groups = null): void
-    {
-        $errors = $this->validator->validate($dto, null, $groups ?? []);
-        if (count($errors) > 0) {
-            throw ApiException::validation($errors);
-        }
     }
 }

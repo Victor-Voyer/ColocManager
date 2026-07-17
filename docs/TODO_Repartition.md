@@ -18,7 +18,7 @@ Le backend est globalement bien avancé et couvre la plupart des règles métier
 
 - [x] **Profil (frontend)** : la page Settings affiche désormais un vrai formulaire connecté à `GET/PUT /api/me` (déjà fait avant ce commit).
 - [x] **Suppression de compte (frontend)** : UI ajoutée (`DeleteAccountDialog` + carte "Zone dangereuse" dans Settings) pour `DELETE /api/me`, avec confirmation par mot de passe et affichage des erreurs métier (dette active / admin sans successeur désigné).
-- [ ] **Dépenses — validation somme des parts** : actuellement la vérification "somme des parts = montant total" est une vérification PHP manuelle (`ExpenseService::assertShares`), pas une contrainte du composant Validator comme demandé section 6. À transformer en Constraint/Validator Symfony réutilisable.
+- [x] **Dépenses — validation somme des parts** : la vérification "somme des parts = montant total" est désormais une Constraint/Validator Symfony réutilisable (`App\Validator\Constraints\SharesSumMatchesAmount` + `SharesSumMatchesAmountValidator`), appliquée sur `CreateExpenseDto`. `ExpenseService::assertShares` ne gère plus que les règles nécessitant le contexte (appartenance à la colocation, part unique, payeur avec part explicite).
 - [ ] **Voter Dépenses** : créer `ExpenseVoter` (autorisation — distinct du JWT qui gère l'authentification) pour décider qui peut supprimer une dépense (créateur/payeur ou admin). Aujourd'hui `ExpenseService::delete()` ne vérifie que l'appartenance à la colocation (`resolveExpense` → `requireMembership`), donc n'importe quel membre peut supprimer la dépense de n'importe qui. À brancher via `denyAccessUnlessGranted()` dans le service ou `#[IsGranted]` sur le contrôleur.
 
 ## Dev B — Foyer, Tâches, Remboursements

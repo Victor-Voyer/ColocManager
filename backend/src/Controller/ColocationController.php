@@ -6,7 +6,6 @@ use App\DTO\Colocation\CreateColocationDto;
 use App\DTO\Colocation\JoinColocationDto;
 use App\DTO\Colocation\UpdateColocationDto;
 use App\DTO\Colocation\UpdateMemberRoleDto;
-use App\Exception\ApiException;
 use App\Service\Colocation\ColocationService;
 use App\Service\Security\CurrentUserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Gère les colocations et leurs membres.
@@ -29,7 +27,6 @@ class ColocationController extends AbstractController
     public function __construct(
         private readonly CurrentUserProvider $currentUserProvider, // Récupère l'utilisateur connecté
         private readonly ColocationService $colocationService,       // Logique métier des colocations
-        private readonly ValidatorInterface $validator,              // Valide les DTO
     ) {
     }
 
@@ -37,8 +34,6 @@ class ColocationController extends AbstractController
     #[Route('', name: 'api_colocation_create', methods: ['POST'])]
     public function create(#[MapRequestPayload] CreateColocationDto $dto): JsonResponse
     {
-        $this->validate($dto);
-
         return $this->json(
             $this->colocationService->create($this->currentUserProvider->getUser(), $dto),
             Response::HTTP_CREATED,
@@ -49,8 +44,6 @@ class ColocationController extends AbstractController
     #[Route('/join', name: 'api_colocation_join', methods: ['POST'])]
     public function join(#[MapRequestPayload] JoinColocationDto $dto): JsonResponse
     {
-        $this->validate($dto);
-
         return $this->json(
             $this->colocationService->join($this->currentUserProvider->getUser(), $dto),
             Response::HTTP_CREATED,
@@ -70,8 +63,6 @@ class ColocationController extends AbstractController
     #[Route('/{id}', name: 'api_colocation_update', methods: ['PUT'], requirements: ['id' => '\d+'])]
     public function update(int $id, #[MapRequestPayload] UpdateColocationDto $dto): JsonResponse
     {
-        $this->validate($dto);
-
         return $this->json(
             $this->colocationService->update($this->currentUserProvider->getUser(), $id, $dto),
         );
@@ -117,8 +108,6 @@ class ColocationController extends AbstractController
     #[Route('/{id}/members/{userId}/role', name: 'api_colocation_update_member_role', methods: ['PATCH'], requirements: ['id' => '\d+', 'userId' => '\d+'])]
     public function updateMemberRole(int $id, int $userId, #[MapRequestPayload] UpdateMemberRoleDto $dto): JsonResponse
     {
-        $this->validate($dto);
-
         return $this->json(
             $this->colocationService->updateMemberRole($this->currentUserProvider->getUser(), $id, $userId, $dto),
         );
@@ -131,14 +120,5 @@ class ColocationController extends AbstractController
         return $this->json(
             $this->colocationService->regenerateInvitationCode($this->currentUserProvider->getUser(), $id),
         );
-    }
-
-    /** Valide un DTO — lève ApiException (422) si les données sont invalides */
-    private function validate(object $dto, ?array $groups = null): void
-    {
-        $errors = $this->validator->validate($dto, null, $groups ?? []);
-        if (count($errors) > 0) {
-            throw ApiException::validation($errors);
-        }
     }
 }
