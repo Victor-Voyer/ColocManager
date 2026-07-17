@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import Expenses from './pages/Expenses/Expenses.jsx'
 import Tasks from './pages/Tasks/Tasks.jsx'
 import Settings from './pages/Settings/Settings.jsx'
+import HandleColocation from './pages/HandleColocation/HandleColocation.jsx'
 
 function App() {
   return (
@@ -69,6 +70,16 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Settings />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collocations"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <HandleColocation />
               </Layout>
             </ProtectedRoute>
           }

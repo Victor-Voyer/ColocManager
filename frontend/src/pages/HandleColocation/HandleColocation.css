@@ -1,0 +1,65 @@
+@import '../shared/Pages.css';
+
+.handle-colocation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+
+.handle-colocation-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.handle-colocation-card p {
+  margin: 0 0 1.5rem;
+  color: #6b7280;
+}
+
+.handle-colocation-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.handle-colocation-card label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.handle-colocation-card input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.handle-colocation-card input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+.handle-colocation-card .btn {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+.handle-colocation-card__error {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .handle-colocation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .handle-colocation-card .btn {
+    width: 100%;
+  }
+}
