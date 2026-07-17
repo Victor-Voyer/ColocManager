@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router'
 import DeleteAccountDialog from '../../components/DeleteAccountDialog/DeleteAccountDialog.jsx'
 import { getErrorMessage } from '../../utils/apiError'
 import './Settings.css'
+import { getMembers } from '../../api/colocationApi'
 
 function Settings() {
   const { user, updateProfile, deleteAccount } = useAuth()
@@ -19,6 +20,8 @@ function Settings() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [invitationCode, setInvitationCode] = useState('')
   const [loading, setLoading] = useState(false)
+  const [membres, setMembers] = useState([])
+  const [selectedMemberId, setSelectedMemberId] = useState("")
 
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
@@ -35,6 +38,19 @@ function Settings() {
 
     loadColocation()
   }, [colocationId, isAdmin])
+
+  useEffect(() => {
+    if (!colocationId) {
+      return
+    }
+
+    const loadMembers = async () => {
+      const result = await getMembers(colocationId)
+      setMembers(result)
+    }
+
+    loadMembers()
+  }, [colocationId])
 
   const handleRegenerateCode = async () => {
     setLoading(true)
