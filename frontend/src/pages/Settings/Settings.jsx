@@ -20,8 +20,7 @@ function Settings() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [invitationCode, setInvitationCode] = useState('')
   const [loading, setLoading] = useState(false)
-  const [membres, setMembers] = useState([])
-  const [selectedMemberId, setSelectedMemberId] = useState("")
+  const [members, setMembers] = useState([])
 
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
@@ -197,6 +196,31 @@ function Settings() {
               >
                 {loading ? 'Régénération...' : 'Régénérer le code'}
               </button>
+            </div>
+          )}
+          <h3>Membres</h3>
+          {members.length === 0 ? (
+            <p>Aucun membre dans cette colocation.</p>
+          ) : (
+            <div className="members-table-container">
+              <table className="members-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Rôle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {members.map((member) => (
+                    <tr key={member.id}>
+                      <td>{member.firstName} {member.lastName}</td>
+                      <td>
+                        {member.role === 'admin' ? 'Administrateur' : 'Membre'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
