@@ -13,8 +13,10 @@ use App\Model\Expense\ExpenseListFilters;
 use App\Repository\ExpenseRepository;
 use App\Repository\ExpenseShareRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\ExpenseVoter;
 use App\Service\Colocation\ColocationAccessChecker;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class ExpenseService
 {
@@ -25,6 +27,7 @@ final class ExpenseService
         private readonly ExpenseShareRepository $expenseShareRepository,
         private readonly UserRepository $userRepository,
         private readonly ExpenseSerializer $serializer,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -153,6 +156,11 @@ final class ExpenseService
     public function delete(User $user, int $colocationId, int $expenseId): void
     {
         $expense = $this->resolveExpense($user, $colocationId, $expenseId);
+
+        if (!$this->authorizationChecker->isGranted(ExpenseVoter::DELETE, $expense)) {
+            throw ApiException::forbidden('Seul le payeur de la dépense ou un administrateur peut la supprimer.');
+        }
+
         $this->entityManager->remove($expense);
         $this->entityManager->flush();
     }
