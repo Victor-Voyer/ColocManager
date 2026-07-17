@@ -71,6 +71,12 @@
 .members-table td {
   font-size: 0.875rem;
 }
+
+.member-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .settings-leave-button {
   margin-top: 1.5rem;
   background-color: #ef4444;

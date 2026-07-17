@@ -43,5 +43,14 @@ export function leaveColocation(colocationId) {
   return apiRequest(`/colocations/${colocationId}/leave`,
     {
       method: 'POST',
-    })
+    },
+  )
+}
+
+export function removeMember(colocationId, memberId) {
+  return apiRequest(`/colocations/${colocationId}/members/${memberId}`,
+    {
+      method: 'DELETE',
+    },
+  )
 }
