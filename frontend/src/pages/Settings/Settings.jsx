@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
+import { getColocation, regenerateInvitationCode } from '../../api/colocationApi'
 import './Settings.css'
 
 function Settings() {
@@ -12,6 +13,38 @@ function Settings() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [invitationCode, setInvitationCode] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const colocationId = user?.colocation?.id
+  const isAdmin = user?.colocation?.role === 'admin'
+
+  useEffect(() => {
+    if (!colocationId || !isAdmin) {
+      return
+    }
+
+    const loadColocation = async () => {
+      const colocation = await getColocation(colocationId)
+      setInvitationCode(colocation.invitationCode)
+    }
+
+    loadColocation()
+  }, [colocationId, isAdmin])
+
+  const handleRegenerateCode = async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const result = await regenerateInvitationCode(colocationId)
+      setInvitationCode(result.invitationCode)
+    } catch (apiError) {
+      setError(apiError.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -106,9 +139,23 @@ function Settings() {
         </div>
         <div className="card">
           <h2>Colocation</h2>
-          <p>Nom : <strong>THE BIG FLATROOM</strong></p>
-          <p>Code d&apos;invitation : <code>BF-2026-XYZ</code></p>
-          <button className="btn btn--neutral">Modifier le foyer</button>
+          <p>Nom : <strong>{user?.colocation?.name}</strong></p>
+          {isAdmin && (
+            <div>
+              <p>
+                Code d'invitation : <strong>{invitationCode}</strong>
+              </p>
+
+              <button
+                type="button"
+                className="btn btn--neutral"
+                onClick={handleRegenerateCode}
+                disabled={loading}
+              >
+                {loading ? 'Régénération...' : 'Régénérer le code'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
