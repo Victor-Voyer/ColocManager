@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
-import { getColocation, regenerateInvitationCode, updateMemberRole } from '../../api/colocationApi'
+import { getColocation, regenerateInvitationCode, updateMemberRole, getMembers, leaveColocation, removeMember } from '../../api/colocationApi'
 import { useNavigate } from 'react-router'
 import DeleteAccountDialog from '../../components/DeleteAccountDialog/DeleteAccountDialog.jsx'
 import { getErrorMessage } from '../../utils/apiError'
 import './Settings.css'
-import { getMembers } from '../../api/colocationApi'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
-import { leaveColocation } from '../../api/colocationApi'
 
 function Settings() {
   const { user, updateProfile, deleteAccount,refreshUser } = useAuth()
@@ -28,6 +26,9 @@ function Settings() {
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
   const [leaveError, setLeaveError] = useState('')
+  const [memberToRemove, setMemberToRemove] = useState(null)
+  const [removingMemberId, setRemovingMemberId] = useState(null)
+  const [removeError, setRemoveError] = useState('')
 
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
@@ -155,6 +156,33 @@ function Settings() {
     }
   }
 
+  const handleRemoveMember = async () => {
+    if (!memberToRemove) {
+      return
+    }
+
+    setRemovingMemberId(memberToRemove.id)
+    setRemoveError('')
+
+    try {
+      await removeMember(colocationId, memberToRemove.id)
+
+      setMembers((currentMembers) =>
+        currentMembers.filter(
+          (member) => member.id !== memberToRemove.id,
+        ),
+      )
+
+      setMemberToRemove(null)
+    } catch (error) {
+      setRemoveError(
+        getErrorMessage(error, 'Impossible de retirer ce membre.'),
+      )
+    } finally {
+      setRemovingMemberId(null)
+    }
+  }
+
   const handleCloseDeleteDialog = () => {
     setIsDeleteDialogOpen(false)
     setDeleteError('')
@@ -273,16 +301,30 @@ function Settings() {
                           {member.id === user?.id ? (
                             <span>Vous</span>
                           ) : (
-                            <button
-                              type="button"
-                              className="btn btn--neutral"
-                              onClick={() => setMemberToPromote(member)}
-                              disabled={transferringMemberId === member.id}
-                            >
-                              {transferringMemberId === member.id
-                                ? 'Transfert...'
-                                : 'Nommer administrateur'}
-                            </button>
+                            <div className='member-actions'>
+                              <button
+                                type="button"
+                                className="btn btn--neutral"
+                                onClick={() => setMemberToPromote(member)}
+                                disabled={transferringMemberId === member.id}>
+                                {transferringMemberId === member.id
+                                  ? 'Transfert...'
+                                  : 'Nommer administrateur'}
+                              </button>
+
+                              <button
+                                type="button"
+                                className="btn remove-member-button"
+                                onClick={() => {
+                                  setRemoveError('')
+                                  setMemberToRemove(member)
+                                }}
+                                disabled={removingMemberId === member.id}>
+                                {removingMemberId === member.id
+                                  ? 'Retrait...'
+                                  : 'Retirer de la colocation'}
+                              </button>
+                            </div>
                           )}
                         </td>
                       )}
@@ -353,6 +395,23 @@ function Settings() {
         confirmLabel="Quitter"
         loadingLabel="Départ..."
         isLoading={isLeaving}
+      />
+
+      <ConfirmDialog
+        isOpen={Boolean(memberToRemove)}
+        onClose={() => {
+          setMemberToRemove(null)
+          setRemoveError('')
+        }}
+        onConfirm={handleRemoveMember}
+        title="Retirer un membre"
+        message={
+          removeError ||
+          `Retirer ${memberToRemove?.firstName} ${memberToRemove?.lastName} de la colocation ?`
+        }
+        confirmLabel="Retirer"
+        loadingLabel="Retrait..."
+        isLoading={Boolean(removingMemberId)}
       />
 
       <DeleteAccountDialog
