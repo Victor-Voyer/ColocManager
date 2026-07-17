@@ -38,3 +38,10 @@ export function updateMemberRole(colocationId, userId, payload) {
     },
   )
 }
+
+export function leaveColocation(colocationId) {
+  return apiRequest(`/colocations/${colocationId}/leave`,
+    {
+      method: 'POST',
+    })
+}
