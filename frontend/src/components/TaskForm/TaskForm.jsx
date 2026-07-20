@@ -84,7 +84,7 @@ function TaskForm({
 
       <div className="task-form__row">
         <div className="task-form__field">
-          <label htmlFor="task-priority">Priorite</label>
+          <label htmlFor="task-priority">Priorité</label>
           <select
             id="task-priority"
             value={form.priority}
@@ -98,7 +98,7 @@ function TaskForm({
           </select>
         </div>
         <div className="task-form__field">
-          <label htmlFor="task-due-date">Echeance</label>
+          <label htmlFor="task-due-date">Échéance</label>
           <input
             id="task-due-date"
             type="date"
@@ -141,7 +141,7 @@ function TaskForm({
           disabled={isSubmitting}
         >
           {isSubmitting
-            ? 'Enregistrement...'
+            ? 'Enregistrement…'
             : task
               ? 'Enregistrer'
               : 'Ajouter'}

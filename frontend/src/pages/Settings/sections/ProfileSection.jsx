@@ -92,7 +92,7 @@ function ProfileSection() {
             </div>
           </div>
           <div className="form__field">
-            <label htmlFor="settings-email">Email</label>
+            <label htmlFor="settings-email">Adresse e-mail</label>
             <input
               id="settings-email"
               type="email"

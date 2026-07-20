@@ -21,7 +21,7 @@ function TasksTable({
   if (tasks.length === 0) {
     return (
       <p className="page-status">
-        Aucune tache pour le moment. Ajoutez-en une !
+        Aucune tâche pour le moment. Ajoutez-en une !
       </p>
     )
   }
@@ -31,10 +31,10 @@ function TasksTable({
       <table className="table">
         <thead>
           <tr>
-            <th>Tache</th>
-            <th>Assigne a</th>
-            <th>Echeance</th>
-            <th>Priorite</th>
+            <th>Tâche</th>
+            <th>Assigné à</th>
+            <th>Échéance</th>
+            <th>Priorité</th>
             <th>Statut</th>
             <th>Faite</th>
           </tr>
@@ -68,7 +68,7 @@ function TasksTable({
                   <input
                     type="checkbox"
                     className="tasks-page__done-checkbox"
-                    aria-label={`Marquer ${task.title} comme terminee`}
+                    aria-label={`Marquer ${task.title} comme terminée`}
                     checked={task.status === 'done'}
                     disabled={
                       !canChangeStatus ||

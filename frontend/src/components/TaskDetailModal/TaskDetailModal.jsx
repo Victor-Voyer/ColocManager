@@ -117,7 +117,7 @@ function TaskDetailModal({
                 </p>
               </div>
               <div>
-                <span className="task-detail__label">Echéance</span>
+                <span className="task-detail__label">Échéance</span>
                 <p className="task-detail__value">
                   {formatTaskDate(task.dueDate)}
                 </p>

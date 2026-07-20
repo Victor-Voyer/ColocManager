@@ -7,7 +7,7 @@ function ConfirmDialog({
   onConfirm,
   title,
   message,
-  loadingLabel = 'Chargement...',
+  loadingLabel = 'Chargement…',
   confirmLabel = 'Confirmer',
   isLoading = false,
 }) {

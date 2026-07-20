@@ -17,10 +17,10 @@ import './Layout.css'
 const ICON_SIZE = 20
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-  { id: 'expenses', label: 'Expenses', icon: Wallet, path: '/expenses' },
-  { id: 'tasks', label: 'Tasks', icon: ListTodo, path: '/tasks' },
-  { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
+  { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/dashboard' },
+  { id: 'expenses', label: 'Dépenses', icon: Wallet, path: '/expenses' },
+  { id: 'tasks', label: 'Tâches', icon: ListTodo, path: '/tasks' },
+  { id: 'settings', label: 'Paramètres', icon: Settings, path: '/settings' },
 ]
 
 function Layout({ children }) {
@@ -115,7 +115,11 @@ function Layout({ children }) {
           <div className="dashboard-layout__topbar-center">
             <div className="dashboard-layout__search">
               <Search className="dashboard-layout__search-icon" size={18} aria-hidden="true" />
-              <input type="text" placeholder="Search anything..." />
+              <input
+                type="text"
+                placeholder="Rechercher…"
+                aria-label="Rechercher"
+              />
             </div>
           </div>
 

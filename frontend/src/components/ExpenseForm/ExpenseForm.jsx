@@ -220,7 +220,7 @@ function ExpenseForm({
                       className="expense-form__share-toggle"
                       onClick={() => toggleManual(share.userId, previewAmount)}
                     >
-                      {share.isManual ? 'Auto' : 'Précis'}
+                      {share.isManual ? 'Automatique' : 'Précis'}
                     </button>
                   </div>
                 )}

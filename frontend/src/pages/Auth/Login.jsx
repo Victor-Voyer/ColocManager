@@ -59,7 +59,7 @@ function Login() {
 
           <form className="auth-page__form" onSubmit={handleSubmit} noValidate>
             <div className="auth-page__field">
-              <label htmlFor="login-email">Email</label>
+              <label htmlFor="login-email">Adresse e-mail</label>
               <input
                 id="login-email"
                 type="email"

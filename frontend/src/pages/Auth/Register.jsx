@@ -90,7 +90,7 @@ function Register() {
             </div>
 
             <div className="auth-page__field">
-              <label htmlFor="register-email">Email</label>
+              <label htmlFor="register-email">Adresse e-mail</label>
               <input
                 id="register-email"
                 type="email"

@@ -29,7 +29,7 @@ export function useTasks(colocationId) {
       const data = await taskApi.listTasks(colocationId, filters)
       setTasks(Array.isArray(data.items) ? data.items : [])
     } catch (err) {
-      setError(getErrorMessage(err, 'Impossible de charger les taches.'))
+      setError(getErrorMessage(err, 'Impossible de charger les tâches.'))
     } finally {
       setIsLoading(false)
     }
@@ -82,7 +82,7 @@ export function useTasks(colocationId) {
         await refreshHistory()
         return true
       } catch (err) {
-        setFormError(getErrorMessage(err, 'Impossible de creer la tache.'))
+        setFormError(getErrorMessage(err, 'Impossible de créer la tâche.'))
         return false
       } finally {
         setIsSubmitting(false)
@@ -102,7 +102,7 @@ export function useTasks(colocationId) {
         await refreshHistory()
         return updated
       } catch (err) {
-        setFormError(getErrorMessage(err, 'Impossible de modifier la tache.'))
+        setFormError(getErrorMessage(err, 'Impossible de modifier la tâche.'))
         return null
       } finally {
         setIsSubmitting(false)
@@ -127,7 +127,7 @@ export function useTasks(colocationId) {
         return updated
       } catch (err) {
         setError(
-          getErrorMessage(err, 'Impossible de modifier le statut de la tache.'),
+          getErrorMessage(err, 'Impossible de modifier le statut de la tâche.'),
         )
         return null
       }
@@ -145,7 +145,7 @@ export function useTasks(colocationId) {
         await refreshHistory()
         return true
       } catch (err) {
-        setError(getErrorMessage(err, 'Impossible de supprimer la tache.'))
+        setError(getErrorMessage(err, 'Impossible de supprimer la tâche.'))
         return false
       } finally {
         setIsDeleting(false)
