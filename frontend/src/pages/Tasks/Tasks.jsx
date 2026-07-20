@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
+import CreateTaskModal from '../../components/CreateTaskModal/CreateTaskModal.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 import ColocationRequired from '../../components/ColocationRequired/ColocationRequired.jsx'
-import Modal from '../../components/Modal/Modal.jsx'
 import TaskDetailModal from '../../components/TaskDetailModal/TaskDetailModal.jsx'
-import TaskForm from '../../components/TaskForm/TaskForm.jsx'
 import TasksTable from '../../components/TasksTable/TasksTable.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { useCrudPageState } from '../../hooks/useCrudPageState'
@@ -201,21 +200,14 @@ function Tasks() {
         </div>
       </section>
 
-      <Modal
+      <CreateTaskModal
         isOpen={isCreateOpen}
         onClose={closeCreate}
-        title="Nouvelle tâche"
-      >
-        <div className="modal__body">
-          <TaskForm
-            members={members}
-            onSubmit={handleCreate}
-            onCancel={closeCreate}
-            isSubmitting={isSubmitting}
-            error={formError}
-          />
-        </div>
-      </Modal>
+        members={members}
+        onSubmit={handleCreate}
+        isSubmitting={isSubmitting}
+        error={formError}
+      />
 
       <TaskDetailModal
         isOpen={Boolean(selectedTask)}

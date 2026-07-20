@@ -55,6 +55,16 @@
   transform: translateY(-1px);
 }
 
+.dashboard-content__btn--task {
+  background-color: #f59e0b;
+  color: var(--color-white);
+}
+
+.dashboard-content__btn--task:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
 .dashboard-content__btn--with-icon {
   display: inline-flex;
   align-items: center;

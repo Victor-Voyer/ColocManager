@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import CreateExpenseModal from '../../components/CreateExpenseModal/CreateExpenseModal.jsx'
+import CreateTaskModal from '../../components/CreateTaskModal/CreateTaskModal.jsx'
 import * as expenseApi from '../../api/expenseApi'
 import * as taskApi from '../../api/taskApi'
 import { useAuth } from '../../context/AuthContext'
@@ -20,11 +21,22 @@ function Dashboard() {
   const [pendingTasks, setPendingTasks] = useState(0)
   const [isLoading, setIsLoading] = useState(Boolean(colocationId))
   const [error, setError] = useState('')
-  const [formError, setFormError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [expenseFormError, setExpenseFormError] = useState('')
+  const [taskFormError, setTaskFormError] = useState('')
+  const [isExpenseSubmitting, setIsExpenseSubmitting] = useState(false)
+  const [isTaskSubmitting, setIsTaskSubmitting] = useState(false)
 
   const { members } = useColocationMembers(colocationId)
-  const { isCreateOpen, openCreate, closeCreate } = useCrudPageState()
+  const {
+    isCreateOpen: isExpenseCreateOpen,
+    openCreate: openExpenseCreate,
+    closeCreate: closeExpenseCreate,
+  } = useCrudPageState()
+  const {
+    isCreateOpen: isTaskCreateOpen,
+    openCreate: openTaskCreate,
+    closeCreate: closeTaskCreate,
+  } = useCrudPageState()
 
   useEffect(() => {
     let cancelled = false
@@ -85,19 +97,36 @@ function Dashboard() {
   }, [colocationId])
 
   const handleCreateExpense = async (payload) => {
-    setFormError('')
-    setIsSubmitting(true)
+    setExpenseFormError('')
+    setIsExpenseSubmitting(true)
 
     try {
       await expenseApi.createExpense(colocationId, payload)
-      closeCreate()
+      closeExpenseCreate()
       await refreshDashboard()
       return true
     } catch (err) {
-      setFormError(getErrorMessage(err, 'Impossible de créer la dépense.'))
+      setExpenseFormError(getErrorMessage(err, 'Impossible de créer la dépense.'))
       return false
     } finally {
-      setIsSubmitting(false)
+      setIsExpenseSubmitting(false)
+    }
+  }
+
+  const handleCreateTask = async (payload) => {
+    setTaskFormError('')
+    setIsTaskSubmitting(true)
+
+    try {
+      await taskApi.createTask(colocationId, payload)
+      closeTaskCreate()
+      await refreshDashboard()
+      return true
+    } catch (err) {
+      setTaskFormError(getErrorMessage(err, 'Impossible de créer la tâche.'))
+      return false
+    } finally {
+      setIsTaskSubmitting(false)
     }
   }
 
@@ -179,17 +208,30 @@ function Dashboard() {
           )}
 
           {colocationId && (
-            <button
-              type="button"
-              className="dashboard-content__btn dashboard-content__btn--primary dashboard-content__btn--with-icon"
-              onClick={() => {
-                setFormError('')
-                openCreate()
-              }}
-            >
-              <Plus size={18} aria-hidden="true" />
-              Ajouter une dépense
-            </button>
+            <>
+              <button
+                type="button"
+                className="dashboard-content__btn dashboard-content__btn--task dashboard-content__btn--with-icon"
+                onClick={() => {
+                  setTaskFormError('')
+                  openTaskCreate()
+                }}
+              >
+                <Plus size={18} aria-hidden="true" />
+                Ajouter une tâche
+              </button>
+              <button
+                type="button"
+                className="dashboard-content__btn dashboard-content__btn--primary dashboard-content__btn--with-icon"
+                onClick={() => {
+                  setExpenseFormError('')
+                  openExpenseCreate()
+                }}
+              >
+                <Plus size={18} aria-hidden="true" />
+                Ajouter une dépense
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -237,13 +279,22 @@ function Dashboard() {
       )}
 
       <CreateExpenseModal
-        isOpen={isCreateOpen}
-        onClose={closeCreate}
+        isOpen={isExpenseCreateOpen}
+        onClose={closeExpenseCreate}
         members={members}
         currentUserId={user?.id}
         onSubmit={handleCreateExpense}
-        isSubmitting={isSubmitting}
-        error={formError}
+        isSubmitting={isExpenseSubmitting}
+        error={expenseFormError}
+      />
+
+      <CreateTaskModal
+        isOpen={isTaskCreateOpen}
+        onClose={closeTaskCreate}
+        members={members}
+        onSubmit={handleCreateTask}
+        isSubmitting={isTaskSubmitting}
+        error={taskFormError}
       />
     </div>
   )
