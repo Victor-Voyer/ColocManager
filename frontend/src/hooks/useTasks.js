@@ -137,18 +137,24 @@ export function useTasks(colocationId) {
     [colocationId, refresh, refreshHistory, upsertTask],
   )
 
-  const checkTask = useCallback(
-    async (taskId, payload) => {
+  const updateTaskStatus = useCallback(
+    async (taskId, status) => {
       setError('')
 
       try {
-        const updated = await taskApi.updateTask(colocationId, taskId, payload)
+        const updated = await taskApi.updateTaskStatus(
+          colocationId,
+          taskId,
+          status,
+        )
         upsertTask(updated)
         await refresh()
         await refreshHistory()
         return updated
       } catch (err) {
-        setError(getErrorMessage(err, 'Impossible de terminer la tache.'))
+        setError(
+          getErrorMessage(err, 'Impossible de modifier le statut de la tache.'),
+        )
         return null
       }
     },
@@ -174,24 +180,6 @@ export function useTasks(colocationId) {
     [colocationId, refreshHistory],
   )
 
-  const completeTask = useCallback(
-    async (taskId) => {
-      setError('')
-
-      try {
-        const updated = await taskApi.completeTask(taskId)
-        upsertTask(updated)
-        await refresh()
-        await refreshHistory()
-        return updated
-      } catch (err) {
-        setError(getErrorMessage(err, 'Impossible de terminer la tache.'))
-        return null
-      }
-    },
-    [refresh, refreshHistory, upsertTask],
-  )
-
   return {
     tasks,
     history,
@@ -207,9 +195,8 @@ export function useTasks(colocationId) {
     refresh,
     createTask,
     updateTask,
-    checkTask,
+    updateTaskStatus,
     deleteTask,
-    completeTask,
     upsertTask,
     clearFormError: () => setFormError(''),
   }

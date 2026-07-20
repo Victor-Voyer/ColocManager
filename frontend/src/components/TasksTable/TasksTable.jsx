@@ -1,4 +1,5 @@
 import {
+  canChangeTaskStatus,
   formatMemberName,
   formatTaskDate,
   getTaskPriority,
@@ -9,6 +10,7 @@ function TasksTable({
   tasks,
   isLoading,
   completingTaskId = null,
+  currentUser,
   onSelectTask,
   onCompleteTask,
 }) {
@@ -41,6 +43,7 @@ function TasksTable({
           {tasks.map((task) => {
             const status = getTaskStatus(task.status)
             const priority = getTaskPriority(task.priority)
+            const canChangeStatus = canChangeTaskStatus(task, currentUser)
 
             return (
               <tr
@@ -67,7 +70,11 @@ function TasksTable({
                     className="tasks-page__done-checkbox"
                     aria-label={`Marquer ${task.title} comme terminee`}
                     checked={task.status === 'done'}
-                    disabled={task.status === 'done' || completingTaskId === task.id}
+                    disabled={
+                      !canChangeStatus ||
+                      task.status === 'done' ||
+                      completingTaskId === task.id
+                    }
                     onChange={(event) => {
                       event.stopPropagation()
                       if (event.target.checked) {

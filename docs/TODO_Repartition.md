@@ -32,7 +32,7 @@ Le backend est globalement bien avancé et couvre la plupart des règles métier
   - [ ] Quitter le foyer (avec gestion des erreurs : dette active / admin sans successeur)
   - [ ] Retirer un membre (admin)
 - [x] **Remboursements — permission** : `markShareAsPaid` / `markShareAsUnpaid` sont réservées au créateur de la dépense, qui valide ou annule le remboursement de chaque membre concerné.
-- [ ] **Tâches — règle "l'assigné peut toujours changer le statut"** : non implémentée telle quelle. `update()` (qui inclut le statut) est réservé créateur/admin, et l'endpoint `complete()` est ouvert à tout membre du foyer (pas seulement l'assigné) et ne gère que le passage à "Terminé". Il faut un vrai chemin "changement de statut" ouvert au créateur, à l'admin, ET à l'assigné (règle 11 section 5).
+- [x] **Tâches — règle "l'assigné peut toujours changer le statut"** : une route dédiée permet au créateur, à l'admin et au membre assigné de choisir entre "À faire", "En cours" et "Terminée", sans leur ouvrir la modification complète de la tâche.
 - [ ] **Voters Foyer / Tâches** : créer `ColocationVoter` (rôle admin — ex: `updateMemberRole`, `removeMember` dans `ColocationService.php:247`) et `TaskVoter` (créateur ou admin — remplace la méthode privée `requireCreatorOrAdmin` de `TaskService.php:115`, dupliquée ailleurs sous une autre forme). Objectif : centraliser cette logique d'autorisation dans une seule classe par domaine au lieu de la retaper dans chaque service.
 
 ## Commun (à faire ensemble / sprint d'intégration)

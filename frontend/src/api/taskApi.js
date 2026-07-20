@@ -43,8 +43,9 @@ export function deleteTask(colocationId, taskId) {
   })
 }
 
-export function completeTask(taskId) {
-  return apiRequest(`/tasks/${taskId}/complete`, {
+export function updateTaskStatus(colocationId, taskId, status) {
+  return apiRequest(`/colocations/${colocationId}/tasks/${taskId}/status`, {
     method: 'PATCH',
+    body: JSON.stringify({ status }),
   })
 }
