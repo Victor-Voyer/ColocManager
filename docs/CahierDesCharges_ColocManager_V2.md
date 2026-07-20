@@ -65,7 +65,7 @@ L'application couvre deux axes fonctionnels : la gestion des dépenses partagée
 | Ajouter une dépense | Montant, description, catégorie, date. Répartition égale automatique par défaut entre les membres sélectionnés par le créateur (le payeur n'est pas obligé d'en faire partie : il peut avoir avancé la totalité pour le compte d'un autre membre) ; possibilité de saisir un montant précis pour un ou plusieurs membres. La somme des parts doit être égale au montant total | HAUTE |
 | Historique | Liste des dépenses du foyer, filtrable par catégorie | MOYENNE |
 | Suppression | Une dépense n'est pas modifiable après création. Pour corriger une répartition, il faut supprimer et recréer | MOYENNE |
-| Marquer une part comme remboursée | Chaque membre signale le remboursement de sa propre part | HAUTE |
+| Marquer une part comme remboursée | Le créateur de la dépense valide ou annule le remboursement de chaque membre concerné | HAUTE |
 | Soldes | Vue "qui doit combien à qui", calculée à la volée à partir des parts non remboursées | HAUTE |
 
 ### 4.4 Tâches ménagères
