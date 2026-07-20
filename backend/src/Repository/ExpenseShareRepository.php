@@ -34,6 +34,7 @@ class ExpenseShareRepository extends ServiceEntityRepository
             ->select('IDENTITY(es.user) AS userId', 'SUM(es.amountOwed) AS totalOwed')
             ->join('es.expense', 'e')
             ->where('e.colocation = :colocation')
+            ->andWhere('es.isPaid = false')
             ->setParameter('colocation', $colocation)
             ->groupBy('es.user')
             ->getQuery()
@@ -46,6 +47,37 @@ class ExpenseShareRepository extends ServiceEntityRepository
 
         return $result;
     }
+    
+    /**Additionne les parts non remboursées et les associe au membre qui avait payé la dépense */
+    public function getTotalReceivableByMember(Colocation $colocation): array
+{
+    $rows = $this->createQueryBuilder('es')
+        ->select(
+            'IDENTITY(e.paidBy) AS userId',
+            'SUM(es.amountOwed) AS totalReceivable',
+        )
+        ->join('es.expense', 'e')
+        ->where('e.colocation = :colocation')
+        ->andWhere('es.isPaid = false')
+        ->andWhere('e.paidBy IS NOT NULL')
+        ->setParameter('colocation', $colocation)
+        ->groupBy('e.paidBy')
+        ->getQuery()
+        ->getArrayResult();
+
+    $result = [];
+
+    foreach ($rows as $row) {
+        $result[(int) $row['userId']] = number_format(
+            (float) $row['totalReceivable'],
+            2,
+            '.',
+            '',
+        );
+    }
+
+    return $result;
+}
 
     /**
      * Retourne true si l'utilisateur a une dette active :

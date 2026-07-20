@@ -132,12 +132,14 @@ final class ExpenseService
 
         $totalPaid = $this->expenseRepository->getTotalPaidByMember($colocation);
         $totalOwed = $this->expenseShareRepository->getTotalOwedByMember($colocation);
+        $totalReceivable = $this->expenseShareRepository->getTotalReceivableByMember($colocation);
 
         $members = [];
         foreach ($colocation->getMembers() as $member) {
             $userId = $member->getId();
             $paid = $totalPaid[$userId] ?? '0.00';
             $owed = $totalOwed[$userId] ?? '0.00';
+            $receivable = $totalReceivable[$userId] ?? '0.00';
 
             $members[] = [
                 'userId' => $userId,
@@ -145,7 +147,7 @@ final class ExpenseService
                 'lastName' => $member->getLastName(),
                 'totalPaid' => $paid,
                 'totalOwed' => $owed,
-                'balance' => MoneyHelper::subtract($paid, $owed),
+                'balance' => MoneyHelper::subtract($receivable, $owed),
             ];
         }
 
