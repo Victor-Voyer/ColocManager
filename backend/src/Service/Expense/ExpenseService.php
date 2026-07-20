@@ -43,6 +43,7 @@ final class ExpenseService
         $expense = new Expense();
         $expense->setColocation($context->colocation);
         $expense->setPaidBy($payer);
+        $expense->setCreatedBy($user);
         $expense->setAmount($amount);
         $expense->setDescription($dto->description);
         $expense->setCategory($dto->category);
@@ -200,12 +201,20 @@ final class ExpenseService
 
         $this->accessChecker->requireMembership($user, $expense->getColocation());
 
-        $targetUser = $this->userRepository->find($targetUserId);
-        if ($targetUser === null) {
-            throw ApiException::notFound('Utilisateur introuvable.');
+        if ($expense->getCreatedBy()?->getId() !== $user->getId()) {
+            throw ApiException::forbidden(
+                'Seul le créateur de la dépense peut valider les remboursements.',
+            );
         }
 
-        $share = $this->expenseShareRepository->findOneByExpenseAndUser($expense, $targetUser);
+        $targetUser = $this->userRepository->find($targetUserId);
+        if ($targetUser === null) {
+            throw ApiException::notFound('Membre introuvable.');
+        }
+
+        $share = $this->expenseShareRepository
+            ->findOneByExpenseAndUser($expense, $targetUser);
+
         if ($share === null) {
             throw ApiException::notFound('Part de dépense introuvable.');
         }

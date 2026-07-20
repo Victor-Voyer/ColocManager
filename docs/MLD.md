@@ -79,6 +79,7 @@ Cette section fait office de compte rendu de cadrage. Chaque règle ci dessous a
 | `id` | INT | PK, AUTO_INCREMENT |
 | `colocation_id` | INT | FK → colocations.id, NOT NULL |
 | `paid_by` | INT | FK → users.id, NOT NULL |
+| `created_by` | INT | FK → users.id, NULLABLE |
 | `amount` | DECIMAL(10,2) | NOT NULL |
 | `description` | VARCHAR(500) | NOT NULL |
 | `category` | VARCHAR(100) | NULLABLE |
@@ -105,7 +106,7 @@ Cette section fait office de compte rendu de cadrage. Chaque règle ci dessous a
 > **UNIQUE** : `(expense_id, user_id)`, un membre ne peut avoir qu'une seule part par dépense.
 > Une ligne par membre concerné, **y compris le payeur**. La ligne du payeur (`user_id = expenses.paid_by`) est créée avec `is_paid = TRUE` automatiquement : il a déjà couvert sa propre part en payant la dépense en entier. Les autres lignes démarrent à `is_paid = FALSE`.
 > **Validation back obligatoire à la création d'une dépense** : la somme de tous les `amount_owed` (payeur inclus) doit être strictement égale à `expenses.amount`.
-> `POST /api/expenses/:id/shares/:shareId/mark-paid` : un membre marque sa propre part comme remboursée (`is_paid = TRUE`, `paid_at = now()`).
+> `PATCH /api/expenses/:expenseId/shares/:userId/pay` : seul le créateur de la dépense valide le remboursement de la part du membre ciblé (`is_paid = TRUE`, `paid_at = now()`). L'endpoint `/unpay` permet au même créateur d'annuler cette validation.
 
 ---
 

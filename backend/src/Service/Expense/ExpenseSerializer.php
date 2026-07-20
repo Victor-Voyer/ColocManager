@@ -10,6 +10,7 @@ final class ExpenseSerializer
     public function serialize(Expense $expense): array
     {
         $paidBy = $expense->getPaidBy();
+        $createdBy = $expense->getCreatedBy();
 
         return [
             'id' => $expense->getId(),
@@ -21,6 +22,11 @@ final class ExpenseSerializer
                 'id' => $paidBy->getId(),
                 'firstName' => $paidBy->getFirstName(),
                 'lastName' => $paidBy->getLastName(),
+            ],
+            'createdBy' => $createdBy === null ? null : [
+                'id' => $createdBy->getId(),
+                'firstName' => $createdBy->getFirstName(),
+                'lastName' => $createdBy->getLastName(),
             ],
             'shares' => array_map(
                 fn (ExpenseShare $share): array => $this->serializeShare($share),

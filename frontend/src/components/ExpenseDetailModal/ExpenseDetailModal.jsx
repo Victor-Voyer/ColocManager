@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import * as expenseApi from '../../api/expenseApi'
+import { useAuth } from '../../context/AuthContext.jsx'
 import { getErrorMessage } from '../../utils/apiError'
 import {
   formatAmount,
@@ -37,10 +38,13 @@ function ExpenseDetailModal({
       setIsUpdatingShare(null)
     }
   }
+  const { user } = useAuth()
 
   if (!expense) {
     return null
   }
+
+  const canManageRepayments = expense.createdBy?.id === user?.id
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Détail de la dépense" wide>
@@ -84,54 +88,60 @@ function ExpenseDetailModal({
 
         <h3 className="expense-detail__shares-title">Parts</h3>
         <ul className="expense-detail__shares">
-          {expense.shares.map((share) => (
-            <li key={share.id} className="expense-detail__share">
-              <div className="expense-detail__share-info">
-                <span className="expense-detail__share-name">
-                  {share.firstName} {share.lastName}
-                </span>
-                <span className="expense-detail__share-amount">
-                  {formatAmount(share.amountOwed)}
-                </span>
-              </div>
-              {share.isPaid ? (
-                <div className="expense-detail__share-status">
-                  <span className="badge badge--success">Remboursé</span>
-                  <button
-                    type="button"
-                    className="btn btn--neutral expense-detail__pay-btn"
-                    disabled={isUpdatingShare === share.userId}
-                    onClick={() =>
-                      handleShareStatusChange(
-                        share.userId,
-                        expenseApi.markShareAsUnpaid,
-                        'Impossible d\'annuler le remboursement.',
-                      )
-                    }
-                  >
-                    {isUpdatingShare === share.userId ? '…' : 'Annuler'}
-                  </button>
+          {expense.shares.map((share) => {
+            return (
+              <li key={share.id} className="expense-detail__share">
+                <div className="expense-detail__share-info">
+                  <span className="expense-detail__share-name">
+                    {share.firstName} {share.lastName}
+                  </span>
+                  <span className="expense-detail__share-amount">
+                    {formatAmount(share.amountOwed)}
+                  </span>
                 </div>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn--primary expense-detail__pay-btn"
-                  disabled={isUpdatingShare === share.userId}
-                  onClick={() =>
-                    handleShareStatusChange(
-                      share.userId,
-                      expenseApi.markShareAsPaid,
-                      'Impossible de marquer la part comme remboursée.',
-                    )
-                  }
-                >
-                  {isUpdatingShare === share.userId
-                    ? '…'
-                    : 'Marquer remboursé'}
-                </button>
-              )}
-            </li>
-          ))}
+                {share.isPaid ? (
+                  <div className="expense-detail__share-status">
+                    <span className="badge badge--success">Remboursé</span>
+                    {canManageRepayments && (
+                      <button
+                        type="button"
+                        className="btn btn--neutral expense-detail__pay-btn"
+                        disabled={isUpdatingShare === share.userId}
+                        onClick={() =>
+                          handleShareStatusChange(
+                            share.userId,
+                            expenseApi.markShareAsUnpaid,
+                            'Impossible d\'annuler le remboursement.',
+                          )
+                        }
+                      >
+                        {isUpdatingShare === share.userId ? '…' : 'Annuler'}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  canManageRepayments && (
+                    <button
+                      type="button"
+                      className="btn btn--primary expense-detail__pay-btn"
+                      disabled={isUpdatingShare === share.userId}
+                      onClick={() =>
+                        handleShareStatusChange(
+                          share.userId,
+                          expenseApi.markShareAsPaid,
+                          'Impossible de marquer la part comme remboursée.',
+                        )
+                      }
+                    >
+                      {isUpdatingShare === share.userId
+                        ? '…'
+                        : 'Marquer remboursé'}
+                    </button>
+                  )
+                )}
+              </li>
+            )
+          })}
         </ul>
       </div>
 

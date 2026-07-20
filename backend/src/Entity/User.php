@@ -52,6 +52,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'paidBy')]
     private Collection $expensesPaid;
 
+    /** @var Collection<int, Expense> */
+    #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'createdBy')]
+    private Collection $expensesCreated;
+
     /** @var Collection<int, ExpenseShare> */
     #[ORM\OneToMany(targetEntity: ExpenseShare::class, mappedBy: 'user')]
     private Collection $expenseShares;
@@ -67,6 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->expensesPaid = new ArrayCollection();
+        $this->expensesCreated = new ArrayCollection();
         $this->expenseShares = new ArrayCollection();
         $this->tasksAssigned = new ArrayCollection();
         $this->tasksCreated = new ArrayCollection();
@@ -189,6 +194,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getExpensesPaid(): Collection
     {
         return $this->expensesPaid;
+    }
+
+    /** @return Collection<int, Expense> */
+    public function getExpensesCreated(): Collection
+    {
+        return $this->expensesCreated;
     }
 
     /** @return Collection<int, ExpenseShare> */

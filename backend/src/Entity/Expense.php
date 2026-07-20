@@ -26,6 +26,10 @@ class Expense
     #[ORM\JoinColumn(name: 'paid_by', nullable: true, onDelete: 'SET NULL')]
     private ?User $paidBy = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expensesCreated')]
+    #[ORM\JoinColumn(name: 'created_by', nullable: true, onDelete: 'SET NULL')]
+    private ?User $createdBy = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private string $amount = '0.00';
 
@@ -93,6 +97,18 @@ class Expense
     public function setPaidBy(?User $paidBy): static
     {
         $this->paidBy = $paidBy;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }
