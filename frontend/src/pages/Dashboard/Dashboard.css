@@ -55,22 +55,6 @@
   transform: translateY(-1px);
 }
 
-.dashboard-content__btn--task {
-  background-color: #f59e0b;
-  color: var(--color-white);
-}
-
-.dashboard-content__btn--task:hover {
-  background-color: #d97706;
-  transform: translateY(-1px);
-}
-
-.dashboard-content__btn--with-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
 .dashboard-content__btn--neutral {
   background-color: var(--color-white);
   color: var(--color-text);
@@ -331,7 +315,8 @@
     flex-wrap: wrap;
   }
 
-  .dashboard-content__greeting-actions .dashboard-content__btn {
+  .dashboard-content__greeting-actions .dashboard-content__btn,
+  .dashboard-content__greeting-actions .action-btn {
     flex: 1;
     min-width: fit-content;
     text-align: center;
@@ -400,7 +385,8 @@
     flex-direction: column;
   }
 
-  .dashboard-content__greeting-actions .dashboard-content__btn {
+  .dashboard-content__greeting-actions .dashboard-content__btn,
+  .dashboard-content__greeting-actions .action-btn {
     width: 100%;
   }
 

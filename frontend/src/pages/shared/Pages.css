@@ -106,7 +106,8 @@
     font-size: 1.5rem;
   }
 
-  .page-header .btn {
+  .page-header .btn,
+  .page-header .action-btn {
     width: 100%;
     text-align: center;
   }

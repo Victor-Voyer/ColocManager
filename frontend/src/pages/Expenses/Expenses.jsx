@@ -1,9 +1,9 @@
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
+import ActionButton from '../../components/ActionButton/ActionButton.jsx'
 import ColocationRequired from '../../components/ColocationRequired/ColocationRequired.jsx'
 import CreateExpenseModal from '../../components/CreateExpenseModal/CreateExpenseModal.jsx'
 import ExpenseDetailModal from '../../components/ExpenseDetailModal/ExpenseDetailModal.jsx'
 import ExpensesTable from '../../components/ExpensesTable/ExpensesTable.jsx'
-import { Plus } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useCrudPageState } from '../../hooks/useCrudPageState'
 import { useExpenses } from '../../hooks/useExpenses'
@@ -84,17 +84,14 @@ function Expenses() {
           <h1>Dépenses</h1>
           <p>Gérez les finances de votre colocation.</p>
         </div>
-        <button
-          type="button"
-          className="btn btn--primary btn--with-icon"
+        <ActionButton
+          variant="expense"
+          label="Ajouter une dépense"
           onClick={() => {
             clearFormError()
             openCreate()
           }}
-        >
-          <Plus size={18} aria-hidden="true" />
-          Ajouter une dépense
-        </button>
+        />
       </div>
 
       {error && (

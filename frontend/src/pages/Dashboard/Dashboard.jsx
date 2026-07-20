@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
+import ActionButton from '../../components/ActionButton/ActionButton.jsx'
 import CreateExpenseModal from '../../components/CreateExpenseModal/CreateExpenseModal.jsx'
 import CreateTaskModal from '../../components/CreateTaskModal/CreateTaskModal.jsx'
 import * as expenseApi from '../../api/expenseApi'
@@ -78,24 +78,6 @@ function Dashboard() {
     }
   }, [colocationId])
 
-  const refreshDashboard = useCallback(async () => {
-    if (!colocationId) {
-      return
-    }
-
-    try {
-      const [balanceData, taskData] = await Promise.all([
-        expenseApi.getBalances(colocationId),
-        taskApi.listTasks(colocationId, { status: 'pending' }),
-      ])
-
-      setBalances(balanceData)
-      setPendingTasks(Array.isArray(taskData.items) ? taskData.items.length : 0)
-    } catch {
-      setError('Impossible de charger le tableau de bord.')
-    }
-  }, [colocationId])
-
   const handleCreateExpense = async (payload) => {
     setExpenseFormError('')
     setIsExpenseSubmitting(true)
@@ -103,7 +85,7 @@ function Dashboard() {
     try {
       await expenseApi.createExpense(colocationId, payload)
       closeExpenseCreate()
-      await refreshDashboard()
+      navigate('/expenses')
       return true
     } catch (err) {
       setExpenseFormError(getErrorMessage(err, 'Impossible de créer la dépense.'))
@@ -120,7 +102,7 @@ function Dashboard() {
     try {
       await taskApi.createTask(colocationId, payload)
       closeTaskCreate()
-      await refreshDashboard()
+      navigate('/tasks')
       return true
     } catch (err) {
       setTaskFormError(getErrorMessage(err, 'Impossible de créer la tâche.'))
@@ -209,28 +191,22 @@ function Dashboard() {
 
           {colocationId && (
             <>
-              <button
-                type="button"
-                className="dashboard-content__btn dashboard-content__btn--task dashboard-content__btn--with-icon"
+              <ActionButton
+                variant="task"
+                label="Ajouter une tâche"
                 onClick={() => {
                   setTaskFormError('')
                   openTaskCreate()
                 }}
-              >
-                <Plus size={18} aria-hidden="true" />
-                Ajouter une tâche
-              </button>
-              <button
-                type="button"
-                className="dashboard-content__btn dashboard-content__btn--primary dashboard-content__btn--with-icon"
+              />
+              <ActionButton
+                variant="expense"
+                label="Ajouter une dépense"
                 onClick={() => {
                   setExpenseFormError('')
                   openExpenseCreate()
                 }}
-              >
-                <Plus size={18} aria-hidden="true" />
-                Ajouter une dépense
-              </button>
+              />
             </>
           )}
         </div>

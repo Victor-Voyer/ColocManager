@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Plus, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
+import ActionButton from '../../components/ActionButton/ActionButton.jsx'
 import CreateTaskModal from '../../components/CreateTaskModal/CreateTaskModal.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 import ColocationRequired from '../../components/ColocationRequired/ColocationRequired.jsx'
@@ -116,17 +117,14 @@ function Tasks() {
           <h1>Tâches ménagères</h1>
           <p>Répartition équitable des corvées.</p>
         </div>
-        <button
-          type="button"
-          className="btn btn--primary btn--with-icon"
+        <ActionButton
+          variant="task"
+          label="Ajouter une tâche"
           onClick={() => {
             clearFormError()
             openCreate()
           }}
-        >
-          <Plus size={18} aria-hidden="true" />
-          Nouvelle tâche
-        </button>
+        />
       </div>
 
       {error && (
