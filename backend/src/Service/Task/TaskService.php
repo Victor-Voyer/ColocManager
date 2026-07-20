@@ -8,14 +8,15 @@ use App\DTO\Task\UpdateTaskDto;
 use App\Entity\Colocation;
 use App\Entity\Task;
 use App\Entity\User;
-use App\Enum\ColocationRole;
 use App\Enum\TaskPriority;
 use App\Enum\TaskStatus;
 use App\Exception\ApiException;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\TaskVoter;
 use App\Service\Colocation\ColocationAccessChecker;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class TaskService
 {
@@ -25,6 +26,7 @@ final class TaskService
         private readonly TaskRepository $taskRepository,
         private readonly UserRepository $userRepository,
         private readonly TaskSerializer $serializer,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -75,10 +77,14 @@ final class TaskService
 
     public function update(User $user, int $colocationId, int $taskId, UpdateTaskDto $dto): array
     {
-        $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $this->accessChecker->resolveContext($user, $colocationId);
         $task = $this->findTaskInColocation($colocationId, $taskId);
 
-        $this->requireCreatorOrAdmin($user, $task, $context->role);
+        if (!$this->authorizationChecker->isGranted(TaskVoter::MANAGE, $task)) {
+            throw ApiException::forbidden(
+                'Seul le créateur de la tâche ou un administrateur peut effectuer cette action.',
+            );
+        }
 
         $this->fillTask($task, $dto, $task->getColocation());
         $this->entityManager->flush();
@@ -88,10 +94,14 @@ final class TaskService
 
     public function delete(User $user, int $colocationId, int $taskId): void
     {
-        $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $this->accessChecker->resolveContext($user, $colocationId);
         $task = $this->findTaskInColocation($colocationId, $taskId);
 
-        $this->requireCreatorOrAdmin($user, $task, $context->role);
+        if (!$this->authorizationChecker->isGranted(TaskVoter::MANAGE, $task)) {
+            throw ApiException::forbidden(
+                'Seul le créateur de la tâche ou un administrateur peut effectuer cette action.',
+            );
+        }
 
         $this->entityManager->remove($task);
         $this->entityManager->flush();
@@ -99,14 +109,10 @@ final class TaskService
 
     public function updateStatus(User $user, int $colocationId, int $taskId, UpdateTaskStatusDto $dto): array
     {
-        $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $this->accessChecker->resolveContext($user, $colocationId);
         $task = $this->findTaskInColocation($colocationId, $taskId);
 
-        $isCreator = $task->getCreatedBy()?->getId() === $user->getId();
-        $isAssigned = $task->getAssignedTo()?->getId() === $user->getId();
-        $isAdmin = $context->role === ColocationRole::Admin;
-
-        if (!$isCreator && !$isAssigned && !$isAdmin) {
+        if (!$this->authorizationChecker->isGranted(TaskVoter::CHANGE_STATUS, $task)) {
             throw ApiException::forbidden(
                 'Seul le créateur, un administrateur ou le membre assigné peut changer le statut.',
             );
@@ -122,16 +128,6 @@ final class TaskService
         $this->entityManager->flush();
 
         return $this->serializer->serialize($task);
-    }
-
-    private function requireCreatorOrAdmin(User $user, Task $task, ColocationRole $role): void
-    {
-        $isCreator = $task->getCreatedBy() !== null && $task->getCreatedBy()->getId() === $user->getId();
-        $isAdmin = $role === ColocationRole::Admin;
-
-        if (!$isCreator && !$isAdmin) {
-            throw ApiException::forbidden('Seul le créateur de la tâche ou un administrateur peut effectuer cette action.');
-        }
     }
 
     private function findTaskInColocation(int $colocationId, int $taskId): Task
