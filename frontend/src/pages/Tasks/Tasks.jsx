@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus, Trash2 } from 'lucide-react'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 import ColocationRequired from '../../components/ColocationRequired/ColocationRequired.jsx'
 import Modal from '../../components/Modal/Modal.jsx'
@@ -118,13 +119,14 @@ function Tasks() {
         </div>
         <button
           type="button"
-          className="btn btn--primary"
+          className="btn btn--primary btn--with-icon"
           onClick={() => {
             clearFormError()
             openCreate()
           }}
         >
-          + Nouvelle tâche
+          <Plus size={18} aria-hidden="true" />
+          Nouvelle tâche
         </button>
       </div>
 
@@ -191,7 +193,7 @@ function Tasks() {
                   aria-label={`Supprimer ${task.title}`}
                   onClick={() => setTaskToDelete(task)}
                 >
-                  ×
+                  <Trash2 size={18} aria-hidden="true" />
                 </button>
               </div>
             ))

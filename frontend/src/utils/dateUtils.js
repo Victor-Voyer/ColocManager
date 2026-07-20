@@ -1,3 +1,17 @@
+export function formatDateTimeFr(value, fallback = null) {
+  if (!value) {
+    return fallback
+  }
+
+  return new Date(value).toLocaleString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export function formatDateFr(value, style = 'short', fallback = null) {
   if (!value) {
     return fallback

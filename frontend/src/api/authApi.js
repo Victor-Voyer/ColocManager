@@ -27,10 +27,28 @@ export function getMe(options = {}) {
   return apiRequest('/me', options)
 }
 
-export function updateProfile({ firstName, lastName, email }) {
+export function updateProfile({ firstName, lastName, email, currentPassword, newPassword }) {
+  const payload = {}
+
+  if (firstName !== undefined) {
+    payload.firstName = firstName
+  }
+  if (lastName !== undefined) {
+    payload.lastName = lastName
+  }
+  if (email !== undefined) {
+    payload.email = email
+  }
+  if (currentPassword !== undefined) {
+    payload.currentPassword = currentPassword
+  }
+  if (newPassword !== undefined) {
+    payload.newPassword = newPassword
+  }
+
   return apiRequest('/me', {
     method: 'PUT',
-    body: JSON.stringify({ firstName, lastName, email }),
+    body: JSON.stringify(payload),
   })
 }
 

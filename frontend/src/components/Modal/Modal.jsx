@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { X } from 'lucide-react'
 import './Modal.css'
 
 function Modal({ isOpen, onClose, title, children, wide = false }) {
@@ -49,7 +50,7 @@ function Modal({ isOpen, onClose, title, children, wide = false }) {
             aria-label="Fermer"
             onClick={onClose}
           >
-            ×
+            <X size={20} aria-hidden="true" />
           </button>
         </header>
         {children}

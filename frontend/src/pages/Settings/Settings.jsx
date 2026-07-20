@@ -1,17 +1,38 @@
+import { useEffect } from 'react'
+import { useSearchParams } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
-import ColocationAdminPanel from './ColocationAdminPanel.jsx'
-import DangerZone from './DangerZone.jsx'
-import MembersSection from './MembersSection.jsx'
-import ProfileSettings from './ProfileSettings.jsx'
+import SettingsNav from './SettingsNav.jsx'
+import SettingsSummary from './SettingsSummary.jsx'
+import AccountSection from './sections/AccountSection.jsx'
+import ColocationSection from './sections/ColocationSection.jsx'
+import ProfileSection from './sections/ProfileSection.jsx'
 import './Settings.css'
+
+const VALID_SECTIONS = ['profile', 'colocation', 'account']
 
 function Settings() {
   const { user } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
   const colocationId = user?.colocation?.id
   const isAdmin = user?.colocation?.role === 'admin'
 
+  const sectionParam = searchParams.get('section')
+  const activeSection = VALID_SECTIONS.includes(sectionParam)
+    ? sectionParam
+    : 'profile'
+
+  useEffect(() => {
+    if (sectionParam && !VALID_SECTIONS.includes(sectionParam)) {
+      setSearchParams({ section: 'profile' }, { replace: true })
+    }
+  }, [sectionParam, setSearchParams])
+
+  const handleSectionChange = (section) => {
+    setSearchParams({ section }, { replace: true })
+  }
+
   return (
-    <div className="page-content">
+    <div className="page-content settings-page">
       <div className="page-header">
         <div>
           <h1>Paramètres</h1>
@@ -19,32 +40,29 @@ function Settings() {
         </div>
       </div>
 
-      <div className="settings-grid">
-        <ProfileSettings />
-
-        {colocationId && isAdmin && (
-          <ColocationAdminPanel
-            colocationId={colocationId}
-            colocationName={user?.colocation?.name}
+      <div className="settings-layout">
+        <aside className="settings-layout__sidebar">
+          <SettingsNav
+            activeSection={activeSection}
+            onSectionChange={handleSectionChange}
           />
-        )}
+        </aside>
 
-        {colocationId && (
-          <MembersSection
-            colocationId={colocationId}
-            colocationName={user?.colocation?.name}
-            isAdmin={isAdmin}
-          />
-        )}
+        <div className="settings-layout__content">
+          <SettingsSummary />
 
-        {!colocationId && (
-          <div className="card">
-            <h2>Colocation</h2>
-            <p>Vous n&apos;appartenez à aucune colocation pour le moment.</p>
-          </div>
-        )}
+          {activeSection === 'profile' && <ProfileSection />}
 
-        <DangerZone />
+          {activeSection === 'colocation' && (
+            <ColocationSection
+              colocationId={colocationId}
+              colocationName={user?.colocation?.name}
+              isAdmin={isAdmin}
+            />
+          )}
+
+          {activeSection === 'account' && <AccountSection />}
+        </div>
       </div>
     </div>
   )

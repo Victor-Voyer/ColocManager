@@ -55,6 +55,12 @@
   transform: translateY(-1px);
 }
 
+.dashboard-content__btn--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
 .dashboard-content__btn--neutral {
   background-color: var(--color-white);
   color: var(--color-text);
