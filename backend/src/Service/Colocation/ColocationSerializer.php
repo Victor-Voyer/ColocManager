@@ -42,7 +42,6 @@ final class ColocationSerializer
             'firstName' => $member->getFirstName(),
             'lastName' => $member->getLastName(),
             'email' => $member->getEmail(),
-            'avatarUrl' => $member->getAvatarUrl(),
             'role' => $member->getRole()?->value,
         ];
     }

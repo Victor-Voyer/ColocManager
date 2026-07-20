@@ -1,5 +1,6 @@
 import { Home, Shield, User } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { getAvatarUrl } from '../../utils/avatarUtils'
 
 function SettingsSummary() {
   const { user } = useAuth()
@@ -7,9 +8,7 @@ function SettingsSummary() {
   const displayName = user
     ? `${user.firstName} ${user.lastName}`.trim()
     : 'Utilisateur'
-  const avatarSrc =
-    user?.avatarUrl ??
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
+  const avatarSrc = getAvatarUrl(displayName)
   const isAdmin = user?.colocation?.role === 'admin'
   const colocationName = user?.colocation?.name
 

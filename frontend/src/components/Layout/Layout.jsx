@@ -11,6 +11,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { getAvatarUrl } from '../../utils/avatarUtils'
 import BurgerButton from '../BurgerButton/BurgerButton'
 import './Layout.css'
 
@@ -33,9 +34,7 @@ function Layout({ children }) {
     ? `${user.firstName} ${user.lastName}`.trim()
     : 'Utilisateur'
   const colocationName = user?.colocation?.name ?? 'Aucune colocation'
-  const avatarSrc =
-    user?.avatarUrl ??
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
+  const avatarSrc = getAvatarUrl(displayName)
 
   const handleLogout = async () => {
     await logout()

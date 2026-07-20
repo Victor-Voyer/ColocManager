@@ -23,9 +23,6 @@ class UpdateUserProfileDto
     #[Assert\Length(max: 255)]
     public ?string $email = null;
 
-    #[Assert\Length(max: 255)]
-    public ?string $avatarUrl = null;
-
     /** Nouveau mot de passe — minimum 8 caractères */
     #[Assert\Length(min: 8, max: 255)]
     public ?string $newPassword = null;

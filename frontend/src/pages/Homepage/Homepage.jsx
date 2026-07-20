@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Banknote, Check, Home, Sparkles } from 'lucide-react'
 import BurgerButton from '../../components/BurgerButton/BurgerButton'
 import { useAuth } from '../../context/AuthContext'
+import { getAvatarUrl } from '../../utils/avatarUtils'
 import './Homepage.css'
 
 const features = [
@@ -46,9 +47,7 @@ function Homepage() {
   const displayName = user
     ? `${user.firstName} ${user.lastName}`.trim()
     : 'Utilisateur'
-  const avatarSrc =
-    user?.avatarUrl ??
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
+  const avatarSrc = getAvatarUrl(displayName)
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''

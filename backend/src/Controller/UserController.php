@@ -39,7 +39,7 @@ class UserController extends AbstractController
         );
     }
 
-    /** PUT /api/me — Modifie le profil (nom, email, avatar, mot de passe) */
+    /** PUT /api/me — Modifie le profil (nom, email, mot de passe) */
     #[Route('/me', name: 'api_user_update', methods: ['PUT'])]
     public function update(#[MapRequestPayload] UpdateUserProfileDto $dto): JsonResponse
     {

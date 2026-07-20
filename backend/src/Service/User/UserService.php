@@ -66,10 +66,6 @@ final class UserService
             $user->setEmail($dto->email);
         }
 
-        if ($dto->avatarUrl !== null) {
-            $user->setAvatarUrl($dto->avatarUrl === '' ? null : $dto->avatarUrl);
-        }
-
         if ($dto->newPassword !== null) {
             $user->setPasswordHash($this->passwordHasher->hashPassword($user, $dto->newPassword));
         }

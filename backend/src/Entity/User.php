@@ -35,9 +35,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private string $passwordHash = '';
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatarUrl = null;
-
     #[ORM\ManyToOne(targetEntity: Colocation::class, inversedBy: 'members')]
     #[ORM\JoinColumn(name: 'colocation_id', nullable: true, onDelete: 'SET NULL')]
     private ?Colocation $colocation = null;
@@ -123,18 +120,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPasswordHash(string $passwordHash): static
     {
         $this->passwordHash = $passwordHash;
-
-        return $this;
-    }
-
-    public function getAvatarUrl(): ?string
-    {
-        return $this->avatarUrl;
-    }
-
-    public function setAvatarUrl(?string $avatarUrl): static
-    {
-        $this->avatarUrl = $avatarUrl;
 
         return $this;
     }

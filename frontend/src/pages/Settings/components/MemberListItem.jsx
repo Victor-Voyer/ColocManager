@@ -1,4 +1,5 @@
 import { Shield, UserMinus } from 'lucide-react'
+import { getAvatarUrl } from '../../../utils/avatarUtils'
 import { formatMemberName } from '../../../utils/memberUtils'
 
 function MemberListItem({
@@ -11,9 +12,10 @@ function MemberListItem({
   isRemoving = false,
 }) {
   const displayName = formatMemberName(member)
-  const avatarSrc =
-    member.avatarUrl ??
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=E5E7EB&color=374151`
+  const avatarSrc = getAvatarUrl(displayName, {
+    background: 'E5E7EB',
+    color: '374151',
+  })
   const isMemberAdmin = member.role === 'admin'
 
   return (
