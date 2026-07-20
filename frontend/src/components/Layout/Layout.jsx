@@ -100,18 +100,6 @@ function Layout({ children }) {
           })}
         </nav>
 
-        <div className="dashboard-layout__invite-card">
-          <h3>Invite Roommates</h3>
-          <p>Manage your flat together.</p>
-          <button
-            type="button"
-            className="dashboard-layout__btn dashboard-layout__btn--white dashboard-layout__btn--with-icon"
-          >
-            <UserPlus size={16} aria-hidden="true" />
-            Invite Member
-          </button>
-        </div>
-
         <button
           className="dashboard-layout__logout"
           type="button"
