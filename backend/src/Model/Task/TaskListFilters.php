@@ -21,7 +21,7 @@ final readonly class TaskListFilters
 
         if (is_string($statusRaw) && $statusRaw !== '') {
             $status = TaskStatus::tryFrom($statusRaw)
-                ?? throw new ApiException('Statut de tache invalide.');
+                ?? throw new ApiException('Statut de tâche invalide.');
         }
 
         $assignedTo = $request->query->getInt('assignedTo') > 0

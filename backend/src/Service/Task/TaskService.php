@@ -143,7 +143,7 @@ final class TaskService
     {
         $task = $this->taskRepository->find($taskId);
         if ($task === null || $task->getColocation()->getId() !== $colocationId) {
-            throw ApiException::notFound('Tache introuvable.');
+            throw ApiException::notFound('Tâche introuvable.');
         }
 
         return $task;

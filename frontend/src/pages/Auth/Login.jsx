@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Home } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router'
-import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
+import { getErrorMessage } from '../../utils/apiError'
 import './Auth.css'
 
 function Login() {
@@ -26,9 +26,7 @@ function Login() {
       navigate(redirectTo, { replace: true })
     } catch (err) {
       setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Connexion impossible. Vérifiez vos identifiants.',
+        getErrorMessage(err, 'Connexion impossible. Vérifiez vos identifiants.'),
       )
     } finally {
       setIsSubmitting(false)

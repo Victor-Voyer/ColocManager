@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { User } from 'lucide-react'
-import { ApiError } from '../../../api/client'
 import { useAuth } from '../../../context/AuthContext'
+import { getErrorMessage } from '../../../utils/apiError'
 import PasswordForm from '../components/PasswordForm.jsx'
 
 function ProfileSection() {
@@ -28,9 +28,7 @@ function ProfileSection() {
       setSuccess(true)
     } catch (err) {
       setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Mise à jour impossible. Vérifiez vos informations.',
+        getErrorMessage(err, 'Mise à jour impossible. Vérifiez vos informations.'),
       )
     } finally {
       setIsSubmitting(false)

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Home } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
-import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
+import { getErrorMessage } from '../../utils/apiError'
 import './Auth.css'
 
 function Register() {
@@ -31,9 +31,7 @@ function Register() {
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Inscription impossible. Vérifiez vos informations.',
+        getErrorMessage(err, 'Inscription impossible. Vérifiez vos informations.'),
       )
     } finally {
       setIsSubmitting(false)

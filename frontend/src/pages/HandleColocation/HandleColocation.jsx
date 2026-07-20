@@ -3,7 +3,7 @@ import './HandleColocation.css'
 import { createColocation, joinColocation } from '../../api/colocationApi'
 import { useNavigate } from "react-router"
 import { useAuth } from '../../context/AuthContext'
-import { ApiError } from '../../api/client'
+import { getErrorMessage } from '../../utils/apiError'
 
 function HandleColocation() {
   const [colocationName, setColocationName] = useState('')
@@ -27,7 +27,7 @@ function HandleColocation() {
         navigate('/dashboard')
       } catch (err) {
         setCreateError(
-          err instanceof ApiError ? err.message : 'Impossible de créer la colocation.',
+          getErrorMessage(err, 'Impossible de créer la colocation.'),
         )
       }
     }
@@ -47,7 +47,7 @@ function HandleColocation() {
         navigate('/dashboard')
       } catch (err) {
         setJoinError(
-          err instanceof ApiError ? err.message : 'Impossible de rejoindre la colocation.',
+          getErrorMessage(err, 'Impossible de rejoindre la colocation.'),
         )
       }
     }

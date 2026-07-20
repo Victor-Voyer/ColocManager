@@ -1,3 +1,5 @@
+import { translateErrorMessage } from '../utils/apiError'
+
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8088/api'
 
 export class ApiError extends Error {
@@ -55,14 +57,14 @@ export async function apiRequest(path, { skipAuthHandler = false, ...options } =
   }
 
   if (!response.ok) {
-    const message =
+    const rawMessage =
       data?.error ??
       data?.message ??
       (data?.errors && typeof data.errors === 'object'
         ? Object.values(data.errors)[0]
         : null) ??
       'Une erreur est survenue.'
-    throw new ApiError(message, response.status, data)
+    throw new ApiError(translateErrorMessage(rawMessage), response.status, data)
   }
 
   return data

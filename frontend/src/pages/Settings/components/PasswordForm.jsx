@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { KeyRound } from 'lucide-react'
-import { ApiError } from '../../../api/client'
 import { useAuth } from '../../../context/AuthContext'
+import { getErrorMessage } from '../../../utils/apiError'
 
 function PasswordForm() {
   const { updateProfile } = useAuth()
@@ -37,9 +37,7 @@ function PasswordForm() {
       setSuccess(true)
     } catch (err) {
       setError(
-        err instanceof ApiError
-          ? err.message
-          : 'Impossible de mettre à jour le mot de passe.',
+        getErrorMessage(err, 'Impossible de mettre à jour le mot de passe.'),
       )
     } finally {
       setIsSubmitting(false)
