@@ -1,105 +1,126 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import './Dashboard.css'
+import * as expenseApi from '../../api/expenseApi'
+import * as taskApi from '../../api/taskApi'
 import { useAuth } from '../../context/AuthContext'
-
-const stats = [
-  {
-    label: 'Total Expenses',
-    value: '1,845.00€',
-    trend: '+12% from last month',
-    trendColor: 'green',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
-    iconBg: 'rgba(59, 130, 246, 0.1)',
-    iconColor: '#3B82F6',
-  },
-  {
-    label: 'You are owed',
-    value: '240.50€',
-    trend: '3 roommates owe you',
-    trendColor: 'green',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="m7 10 5 5 5-5" />
-        <path d="M12 15V3" />
-      </svg>
-    ),
-    iconBg: 'rgba(16, 185, 129, 0.1)',
-    iconColor: '#10B981',
-  },
-  {
-    label: 'You owe',
-    value: '45.00€',
-    trend: 'To Sarah & Mark',
-    trendColor: 'red',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="m17 14-5-5-5 5" />
-        <path d="M12 9v12" />
-      </svg>
-    ),
-    iconBg: 'rgba(239, 68, 68, 0.1)',
-    iconColor: '#EF4444',
-  },
-  {
-    label: 'Pending Tasks',
-    value: '12',
-    trend: '3 tasks due today',
-    trendColor: 'orange',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-      </svg>
-    ),
-    iconBg: 'rgba(245, 158, 11, 0.1)',
-    iconColor: '#F59E0B',
-  },
-]
-
-const recentActivity = [
-  {
-    user: 'Alex',
-    action: 'added a new expense',
-    target: 'Weekly Groceries',
-    time: '2H AGO',
-    amount: '84.50€',
-    icon: '💳',
-    iconBg: 'rgba(59, 130, 246, 0.1)',
-  },
-  {
-    user: 'Sarah',
-    action: 'completed a task',
-    target: 'Clean the kitchen',
-    time: '5H AGO',
-    icon: '✅',
-    iconBg: 'rgba(16, 185, 129, 0.1)',
-  },
-  {
-    user: 'Alex',
-    paid: true,
-    action: 'paid for',
-    target: 'Electricity bill',
-    time: 'YESTERDAY',
-    amount: '120.00€',
-    icon: '💳',
-    iconBg: 'rgba(59, 130, 246, 0.1)',
-  },
-]
+import { formatAmount } from '../../utils/expenseUtils'
+import './Dashboard.css'
 
 function Dashboard() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const colocationId = user?.colocation?.id
+
+  const [balances, setBalances] = useState(null)
+  const [pendingTasks, setPendingTasks] = useState(0)
+  const [isLoading, setIsLoading] = useState(Boolean(colocationId))
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!colocationId) {
+      setIsLoading(false)
+      return
+    }
+
+    let cancelled = false
+
+    const loadDashboard = async () => {
+      setIsLoading(true)
+      setError('')
+
+      try {
+        const [balanceData, taskData] = await Promise.all([
+          expenseApi.getBalances(colocationId),
+          taskApi.listTasks(colocationId, { status: 'pending' }),
+        ])
+
+        if (!cancelled) {
+          setBalances(balanceData)
+          setPendingTasks(Array.isArray(taskData.items) ? taskData.items.length : 0)
+        }
+      } catch {
+        if (!cancelled) {
+          setError('Impossible de charger le tableau de bord.')
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadDashboard()
+
+    return () => {
+      cancelled = true
+    }
+  }, [colocationId])
+
+  const userBalance = useMemo(() => {
+    if (!balances?.members || !user?.id) {
+      return null
+    }
+
+    return balances.members.find((member) => member.userId === user.id) ?? null
+  }, [balances, user?.id])
+
+  const totalExpenses = useMemo(() => {
+    if (!balances?.members) {
+      return '0.00'
+    }
+
+    const totalCents = balances.members.reduce(
+      (sum, member) => sum + Math.round(Number(member.totalPaid) * 100),
+      0,
+    )
+
+    return (totalCents / 100).toFixed(2)
+  }, [balances])
+
+  const owedToYou = userBalance && Number(userBalance.balance) > 0
+    ? userBalance.balance
+    : '0.00'
+
+  const youOwe = userBalance && Number(userBalance.balance) < 0
+    ? Math.abs(Number(userBalance.balance)).toFixed(2)
+    : '0.00'
+
+  const stats = [
+    {
+      label: 'Total des dépenses',
+      value: `${formatAmount(totalExpenses)}`,
+      trend: colocationId ? 'Toutes dépenses enregistrées' : 'Rejoignez une colocation',
+      trendColor: 'green',
+    },
+    {
+      label: 'On vous doit',
+      value: `${formatAmount(owedToYou)}`,
+      trend: Number(owedToYou) > 0 ? 'Solde positif' : 'Rien à percevoir',
+      trendColor: 'green',
+    },
+    {
+      label: 'Vous devez',
+      value: `${formatAmount(youOwe)}`,
+      trend: Number(youOwe) > 0 ? 'Dettes actives' : 'Rien à rembourser',
+      trendColor: Number(youOwe) > 0 ? 'red' : 'green',
+    },
+    {
+      label: 'Tâches en attente',
+      value: String(pendingTasks),
+      trend: pendingTasks > 0 ? 'À planifier ou terminer' : 'Aucune tâche en attente',
+      trendColor: pendingTasks > 0 ? 'orange' : 'green',
+    },
+  ]
 
   return (
     <div className="dashboard-content">
       <div className="dashboard-content__greeting">
         <div className="dashboard-content__greeting-text">
-          <h1>Bonjour, {user?.firstName?.[0].toUpperCase() + user?.firstName?.slice(1)}</h1>
-          <p>Voici quelques actualités</p>
+          <h1>
+            Bonjour, {user?.firstName?.[0]?.toUpperCase()}
+            {user?.firstName?.slice(1)}
+          </h1>
+          <p>Vue d&apos;ensemble de votre colocation</p>
         </div>
         <div className="dashboard-content__greeting-actions">
           {!user?.colocation && (
@@ -112,96 +133,59 @@ function Dashboard() {
             </button>
           )}
 
-          <button className="dashboard-content__btn dashboard-content__btn--primary">+ Add Expense</button>
+          {colocationId && (
+            <button
+              type="button"
+              className="dashboard-content__btn dashboard-content__btn--primary"
+              onClick={() => navigate('/expenses')}
+            >
+              + Ajouter une dépense
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="dashboard-content__stats-grid">
-        {stats.map((stat, index) => (
-          <div key={index} className="dashboard-content__stat-card">
-            <div className="dashboard-content__stat-header">
-              <div
-                className="dashboard-content__stat-icon"
-                style={{ backgroundColor: stat.iconBg, color: stat.iconColor }}
-              >
-                {stat.icon}
-              </div>
-              <span className="dashboard-content__stat-arrow">→</span>
-            </div>
-            <div className="dashboard-content__stat-body">
-              <span className="dashboard-content__stat-label">{stat.label}</span>
-              <span className="dashboard-content__stat-value">{stat.value}</span>
-              <span className={`dashboard-content__stat-trend dashboard-content__stat-trend--${stat.trendColor}`}>
-                {stat.trend}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+      {error && (
+        <p className="alert--error" role="alert">
+          {error}
+        </p>
+      )}
 
-      {/* Main Grid */}
-      <div className="dashboard-content__main-grid">
-        {/* Expense Distribution */}
-        <section className="dashboard-content__chart-section">
-          <div className="dashboard-content__section-header">
-            <h2>Expense Distribution</h2>
-            <select className="dashboard-content__select">
-              <option>This Month</option>
-            </select>
-          </div>
-          <div className="dashboard-content__chart-container">
-            <div className="dashboard-content__bar-chart">
-              <div className="dashboard-content__bar-item">
-                <div className="dashboard-content__bar dashboard-content__bar--rent" style={{ height: '90%' }} />
-                <span>Rent</span>
-              </div>
-              <div className="dashboard-content__bar-item">
-                <div className="dashboard-content__bar dashboard-content__bar--groceries" style={{ height: '40%' }} />
-                <span>Groceries</span>
-              </div>
-              <div className="dashboard-content__bar-item">
-                <div className="dashboard-content__bar dashboard-content__bar--electricity" style={{ height: '25%' }} />
-                <span>Electricity</span>
-              </div>
-              <div className="dashboard-content__bar-item">
-                <div className="dashboard-content__bar dashboard-content__bar--internet" style={{ height: '15%' }} />
-                <span>Internet</span>
-              </div>
-              <div className="dashboard-content__bar-item">
-                <div className="dashboard-content__bar dashboard-content__bar--water" style={{ height: '10%' }} />
-                <span>Water</span>
+      {isLoading ? (
+        <p className="page-status">Chargement du tableau de bord…</p>
+      ) : (
+        <div className="dashboard-content__stats-grid">
+          {stats.map((stat) => (
+            <div key={stat.label} className="dashboard-content__stat-card">
+              <div className="dashboard-content__stat-body">
+                <span className="dashboard-content__stat-label">{stat.label}</span>
+                <span className="dashboard-content__stat-value">{stat.value}</span>
+                <span
+                  className={`dashboard-content__stat-trend dashboard-content__stat-trend--${stat.trendColor}`}
+                >
+                  {stat.trend}
+                </span>
               </div>
             </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      )}
 
-        {/* Recent Activity */}
-        <section className="dashboard-content__activity-section">
-          <div className="dashboard-content__section-header">
-            <h2>Recent Activity</h2>
-            <button className="dashboard-content__link-btn">View All</button>
-          </div>
-          <div className="dashboard-content__activity-list">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="dashboard-content__activity-item">
-                <div className="dashboard-content__activity-icon" style={{ backgroundColor: activity.iconBg }}>
-                  {activity.icon}
-                </div>
-                <div className="dashboard-content__activity-content">
-                  <p>
-                    <strong>{activity.user}</strong> {activity.action}{' '}
-                    <span className="dashboard-content__activity-target">{activity.target}</span>
-                  </p>
-                  <span className="dashboard-content__activity-time">
-                    🕒 {activity.time} {activity.amount && <span> • <strong>{activity.amount}</strong></span>}
-                  </span>
-                </div>
-              </div>
+      {colocationId && balances?.members?.length > 0 && (
+        <section className="dashboard-content__balances card">
+          <h2>Soldes par membre</h2>
+          <ul className="dashboard-content__balance-list">
+            {balances.members.map((member) => (
+              <li key={member.userId} className="dashboard-content__balance-item">
+                <span>
+                  {member.firstName} {member.lastName}
+                </span>
+                <strong>{formatAmount(member.balance)}</strong>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
-      </div>
+      )}
     </div>
   )
 }

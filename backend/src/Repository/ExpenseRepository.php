@@ -77,6 +77,10 @@ class ExpenseRepository extends ServiceEntityRepository
         ?\DateTimeImmutable $to,
     ): \Doctrine\ORM\QueryBuilder {
         $qb = $this->createQueryBuilder('e')
+            ->leftJoin('e.shares', 's')->addSelect('s')
+            ->leftJoin('e.paidBy', 'pb')->addSelect('pb')
+            ->leftJoin('e.createdBy', 'cb')->addSelect('cb')
+            ->leftJoin('s.user', 'su')->addSelect('su')
             ->where('e.colocation = :colocation')
             ->setParameter('colocation', $colocation);
 

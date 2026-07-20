@@ -27,6 +27,14 @@ final class ColocationSerializer
         return $data;
     }
 
+    public function serializeInvitationCode(Colocation $colocation): array
+    {
+        return [
+            'invitationCode' => $colocation->getInvitationCode(),
+            'invitationCodeExpiresAt' => $colocation->getInvitationCodeExpiresAt()?->format(\DateTimeInterface::ATOM),
+        ];
+    }
+
     public function serializeMember(User $member): array
     {
         return [

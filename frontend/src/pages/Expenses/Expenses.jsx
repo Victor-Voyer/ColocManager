@@ -1,10 +1,11 @@
-import { useState } from 'react'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
+import ColocationRequired from '../../components/ColocationRequired/ColocationRequired.jsx'
 import ExpenseDetailModal from '../../components/ExpenseDetailModal/ExpenseDetailModal.jsx'
 import ExpenseForm from '../../components/ExpenseForm/ExpenseForm.jsx'
 import ExpensesTable from '../../components/ExpensesTable/ExpensesTable.jsx'
 import Modal from '../../components/Modal/Modal.jsx'
 import { useAuth } from '../../context/AuthContext'
+import { useCrudPageState } from '../../hooks/useCrudPageState'
 import { useExpenses } from '../../hooks/useExpenses'
 import './Expenses.css'
 
@@ -23,20 +24,31 @@ function Expenses() {
     formError,
     isSubmitting,
     isDeleting,
+    isUpdatingShare,
     createExpense,
     deleteExpense,
     upsertExpense,
+    markShareAsPaid,
+    markShareAsUnpaid,
     clearFormError,
   } = useExpenses(colocationId)
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [selectedExpense, setSelectedExpense] = useState(null)
-  const [expenseToDelete, setExpenseToDelete] = useState(null)
+  const {
+    isCreateOpen,
+    openCreate,
+    closeCreate,
+    selectedItem: selectedExpense,
+    setSelectedItem: setSelectedExpense,
+    itemToDelete: expenseToDelete,
+    requestDelete: setExpenseToDelete,
+    cancelDelete,
+    completeDelete,
+  } = useCrudPageState()
 
   const handleCreate = async (payload) => {
     const success = await createExpense(payload)
     if (success) {
-      setIsCreateOpen(false)
+      closeCreate()
     }
   }
 
@@ -52,21 +64,16 @@ function Expenses() {
 
     const success = await deleteExpense(expenseToDelete.id)
     if (success) {
-      setExpenseToDelete(null)
-      setSelectedExpense(null)
+      completeDelete()
     }
   }
 
   if (!colocationId) {
     return (
-      <div className="page-content">
-        <div className="page-header">
-          <div>
-            <h1>Dépenses</h1>
-            <p>Rejoignez ou créez une colocation pour gérer les dépenses.</p>
-          </div>
-        </div>
-      </div>
+      <ColocationRequired
+        title="Dépenses"
+        message="Rejoignez ou créez une colocation pour gérer les dépenses."
+      />
     )
   }
 
@@ -82,7 +89,7 @@ function Expenses() {
           className="btn btn--primary"
           onClick={() => {
             clearFormError()
-            setIsCreateOpen(true)
+            openCreate()
           }}
         >
           + Ajouter une dépense
@@ -90,7 +97,7 @@ function Expenses() {
       </div>
 
       {error && (
-        <p className="expenses-page__error" role="alert">
+        <p className="alert--error" role="alert">
           {error}
         </p>
       )}
@@ -108,7 +115,7 @@ function Expenses() {
 
       <Modal
         isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
+        onClose={closeCreate}
         title="Nouvelle dépense"
       >
         <div className="modal__body">
@@ -116,7 +123,7 @@ function Expenses() {
             members={members}
             currentUserId={user?.id}
             onSubmit={handleCreate}
-            onCancel={() => setIsCreateOpen(false)}
+            onCancel={closeCreate}
             isSubmitting={isSubmitting}
             error={formError}
           />
@@ -127,18 +134,22 @@ function Expenses() {
         isOpen={Boolean(selectedExpense)}
         onClose={() => setSelectedExpense(null)}
         expense={selectedExpense}
+        user={user}
+        isUpdatingShare={isUpdatingShare}
+        onMarkShareAsPaid={markShareAsPaid}
+        onMarkShareAsUnpaid={markShareAsUnpaid}
         onUpdated={handleExpenseUpdated}
         onDeleteRequest={setExpenseToDelete}
       />
 
       <ConfirmDialog
         isOpen={Boolean(expenseToDelete)}
-        onClose={() => setExpenseToDelete(null)}
+        onClose={cancelDelete}
         onConfirm={handleDelete}
         title="Supprimer la dépense"
         message={`Supprimer « ${expenseToDelete?.description} » ? Cette action est irréversible.`}
         confirmLabel="Supprimer"
-        loadingLabel='Suppression...'
+        loadingLabel="Suppression…"
         isLoading={isDeleting}
       />
     </div>

@@ -2,7 +2,7 @@
 
 namespace App\Model\Expense;
 
-use App\Exception\ApiException;
+use App\Service\Common\DateParser;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -30,8 +30,8 @@ final readonly class ExpenseListFilters
         $category = $request->query->get('category');
         $paidBy = $request->query->has('paidBy') ? (int) $request->query->get('paidBy') : null;
 
-        $from = self::parseDate($request->query->get('from'), 'from');
-        $to = self::parseDate($request->query->get('to'), 'to');
+        $from = DateParser::parseOptionalYmd($request->query->get('from'), 'from');
+        $to = DateParser::parseOptionalYmd($request->query->get('to'), 'to');
 
         return new self(
             $page,
@@ -41,24 +41,5 @@ final readonly class ExpenseListFilters
             $from,
             $to,
         );
-    }
-
-    /** Retourne null si le paramètre est absent, lève ApiException si le format est invalide */
-    private static function parseDate(mixed $value, string $paramName): ?\DateTimeImmutable
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        if (is_array($value) || !is_string($value)) {
-            throw new ApiException(sprintf('Format de date invalide pour "%s" (attendu : Y-m-d).', $paramName));
-        }
-
-        $parsed = \DateTimeImmutable::createFromFormat('Y-m-d', $value);
-        if ($parsed === false) {
-            throw new ApiException(sprintf('Format de date invalide pour "%s" (attendu : Y-m-d).', $paramName));
-        }
-
-        return $parsed;
     }
 }

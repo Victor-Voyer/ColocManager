@@ -3,6 +3,7 @@
 namespace App\Validator\Constraints;
 
 use App\DTO\Expense\CreateExpenseDto;
+use App\Service\Common\MoneyHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -32,10 +33,10 @@ class SharesSumMatchesAmountValidator extends ConstraintValidator
                 $hasAutoShare = true;
                 continue;
             }
-            $explicitCents += $this->toCents($share->amountOwed);
+            $explicitCents += MoneyHelper::toCents($share->amountOwed);
         }
 
-        $remainingCents = $this->toCents($value->amount) - $explicitCents;
+        $remainingCents = MoneyHelper::toCents($value->amount) - $explicitCents;
 
         if ($hasAutoShare) {
             if ($remainingCents < 0) {
@@ -52,11 +53,5 @@ class SharesSumMatchesAmountValidator extends ConstraintValidator
                 ->atPath('shares')
                 ->addViolation();
         }
-    }
-
-    /** Comparaison en centimes pour éviter les problèmes d'arrondi flottant. */
-    private function toCents(string $amount): int
-    {
-        return (int) round((float) $amount * 100);
     }
 }

@@ -1,15 +1,5 @@
 import { apiRequest } from './client'
-
-function buildQuery(params) {
-  const search = new URLSearchParams()
-  Object.entries(params).forEach(([key, value]) => {
-    if (value != null && value !== '') {
-      search.set(key, String(value))
-    }
-  })
-  const query = search.toString()
-  return query ? `?${query}` : ''
-}
+import { buildQuery } from '../utils/buildQuery'
 
 export function listExpenses(colocationId, filters = {}) {
   return apiRequest(
@@ -17,8 +7,8 @@ export function listExpenses(colocationId, filters = {}) {
   )
 }
 
-export function getExpense(colocationId, expenseId) {
-  return apiRequest(`/colocations/${colocationId}/expenses/${expenseId}`)
+export function getBalances(colocationId) {
+  return apiRequest(`/colocations/${colocationId}/balances`)
 }
 
 export function createExpense(colocationId, payload) {

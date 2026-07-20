@@ -1,15 +1,5 @@
 import { apiRequest } from './client'
-
-function buildQuery(params) {
-  const search = new URLSearchParams()
-  Object.entries(params).forEach(([key, value]) => {
-    if (value != null && value !== '') {
-      search.set(key, String(value))
-    }
-  })
-  const query = search.toString()
-  return query ? `?${query}` : ''
-}
+import { buildQuery } from '../utils/buildQuery'
 
 export function listTasks(colocationId, filters = {}) {
   return apiRequest(`/colocations/${colocationId}/tasks${buildQuery(filters)}`)
@@ -17,10 +7,6 @@ export function listTasks(colocationId, filters = {}) {
 
 export function listTaskHistory(colocationId) {
   return apiRequest(`/colocations/${colocationId}/tasks/history`)
-}
-
-export function getTask(colocationId, taskId) {
-  return apiRequest(`/colocations/${colocationId}/tasks/${taskId}`)
 }
 
 export function createTask(colocationId, payload) {

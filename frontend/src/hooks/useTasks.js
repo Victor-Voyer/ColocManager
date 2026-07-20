@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
-import * as colocationApi from '../api/colocationApi'
 import * as taskApi from '../api/taskApi'
+import { useColocationMembers } from './useColocationMembers'
 import { getErrorMessage } from '../utils/apiError'
 
 export function useTasks(colocationId) {
   const [tasks, setTasks] = useState([])
   const [history, setHistory] = useState([])
-  const [members, setMembers] = useState([])
-  const [filters, setFilters] = useState({ status: '', assignedTo: '' })
+  const [filters, setFilters] = useState({ assignedTo: '' })
   const [isLoading, setIsLoading] = useState(Boolean(colocationId))
   const [isHistoryLoading, setIsHistoryLoading] = useState(false)
   const [error, setError] = useState('')
   const [formError, setFormError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  const { members } = useColocationMembers(colocationId)
 
   const refresh = useCallback(async () => {
     if (!colocationId) {
@@ -53,38 +54,12 @@ export function useTasks(colocationId) {
   }, [colocationId])
 
   useEffect(() => {
-    void Promise.resolve().then(() => refresh())
+    refresh()
   }, [refresh])
 
   useEffect(() => {
-    void Promise.resolve().then(() => refreshHistory())
+    refreshHistory()
   }, [refreshHistory])
-
-  useEffect(() => {
-    if (!colocationId) {
-      void Promise.resolve().then(() => setMembers([]))
-      return
-    }
-
-    let cancelled = false
-
-    colocationApi
-      .getMembers(colocationId)
-      .then((data) => {
-        if (!cancelled) {
-          setMembers(Array.isArray(data) ? data : [])
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setMembers([])
-        }
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [colocationId])
 
   const upsertTask = useCallback((updated) => {
     setTasks((prev) => {
@@ -124,7 +99,6 @@ export function useTasks(colocationId) {
       try {
         const updated = await taskApi.updateTask(colocationId, taskId, payload)
         upsertTask(updated)
-        await refresh()
         await refreshHistory()
         return updated
       } catch (err) {
@@ -134,7 +108,7 @@ export function useTasks(colocationId) {
         setIsSubmitting(false)
       }
     },
-    [colocationId, refresh, refreshHistory, upsertTask],
+    [colocationId, refreshHistory, upsertTask],
   )
 
   const updateTaskStatus = useCallback(
@@ -192,7 +166,6 @@ export function useTasks(colocationId) {
     formError,
     isSubmitting,
     isDeleting,
-    refresh,
     createTask,
     updateTask,
     updateTaskStatus,

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import * as colocationApi from '../api/colocationApi'
 import * as expenseApi from '../api/expenseApi'
+import { useColocationMembers } from './useColocationMembers'
 import { getErrorMessage } from '../utils/apiError'
+import { mergeShareIntoExpense } from '../utils/expenseUtils'
 
 const PAGE_SIZE = 20
 
@@ -9,12 +10,14 @@ export function useExpenses(colocationId) {
   const [expenses, setExpenses] = useState([])
   const [pagination, setPagination] = useState({ page: 1, pages: 1 })
   const [page, setPage] = useState(1)
-  const [members, setMembers] = useState([])
   const [isLoading, setIsLoading] = useState(Boolean(colocationId))
   const [error, setError] = useState('')
   const [formError, setFormError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdatingShare, setIsUpdatingShare] = useState(null)
+
+  const { members } = useColocationMembers(colocationId)
 
   const refresh = useCallback(async () => {
     if (!colocationId) {
@@ -44,32 +47,6 @@ export function useExpenses(colocationId) {
   useEffect(() => {
     refresh()
   }, [refresh])
-
-  useEffect(() => {
-    if (!colocationId) {
-      setMembers([])
-      return
-    }
-
-    let cancelled = false
-
-    colocationApi
-      .getMembers(colocationId)
-      .then((data) => {
-        if (!cancelled) {
-          setMembers(Array.isArray(data) ? data : [])
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setMembers([])
-        }
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [colocationId])
 
   const upsertExpense = useCallback((updated) => {
     setExpenses((prev) =>
@@ -122,6 +99,48 @@ export function useExpenses(colocationId) {
     [colocationId, refresh],
   )
 
+  const updateShareStatus = useCallback(
+    async (expense, userId, apiCall, fallbackMessage) => {
+      setIsUpdatingShare(userId)
+      setError('')
+
+      try {
+        const updatedShare = await apiCall(expense.id, userId)
+        const updated = mergeShareIntoExpense(expense, userId, updatedShare)
+        upsertExpense(updated)
+        return updated
+      } catch (err) {
+        setError(getErrorMessage(err, fallbackMessage))
+        return null
+      } finally {
+        setIsUpdatingShare(null)
+      }
+    },
+    [upsertExpense],
+  )
+
+  const markShareAsPaid = useCallback(
+    (expense, userId) =>
+      updateShareStatus(
+        expense,
+        userId,
+        expenseApi.markShareAsPaid,
+        'Impossible de marquer la part comme remboursée.',
+      ),
+    [updateShareStatus],
+  )
+
+  const markShareAsUnpaid = useCallback(
+    (expense, userId) =>
+      updateShareStatus(
+        expense,
+        userId,
+        expenseApi.markShareAsUnpaid,
+        'Impossible d\'annuler le remboursement.',
+      ),
+    [updateShareStatus],
+  )
+
   return {
     expenses,
     members,
@@ -133,9 +152,12 @@ export function useExpenses(colocationId) {
     formError,
     isSubmitting,
     isDeleting,
+    isUpdatingShare,
     createExpense,
     deleteExpense,
     upsertExpense,
+    markShareAsPaid,
+    markShareAsUnpaid,
     clearFormError: () => setFormError(''),
   }
 }

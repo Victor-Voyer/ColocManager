@@ -3,6 +3,7 @@
 namespace App\Service\Task;
 
 use App\DTO\Task\CreateTaskDto;
+use App\DTO\Task\TaskInputDto;
 use App\DTO\Task\UpdateTaskStatusDto;
 use App\DTO\Task\UpdateTaskDto;
 use App\Entity\Colocation;
@@ -11,10 +12,12 @@ use App\Entity\User;
 use App\Enum\TaskPriority;
 use App\Enum\TaskStatus;
 use App\Exception\ApiException;
+use App\Model\Task\TaskListFilters;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\TaskVoter;
 use App\Service\Colocation\ColocationAccessChecker;
+use App\Service\Common\DateParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -45,13 +48,19 @@ final class TaskService
         return $this->serializer->serialize($task);
     }
 
-    public function list(User $user, int $colocationId, ?string $status, ?int $assignedToUserId): array
+    public function list(User $user, int $colocationId, TaskListFilters $filters): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
-        $taskStatus = $this->parseNullableStatus($status);
-        $assignedTo = $assignedToUserId === null ? null : $this->resolveMember($assignedToUserId, $context->colocation);
+        $assignedTo = $filters->assignedToUserId === null
+            ? null
+            : $this->resolveMember($filters->assignedToUserId, $context->colocation);
 
-        $tasks = $this->taskRepository->findByColocationFiltered($context->colocation, $taskStatus, $assignedTo, false);
+        $tasks = $this->taskRepository->findByColocationFiltered(
+            $context->colocation,
+            $filters->status,
+            $assignedTo,
+            false,
+        );
 
         return [
             'items' => array_map(fn (Task $task): array => $this->serializer->serialize($task), $tasks),
@@ -140,7 +149,7 @@ final class TaskService
         return $task;
     }
 
-    private function fillTask(Task $task, CreateTaskDto|UpdateTaskDto $dto, Colocation $colocation): void
+    private function fillTask(Task $task, TaskInputDto $dto, Colocation $colocation): void
     {
         $status = TaskStatus::from($dto->status);
         $priority = TaskPriority::from($dto->priority);
@@ -150,7 +159,7 @@ final class TaskService
         $task->setDescription($dto->description);
         $task->setStatus($status);
         $task->setPriority($priority);
-        $task->setDueDate($this->parseDate($dto->dueDate));
+        $task->setDueDate(DateParser::parseNullableYmd($dto->dueDate));
         $task->setCompletedAt($status === TaskStatus::Done ? ($task->getCompletedAt() ?? new \DateTimeImmutable()) : null);
         $task->setAssignedTo($assignedTo);
     }
@@ -165,28 +174,5 @@ final class TaskService
         $this->accessChecker->requireMembership($member, $colocation);
 
         return $member;
-    }
-
-    private function parseDate(?string $date): ?\DateTimeImmutable
-    {
-        if ($date === null || $date === '') {
-            return null;
-        }
-
-        $parsed = \DateTimeImmutable::createFromFormat('Y-m-d', $date);
-        if ($parsed === false) {
-            throw new ApiException('Date invalide, format attendu : Y-m-d.');
-        }
-
-        return $parsed;
-    }
-
-    private function parseNullableStatus(?string $status): ?TaskStatus
-    {
-        if ($status === null || $status === '') {
-            return null;
-        }
-
-        return TaskStatus::tryFrom($status) ?? throw new ApiException('Statut de tache invalide.');
     }
 }

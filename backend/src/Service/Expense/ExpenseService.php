@@ -13,13 +13,18 @@ use App\Model\Expense\ExpenseListFilters;
 use App\Repository\ExpenseRepository;
 use App\Repository\ExpenseShareRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\ExpenseShareVoter;
 use App\Security\Voter\ExpenseVoter;
 use App\Service\Colocation\ColocationAccessChecker;
+use App\Service\Common\DateParser;
+use App\Service\Common\MoneyHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class ExpenseService
 {
+    private const HISTORY_LIMIT = 1000;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ColocationAccessChecker $accessChecker,
@@ -47,7 +52,7 @@ final class ExpenseService
         $expense->setAmount($amount);
         $expense->setDescription($dto->description);
         $expense->setCategory($dto->category);
-        $expense->setExpenseDate($this->parseDate($dto->expenseDate));
+        $expense->setExpenseDate(DateParser::parseOrToday($dto->expenseDate));
 
         foreach ($dto->shares as $shareInput) {
             $member = $this->userRepository->find($shareInput->userId);
@@ -112,7 +117,7 @@ final class ExpenseService
             null,
             null,
             0,
-            1000,
+            self::HISTORY_LIMIT,
         );
 
         return [
@@ -140,7 +145,7 @@ final class ExpenseService
                 'lastName' => $member->getLastName(),
                 'totalPaid' => $paid,
                 'totalOwed' => $owed,
-                'balance' => $this->centsToAmount($this->toCents($paid) - $this->toCents($owed)),
+                'balance' => MoneyHelper::subtract($paid, $owed),
             ];
         }
 
@@ -168,7 +173,7 @@ final class ExpenseService
 
     public function markShareAsPaid(User $user, int $expenseId, int $targetUserId): array
     {
-        $share = $this->resolveShare($user, $expenseId, $targetUserId);
+        $share = $this->resolveShareForRepayment($user, $expenseId, $targetUserId);
 
         $share->setIsPaid(true);
         $share->setPaidAt(new \DateTimeImmutable());
@@ -179,7 +184,7 @@ final class ExpenseService
 
     public function markShareAsUnpaid(User $user, int $expenseId, int $targetUserId): array
     {
-        $share = $this->resolveShare($user, $expenseId, $targetUserId);
+        $share = $this->resolveShareForRepayment($user, $expenseId, $targetUserId);
 
         if (!$share->isPaid()) {
             throw new ApiException('Cette part n\'est pas marquée comme remboursée.');
@@ -192,16 +197,14 @@ final class ExpenseService
         return $this->serializer->serializeShare($share);
     }
 
-    private function resolveShare(User $user, int $expenseId, int $targetUserId): ExpenseShare
+    private function resolveShareForRepayment(User $user, int $expenseId, int $targetUserId): ExpenseShare
     {
         $expense = $this->expenseRepository->find($expenseId);
         if ($expense === null) {
             throw ApiException::notFound('Dépense introuvable.');
         }
 
-        $this->accessChecker->requireMembership($user, $expense->getColocation());
-
-        if ($expense->getCreatedBy()?->getId() !== $user->getId()) {
+        if (!$this->authorizationChecker->isGranted(ExpenseShareVoter::MANAGE_REPAYMENT, $expense)) {
             throw ApiException::forbidden(
                 'Seul le créateur de la dépense peut valider les remboursements.',
             );
@@ -295,43 +298,22 @@ final class ExpenseService
                 $autoUserIds[] = $shareInput->userId;
                 continue;
             }
-            $cents = $this->toCents($shareInput->amountOwed);
+            $cents = MoneyHelper::toCents($shareInput->amountOwed);
             $explicitCents += $cents;
-            $amounts[$shareInput->userId] = $this->centsToAmount($cents);
+            $amounts[$shareInput->userId] = MoneyHelper::centsToAmount($cents);
         }
 
         $autoCount = count($autoUserIds);
         if ($autoCount > 0) {
-            $remainingCents = $this->toCents($amount) - $explicitCents;
+            $remainingCents = MoneyHelper::toCents($amount) - $explicitCents;
             $baseCents = intdiv($remainingCents, $autoCount);
             $extraCents = $remainingCents % $autoCount;
 
             foreach ($autoUserIds as $index => $userId) {
-                $amounts[$userId] = $this->centsToAmount($baseCents + ($index < $extraCents ? 1 : 0));
+                $amounts[$userId] = MoneyHelper::centsToAmount($baseCents + ($index < $extraCents ? 1 : 0));
             }
         }
 
         return $amounts;
-    }
-
-    private function toCents(string $amount): int
-    {
-        return (int) round((float) $amount * 100);
-    }
-
-    private function centsToAmount(int $cents): string
-    {
-        return number_format($cents / 100, 2, '.', '');
-    }
-
-    private function parseDate(?string $date): \DateTimeImmutable
-    {
-        if ($date === null || $date === '') {
-            return new \DateTimeImmutable('today');
-        }
-
-        $parsed = \DateTimeImmutable::createFromFormat('Y-m-d', $date);
-
-        return $parsed === false ? new \DateTimeImmutable('today') : $parsed;
     }
 }

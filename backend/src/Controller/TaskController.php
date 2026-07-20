@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\Task\CreateTaskDto;
 use App\DTO\Task\UpdateTaskStatusDto;
 use App\DTO\Task\UpdateTaskDto;
+use App\Model\Task\TaskListFilters;
 use App\Service\Security\CurrentUserProvider;
 use App\Service\Task\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +33,6 @@ class TaskController extends AbstractController
 
     /** POST /api/colocations/{colocationId}/tasks - Cree une tache */
     #[Route('/colocations/{colocationId}/tasks', name: 'api_task_create', methods: ['POST'], requirements: ['colocationId' => '\d+'])]
-    /*collocationId doit respecter le format regex avec un chiffre entre 0-9 et possibilité d'en avoir plsusieurs */
     public function create(int $colocationId, #[MapRequestPayload] CreateTaskDto $dto): JsonResponse
     {
         return $this->json(
@@ -49,8 +49,7 @@ class TaskController extends AbstractController
             $this->taskService->list(
                 $this->currentUserProvider->getUser(),
                 $colocationId,
-                $request->query->get('status'),
-                $request->query->getInt('assignedTo') > 0 ? $request->query->getInt('assignedTo') : null,
+                TaskListFilters::fromRequest($request),
             ),
         );
     }

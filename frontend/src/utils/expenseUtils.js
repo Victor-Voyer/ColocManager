@@ -1,19 +1,19 @@
-export function formatExpenseDate(isoDate, style = 'short') {
-  const options =
-    style === 'long'
-      ? { day: 'numeric', month: 'long', year: 'numeric' }
-      : { day: 'numeric', month: 'short', year: 'numeric' }
+import { formatDateFr } from './dateUtils'
+import { formatMemberName } from './memberUtils'
 
-  return new Date(isoDate).toLocaleDateString('fr-FR', options)
+export function formatExpenseDate(isoDate, style = 'short') {
+  return formatDateFr(isoDate, style)
 }
 
 export function formatAmount(amount) {
   return `${Number(amount).toFixed(2)} €`
 }
 
-export function formatMemberName(person) {
-  return `${person.firstName} ${person.lastName}`
-}
+export { formatMemberName }
+export {
+  canManageExpenseRepayments,
+  canDeleteExpense,
+} from './permissions'
 
 export function getExpenseStatus(expense) {
   if (!expense.shares?.length) {
@@ -41,12 +41,6 @@ function centsToAmount(cents) {
   return (cents / 100).toFixed(2)
 }
 
-/**
- * Calcule le montant par part : les parts manuelles (isManual) gardent leur
- * amountOwed, le reste du montant total est réparti également entre les
- * parts automatiques, au centime près (même algorithme que le backend).
- * Retourne un tableau parallèle à `shares`.
- */
 export function computeShareAmounts(totalAmount, shares) {
   const totalCents = toCents(totalAmount)
   let explicitCents = 0
@@ -76,8 +70,6 @@ export function computeShareAmounts(totalAmount, shares) {
   return cents.map(centsToAmount)
 }
 
-/** Une répartition est valide si les parts manuelles sont renseignées et positives,
- * et si leur somme ne dépasse pas le montant total (égalité stricte si tout est manuel). */
 export function isShareSplitValid(totalAmount, shares) {
   if (shares.length === 0) {
     return false

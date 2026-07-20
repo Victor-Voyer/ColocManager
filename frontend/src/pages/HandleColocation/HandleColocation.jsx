@@ -5,7 +5,7 @@ import { useNavigate } from "react-router"
 import { useAuth } from '../../context/AuthContext'
 import { ApiError } from '../../api/client'
 
-function HandleColocation({ onCreate, onJoin }) {
+function HandleColocation() {
   const [colocationName, setColocationName] = useState('')
   const [invitationCode, setInvitationCode] = useState('')
   const [createError, setCreateError] = useState('')

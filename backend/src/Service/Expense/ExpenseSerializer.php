@@ -4,30 +4,25 @@ namespace App\Service\Expense;
 
 use App\Entity\Expense;
 use App\Entity\ExpenseShare;
+use App\Service\User\UserSummarySerializer;
 
 final class ExpenseSerializer
 {
+    public function __construct(
+        private readonly UserSummarySerializer $userSummarySerializer,
+    ) {
+    }
+
     public function serialize(Expense $expense): array
     {
-        $paidBy = $expense->getPaidBy();
-        $createdBy = $expense->getCreatedBy();
-
         return [
             'id' => $expense->getId(),
             'amount' => $expense->getAmount(),
             'description' => $expense->getDescription(),
             'category' => $expense->getCategory(),
             'expenseDate' => $expense->getExpenseDate()->format('Y-m-d'),
-            'paidBy' => $paidBy === null ? null : [
-                'id' => $paidBy->getId(),
-                'firstName' => $paidBy->getFirstName(),
-                'lastName' => $paidBy->getLastName(),
-            ],
-            'createdBy' => $createdBy === null ? null : [
-                'id' => $createdBy->getId(),
-                'firstName' => $createdBy->getFirstName(),
-                'lastName' => $createdBy->getLastName(),
-            ],
+            'paidBy' => $this->userSummarySerializer->toSummary($expense->getPaidBy()),
+            'createdBy' => $this->userSummarySerializer->toSummary($expense->getCreatedBy()),
             'shares' => array_map(
                 fn (ExpenseShare $share): array => $this->serializeShare($share),
                 $expense->getShares()->toArray(),

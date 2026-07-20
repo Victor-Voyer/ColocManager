@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Exception\ApiException;
 use App\Repository\ExpenseShareRepository;
 use App\Repository\UserRepository;
+use App\Service\Colocation\ColocationAdminChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -20,6 +21,7 @@ final class UserService
         private readonly ExpenseShareRepository $expenseShareRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserSerializer $serializer,
+        private readonly ColocationAdminChecker $adminChecker,
         private readonly ValidatorInterface $validator,
     ) {
     }
@@ -89,7 +91,7 @@ final class UserService
             );
         }
 
-        if ($this->userRepository->isSoleAdminOfColocationWithOtherMembers($user)) {
+        if ($this->adminChecker->isSoleAdminOfColocationWithOtherMembers($user)) {
             throw ApiException::conflict(
                 'Impossible de supprimer le compte : vous êtes le seul administrateur d\'une colocation avec d\'autres membres. Transférez le rôle admin avant de supprimer votre compte.',
             );

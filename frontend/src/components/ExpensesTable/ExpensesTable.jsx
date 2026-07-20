@@ -14,12 +14,12 @@ function ExpensesTable({
   onSelectExpense,
 }) {
   if (isLoading) {
-    return <p className="expenses-page__status">Chargement…</p>
+    return <p className="page-status">Chargement…</p>
   }
 
   if (expenses.length === 0) {
     return (
-      <p className="expenses-page__status">
+      <p className="page-status">
         Aucune dépense pour le moment. Ajoutez-en une !
       </p>
     )
