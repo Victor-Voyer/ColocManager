@@ -1,9 +1,9 @@
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
 import ColocationRequired from '../../components/ColocationRequired/ColocationRequired.jsx'
+import CreateExpenseModal from '../../components/CreateExpenseModal/CreateExpenseModal.jsx'
 import ExpenseDetailModal from '../../components/ExpenseDetailModal/ExpenseDetailModal.jsx'
-import ExpenseForm from '../../components/ExpenseForm/ExpenseForm.jsx'
 import ExpensesTable from '../../components/ExpensesTable/ExpensesTable.jsx'
-import Modal from '../../components/Modal/Modal.jsx'
+import { Plus } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useCrudPageState } from '../../hooks/useCrudPageState'
 import { useExpenses } from '../../hooks/useExpenses'
@@ -86,13 +86,14 @@ function Expenses() {
         </div>
         <button
           type="button"
-          className="btn btn--primary"
+          className="btn btn--primary btn--with-icon"
           onClick={() => {
             clearFormError()
             openCreate()
           }}
         >
-          + Ajouter une dépense
+          <Plus size={18} aria-hidden="true" />
+          Ajouter une dépense
         </button>
       </div>
 
@@ -113,22 +114,15 @@ function Expenses() {
         />
       </div>
 
-      <Modal
+      <CreateExpenseModal
         isOpen={isCreateOpen}
         onClose={closeCreate}
-        title="Nouvelle dépense"
-      >
-        <div className="modal__body">
-          <ExpenseForm
-            members={members}
-            currentUserId={user?.id}
-            onSubmit={handleCreate}
-            onCancel={closeCreate}
-            isSubmitting={isSubmitting}
-            error={formError}
-          />
-        </div>
-      </Modal>
+        members={members}
+        currentUserId={user?.id}
+        onSubmit={handleCreate}
+        isSubmitting={isSubmitting}
+        error={formError}
+      />
 
       <ExpenseDetailModal
         isOpen={Boolean(selectedExpense)}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Home } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
@@ -38,7 +39,7 @@ function Login() {
     <div className="auth-page">
       <header className="auth-page__header">
         <Link to="/" className="auth-page__logo">
-          <span aria-hidden="true">🏠</span>
+          <Home size={20} aria-hidden="true" />
           ColocManager
         </Link>
       </header>

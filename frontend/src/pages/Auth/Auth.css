@@ -35,6 +35,10 @@
   font-size: 1.125rem;
 }
 
+.auth-page__logo svg {
+  flex-shrink: 0;
+}
+
 .auth-page__main {
   flex: 1;
   display: flex;

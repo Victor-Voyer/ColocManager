@@ -1,8 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import CreateExpenseModal from '../../components/CreateExpenseModal/CreateExpenseModal.jsx'
 import * as expenseApi from '../../api/expenseApi'
 import * as taskApi from '../../api/taskApi'
 import { useAuth } from '../../context/AuthContext'
+import { useColocationMembers } from '../../hooks/useColocationMembers'
+import { useCrudPageState } from '../../hooks/useCrudPageState'
+import { getErrorMessage } from '../../utils/apiError'
 import { formatAmount } from '../../utils/expenseUtils'
 import './Dashboard.css'
 
@@ -15,16 +20,21 @@ function Dashboard() {
   const [pendingTasks, setPendingTasks] = useState(0)
   const [isLoading, setIsLoading] = useState(Boolean(colocationId))
   const [error, setError] = useState('')
+  const [formError, setFormError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { members } = useColocationMembers(colocationId)
+  const { isCreateOpen, openCreate, closeCreate } = useCrudPageState()
 
   useEffect(() => {
-    if (!colocationId) {
-      setIsLoading(false)
-      return
-    }
-
     let cancelled = false
 
-    const loadDashboard = async () => {
+    async function bootstrap() {
+      if (!colocationId) {
+        setIsLoading(false)
+        return
+      }
+
       setIsLoading(true)
       setError('')
 
@@ -49,12 +59,47 @@ function Dashboard() {
       }
     }
 
-    loadDashboard()
+    bootstrap()
 
     return () => {
       cancelled = true
     }
   }, [colocationId])
+
+  const refreshDashboard = useCallback(async () => {
+    if (!colocationId) {
+      return
+    }
+
+    try {
+      const [balanceData, taskData] = await Promise.all([
+        expenseApi.getBalances(colocationId),
+        taskApi.listTasks(colocationId, { status: 'pending' }),
+      ])
+
+      setBalances(balanceData)
+      setPendingTasks(Array.isArray(taskData.items) ? taskData.items.length : 0)
+    } catch {
+      setError('Impossible de charger le tableau de bord.')
+    }
+  }, [colocationId])
+
+  const handleCreateExpense = async (payload) => {
+    setFormError('')
+    setIsSubmitting(true)
+
+    try {
+      await expenseApi.createExpense(colocationId, payload)
+      closeCreate()
+      await refreshDashboard()
+      return true
+    } catch (err) {
+      setFormError(getErrorMessage(err, 'Impossible de créer la dépense.'))
+      return false
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const userBalance = useMemo(() => {
     if (!balances?.members || !user?.id) {
@@ -136,10 +181,14 @@ function Dashboard() {
           {colocationId && (
             <button
               type="button"
-              className="dashboard-content__btn dashboard-content__btn--primary"
-              onClick={() => navigate('/expenses')}
+              className="dashboard-content__btn dashboard-content__btn--primary dashboard-content__btn--with-icon"
+              onClick={() => {
+                setFormError('')
+                openCreate()
+              }}
             >
-              + Ajouter une dépense
+              <Plus size={18} aria-hidden="true" />
+              Ajouter une dépense
             </button>
           )}
         </div>
@@ -186,6 +235,16 @@ function Dashboard() {
           </ul>
         </section>
       )}
+
+      <CreateExpenseModal
+        isOpen={isCreateOpen}
+        onClose={closeCreate}
+        members={members}
+        currentUserId={user?.id}
+        onSubmit={handleCreateExpense}
+        isSubmitting={isSubmitting}
+        error={formError}
+      />
     </div>
   )
 }

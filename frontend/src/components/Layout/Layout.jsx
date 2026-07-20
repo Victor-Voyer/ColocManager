@@ -1,14 +1,26 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import {
+  Home,
+  LayoutDashboard,
+  ListTodo,
+  LogOut,
+  Search,
+  Settings,
+  UserPlus,
+  Wallet,
+} from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BurgerButton from '../BurgerButton/BurgerButton'
 import './Layout.css'
 
+const ICON_SIZE = 20
+
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
-  { id: 'expenses', label: 'Expenses', icon: '💸', path: '/expenses' },
-  { id: 'tasks', label: 'Tasks', icon: '✅', path: '/tasks' },
-  { id: 'settings', label: 'Settings', icon: '⚙️', path: '/settings' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { id: 'expenses', label: 'Expenses', icon: Wallet, path: '/expenses' },
+  { id: 'tasks', label: 'Tasks', icon: ListTodo, path: '/tasks' },
+  { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
 ]
 
 function Layout({ children }) {
@@ -64,30 +76,40 @@ function Layout({ children }) {
 
       <aside className="dashboard-layout__sidebar">
         <Link to="/" className="dashboard-layout__logo" onClick={closeMenu}>
-          <span className="dashboard-layout__logo-icon">🏠</span>
+          <Home className="dashboard-layout__logo-icon" size={24} aria-hidden="true" />
           <span className="dashboard-layout__logo-text">ColocManager</span>
         </Link>
 
         <nav className="dashboard-layout__nav" aria-label="Navigation principale">
-          {navItems.map((item) => (
-            <Link
-              key={item.id}
-              to={item.path}
-              onClick={closeMenu}
-              className={`dashboard-layout__nav-item ${
-                location.pathname === item.path ? 'dashboard-layout__nav-item--active' : ''
-              }`}
-            >
-              <span className="dashboard-layout__nav-icon">{item.icon}</span>
-              <span className="dashboard-layout__nav-label">{item.label}</span>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const NavIcon = item.icon
+
+            return (
+              <Link
+                key={item.id}
+                to={item.path}
+                onClick={closeMenu}
+                className={`dashboard-layout__nav-item ${
+                  location.pathname === item.path ? 'dashboard-layout__nav-item--active' : ''
+                }`}
+              >
+                <NavIcon className="dashboard-layout__nav-icon" size={ICON_SIZE} aria-hidden="true" />
+                <span className="dashboard-layout__nav-label">{item.label}</span>
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="dashboard-layout__invite-card">
           <h3>Invite Roommates</h3>
           <p>Manage your flat together.</p>
-          <button className="dashboard-layout__btn dashboard-layout__btn--white">+ Invite Member</button>
+          <button
+            type="button"
+            className="dashboard-layout__btn dashboard-layout__btn--white dashboard-layout__btn--with-icon"
+          >
+            <UserPlus size={16} aria-hidden="true" />
+            Invite Member
+          </button>
         </div>
 
         <button
@@ -95,7 +117,7 @@ function Layout({ children }) {
           type="button"
           onClick={handleLogout}
         >
-          <span className="dashboard-layout__logout-icon">🚪</span>
+          <LogOut className="dashboard-layout__logout-icon" size={ICON_SIZE} aria-hidden="true" />
           <span>Déconnexion</span>
         </button>
       </aside>
@@ -104,7 +126,7 @@ function Layout({ children }) {
         <header className="dashboard-layout__topbar">
           <div className="dashboard-layout__topbar-center">
             <div className="dashboard-layout__search">
-              <span className="dashboard-layout__search-icon">🔍</span>
+              <Search className="dashboard-layout__search-icon" size={18} aria-hidden="true" />
               <input type="text" placeholder="Search anything..." />
             </div>
           </div>
