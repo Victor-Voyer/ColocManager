@@ -1,3 +1,6 @@
+@import './table.css';
+@import './forms.css';
+
 .page-content {
   animation: fadeIn 0.3s ease-out;
 }
@@ -67,6 +70,23 @@
 .badge--success { background: #d1fae5; color: #065f46; }
 .badge--warning { background: #fef3c7; color: #92400e; }
 .badge--info { background: #dbeafe; color: #1e40af; }
+.badge--danger { background: #fee2e2; color: #991b1b; }
+.badge--neutral { background: #f3f4f6; color: #374151; }
+
+.alert--error {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.page-status {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9375rem;
+}
 
 @media (max-width: 768px) {
   .page-header {

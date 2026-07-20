@@ -26,6 +26,7 @@ final class ColocationService
         private readonly ExpenseShareRepository $expenseShareRepository,
         private readonly UserRepository $userRepository,
         private readonly ColocationSerializer $serializer,
+        private readonly ColocationAdminChecker $adminChecker,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
@@ -138,12 +139,12 @@ final class ColocationService
         }
 
         if ($userId === $user->getId()) {
-            throw new ApiException('Utilisez POST /leave pour quitter la colocation.');
+            throw ApiException::conflict('Utilisez POST /leave pour quitter la colocation.');
         }
 
         $targetUser = $this->resolveColocationMember($context->colocation, $userId);
 
-        if ($this->isSoleAdmin($targetUser, $context->colocation)) {
+        if ($this->adminChecker->isSoleAdmin($targetUser, $context->colocation)) {
             throw ApiException::conflict('Impossible d\'exclure le seul administrateur. Transférez d\'abord le rôle admin.');
         }
 
@@ -160,7 +161,7 @@ final class ColocationService
         $context = $this->accessChecker->resolveContext($user, $id);
         $colocation = $context->colocation;
 
-        if ($this->isSoleAdmin($user, $colocation)) {
+        if ($this->adminChecker->isSoleAdmin($user, $colocation)) {
             throw ApiException::conflict('Impossible de quitter : vous êtes le seul administrateur. Transférez d\'abord le rôle admin.');
         }
 
@@ -191,7 +192,7 @@ final class ColocationService
         $targetUser = $this->resolveColocationMember($context->colocation, $userId);
         $newRole = ColocationRole::from($dto->role);
 
-        if ($newRole === ColocationRole::Member && $this->isSoleAdmin($targetUser, $context->colocation)) {
+        if ($newRole === ColocationRole::Member && $this->adminChecker->isSoleAdmin($targetUser, $context->colocation)) {
             throw ApiException::conflict('Impossible de rétrograder le seul administrateur. Promouvez d\'abord un autre membre.');
         }
 
@@ -221,10 +222,7 @@ final class ColocationService
         $context->colocation->setInvitationCodeExpiresAt(new \DateTimeImmutable('+24 hours'));
         $this->entityManager->flush();
 
-        return [
-            'invitationCode' => $context->colocation->getInvitationCode(),
-            'invitationCodeExpiresAt' => $context->colocation->getInvitationCodeExpiresAt()->format(\DateTimeInterface::ATOM),
-        ];
+        return $this->serializer->serializeInvitationCode($context->colocation);
     }
 
     /** Retire un utilisateur de sa colocation en mettant à jour les deux côtés de la relation */
@@ -246,27 +244,6 @@ final class ColocationService
         }
 
         return $targetUser;
-    }
-
-    private function isSoleAdmin(User $user, Colocation $colocation): bool
-    {
-        if ($user->getRole() !== ColocationRole::Admin) {
-            return false;
-        }
-
-        $members = $colocation->getMembers();
-        if ($members->count() <= 1) {
-            return false;
-        }
-
-        $adminCount = 0;
-        foreach ($members as $member) {
-            if ($member->getRole() === ColocationRole::Admin) {
-                ++$adminCount;
-            }
-        }
-
-        return $adminCount === 1;
     }
 
     private function generateUniqueInvitationCode(): string

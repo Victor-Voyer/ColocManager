@@ -1,7 +1,7 @@
 export const TASK_STATUS_OPTIONS = [
   { value: 'pending', label: 'A faire' },
   { value: 'in_progress', label: 'En cours' },
-  { value: 'done', label: 'Terminee' },
+  { value: 'done', label: 'Terminée' },
 ]
 
 export const TASK_PRIORITY_OPTIONS = [
@@ -10,40 +10,20 @@ export const TASK_PRIORITY_OPTIONS = [
   { value: 'high', label: 'Haute' },
 ]
 
-export function canChangeTaskStatus(task, user) {
-  return (
-    task.createdBy?.id === user?.id ||
-    task.assignedTo?.id === user?.id ||
-    user?.colocation?.role === 'admin'
-  )
-}
-
-export function formatMemberName(member) {
-  if (!member) {
-    return 'Non assigne'
-  }
-
-  return `${member.firstName} ${member.lastName}`.trim()
-}
-
-export function formatTaskDate(date, fallback = 'Aucune echeance') {
-  if (!date) {
-    return fallback
-  }
-
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(`${date}T00:00:00`))
-}
+export { formatMemberName } from './memberUtils'
+export { formatDateFr as formatTaskDate } from './dateUtils'
+export {
+  canChangeTaskStatus,
+  canManageTask,
+  buildTaskPayload,
+} from './permissions'
 
 export function getTaskStatus(status) {
   return (
     {
       pending: { label: 'A faire', variant: 'warning' },
       in_progress: { label: 'En cours', variant: 'info' },
-      done: { label: 'Terminee', variant: 'success' },
+      done: { label: 'Terminée', variant: 'success' },
     }[status] ?? { label: status, variant: 'neutral' }
   )
 }

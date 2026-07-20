@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import {
   canChangeTaskStatus,
+  canManageTask,
   formatMemberName,
   formatTaskDate,
   getTaskPriority,
@@ -57,8 +58,7 @@ function TaskDetailModal({
   const status = getTaskStatus(task.status)
   const priority = getTaskPriority(task.priority)
   const canChangeStatus = canChangeTaskStatus(task, user)
-  const canManageTask =
-    task.createdBy?.id === user?.id || user?.colocation?.role === 'admin'
+  const canManage = canManageTask(task, user)
   const title = mode === 'edit' ? 'Modifier la tâche' : 'Détail de la tâche'
 
   return (
@@ -140,7 +140,7 @@ function TaskDetailModal({
             </div>
           </div>
 
-          {canManageTask && (
+          {canManage && (
             <footer className="modal__footer task-detail__actions">
               <button
                 type="button"

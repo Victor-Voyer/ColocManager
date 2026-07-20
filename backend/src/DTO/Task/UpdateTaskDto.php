@@ -2,30 +2,10 @@
 
 namespace App\DTO\Task;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * DTO pour modifier une tache.
- * Meme structure que CreateTaskDto, utilisee sur PUT /api/colocations/{id}/tasks/{taskId}.
+ * Utilise sur PUT /api/colocations/{id}/tasks/{taskId}.
  */
-class UpdateTaskDto
+class UpdateTaskDto extends TaskInputDto
 {
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 255)]
-    public string $title = '';
-
-    #[Assert\Length(max: 2000)]
-    public ?string $description = null;
-
-    #[Assert\Choice(choices: ['pending', 'in_progress', 'done'])]
-    public string $status = 'pending';
-
-    #[Assert\Choice(choices: ['low', 'medium', 'high'])]
-    public string $priority = 'medium';
-
-    /** Format Y-m-d */
-    public ?string $dueDate = null;
-
-    #[Assert\Positive]
-    public ?int $assignedToUserId = null;
 }

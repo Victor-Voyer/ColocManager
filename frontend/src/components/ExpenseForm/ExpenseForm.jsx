@@ -3,11 +3,8 @@ import {
   computeShareAmounts,
   isShareSplitValid,
 } from '../../utils/expenseUtils'
+import { todayIso } from '../../utils/dateUtils'
 import './ExpenseForm.css'
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10)
-}
 
 function buildInitialShares(members, currentUserId) {
   return members.map((member) => ({

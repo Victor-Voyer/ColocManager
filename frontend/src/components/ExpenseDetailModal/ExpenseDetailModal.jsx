@@ -1,86 +1,67 @@
-import { useState } from 'react'
-import * as expenseApi from '../../api/expenseApi'
-import { useAuth } from '../../context/AuthContext.jsx'
-import { getErrorMessage } from '../../utils/apiError'
+import Modal from '../Modal/Modal.jsx'
 import {
+  canDeleteExpense,
+  canManageExpenseRepayments,
   formatAmount,
   formatExpenseDate,
   formatMemberName,
-  mergeShareIntoExpense,
 } from '../../utils/expenseUtils'
-import Modal from '../Modal/Modal.jsx'
 import './ExpenseDetailModal.css'
 
 function ExpenseDetailModal({
   isOpen,
   onClose,
   expense,
+  user,
+  isUpdatingShare,
+  onMarkShareAsPaid,
+  onMarkShareAsUnpaid,
   onUpdated,
   onDeleteRequest,
 }) {
-  const [isUpdatingShare, setIsUpdatingShare] = useState(null)
-  const [error, setError] = useState('')
-
-  const handleClose = () => {
-    setError('')
-    onClose()
-  }
-
-  const handleShareStatusChange = async (userId, apiCall, fallbackMessage) => {
-    setIsUpdatingShare(userId)
-    setError('')
-    try {
-      const updatedShare = await apiCall(expense.id, userId)
-      onUpdated(mergeShareIntoExpense(expense, userId, updatedShare))
-    } catch (err) {
-      setError(getErrorMessage(err, fallbackMessage))
-    } finally {
-      setIsUpdatingShare(null)
-    }
-  }
-  const { user } = useAuth()
-
   if (!expense) {
     return null
   }
 
-  const canManageRepayments = expense.createdBy?.id === user?.id
+  const canManageRepayments = canManageExpenseRepayments(expense, user)
+  const canDelete = canDeleteExpense(expense, user)
+
+  const handleShareAction = async (userId, action) => {
+    const updated = await action(expense, userId)
+    if (updated) {
+      onUpdated(updated)
+    }
+  }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Détail de la dépense" wide>
+    <Modal isOpen={isOpen} onClose={onClose} title="Détail de la dépense" wide>
       <div className="modal__body">
-        {error && (
-          <p className="expense-form__error" role="alert">
-            {error}
-          </p>
-        )}
-
-        <div className="expense-detail__meta">
+        <div className="expense-detail__meta detail-modal__meta">
           <div>
-            <span className="expense-detail__label">Montant</span>
-            <p className="expense-detail__value expense-detail__amount">
+            <span className="detail-modal__label">Montant</span>
+            <p className="detail-modal__value expense-detail__amount">
               {formatAmount(expense.amount)}
             </p>
           </div>
           <div>
-            <span className="expense-detail__label">Date</span>
-            <p className="expense-detail__value">
+            <span className="detail-modal__label">Date</span>
+            <p className="detail-modal__value">
               {formatExpenseDate(expense.expenseDate, 'long')}
             </p>
           </div>
           <div>
-            <span className="expense-detail__label">Description</span>
-            <p className="expense-detail__value">{expense.description}</p>
+            <span className="detail-modal__label">Description</span>
+            <p className="detail-modal__value">{expense.description}</p>
           </div>
           <div>
-            <span className="expense-detail__label">Catégorie</span>
-            <p className="expense-detail__value">
+            <span className="detail-modal__label">Catégorie</span>
+            <p className="detail-modal__value">
               {expense.category || '—'}
             </p>
           </div>
           <div>
-            <span className="expense-detail__label">Payé par</span>
-            <p className="expense-detail__value">
+            <span className="detail-modal__label">Payé par</span>
+            <p className="detail-modal__value">
               {formatMemberName(expense.paidBy)}
             </p>
           </div>
@@ -88,72 +69,64 @@ function ExpenseDetailModal({
 
         <h3 className="expense-detail__shares-title">Parts</h3>
         <ul className="expense-detail__shares">
-          {expense.shares.map((share) => {
-            return (
-              <li key={share.id} className="expense-detail__share">
-                <div className="expense-detail__share-info">
-                  <span className="expense-detail__share-name">
-                    {share.firstName} {share.lastName}
-                  </span>
-                  <span className="expense-detail__share-amount">
-                    {formatAmount(share.amountOwed)}
-                  </span>
-                </div>
-                {share.isPaid ? (
-                  <div className="expense-detail__share-status">
-                    <span className="badge badge--success">Remboursé</span>
-                    {canManageRepayments && (
-                      <button
-                        type="button"
-                        className="btn btn--neutral expense-detail__pay-btn"
-                        disabled={isUpdatingShare === share.userId}
-                        onClick={() =>
-                          handleShareStatusChange(
-                            share.userId,
-                            expenseApi.markShareAsUnpaid,
-                            'Impossible d\'annuler le remboursement.',
-                          )
-                        }
-                      >
-                        {isUpdatingShare === share.userId ? '…' : 'Annuler'}
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  canManageRepayments && (
+          {expense.shares.map((share) => (
+            <li key={share.id} className="expense-detail__share">
+              <div className="expense-detail__share-info">
+                <span className="expense-detail__share-name">
+                  {share.firstName} {share.lastName}
+                </span>
+                <span className="expense-detail__share-amount">
+                  {formatAmount(share.amountOwed)}
+                </span>
+              </div>
+              {share.isPaid ? (
+                <div className="expense-detail__share-status">
+                  <span className="badge badge--success">Remboursé</span>
+                  {canManageRepayments && (
                     <button
                       type="button"
-                      className="btn btn--primary expense-detail__pay-btn"
+                      className="btn btn--neutral expense-detail__pay-btn"
                       disabled={isUpdatingShare === share.userId}
                       onClick={() =>
-                        handleShareStatusChange(
-                          share.userId,
-                          expenseApi.markShareAsPaid,
-                          'Impossible de marquer la part comme remboursée.',
-                        )
+                        handleShareAction(share.userId, onMarkShareAsUnpaid)
                       }
                     >
-                      {isUpdatingShare === share.userId
-                        ? '…'
-                        : 'Marquer remboursé'}
+                      {isUpdatingShare === share.userId ? '…' : 'Annuler'}
                     </button>
-                  )
-                )}
-              </li>
-            )
-          })}
+                  )}
+                </div>
+              ) : (
+                canManageRepayments && (
+                  <button
+                    type="button"
+                    className="btn btn--primary expense-detail__pay-btn"
+                    disabled={isUpdatingShare === share.userId}
+                    onClick={() =>
+                      handleShareAction(share.userId, onMarkShareAsPaid)
+                    }
+                  >
+                    {isUpdatingShare === share.userId
+                      ? '…'
+                      : 'Marquer remboursé'}
+                  </button>
+                )
+              )}
+            </li>
+          ))}
         </ul>
       </div>
 
-      <footer className="modal__footer expense-detail__actions">
-        <button
-          type="button"
-          className="btn btn--neutral"
-          onClick={() => onDeleteRequest(expense)}
-        >
-          Supprimer
-        </button>
-      </footer>
+      {canDelete && (
+        <footer className="modal__footer expense-detail__actions">
+          <button
+            type="button"
+            className="btn btn--neutral"
+            onClick={() => onDeleteRequest(expense)}
+          >
+            Supprimer
+          </button>
+        </footer>
+      )}
     </Modal>
   )
 }

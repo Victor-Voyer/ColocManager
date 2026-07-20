@@ -74,7 +74,17 @@
 
 .member-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.remove-member-button {
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.remove-member-button:hover {
+  background: #fef2f2;
 }
 
 .settings-leave-button {

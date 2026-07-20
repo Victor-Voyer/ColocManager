@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router'
 import GuestRoute from './components/GuestRoute/GuestRoute.jsx'
+import ProtectedLayout from './components/ProtectedLayout/ProtectedLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx'
-import Layout from './components/Layout/Layout.jsx'
 import Homepage from './pages/Homepage/Homepage.jsx'
 import Login from './pages/Auth/Login.jsx'
 import Register from './pages/Auth/Register.jsx'
@@ -35,55 +35,18 @@ function App() {
         />
 
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoute>
-              <Layout>
-                <Dashboard />
-              </Layout>
+              <ProtectedLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/expenses"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <Expenses />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tasks"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <Tasks />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <Settings />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/collocations"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <HandleColocation />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/expenses" element={<Expenses />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/collocations" element={<HandleColocation />} />
+        </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

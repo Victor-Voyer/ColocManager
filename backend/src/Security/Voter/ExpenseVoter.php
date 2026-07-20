@@ -34,7 +34,8 @@ final class ExpenseVoter extends Voter
 
         $isPayer = $expense->getPaidBy() !== null && $expense->getPaidBy()->getId() === $user->getId();
         $isAdmin = $user->getRole() === ColocationRole::Admin;
+        $isMember = $user->getColocation()?->getId() === $expense->getColocation()->getId();
 
-        return $isPayer || $isAdmin;
+        return $isMember && ($isPayer || $isAdmin);
     }
 }
