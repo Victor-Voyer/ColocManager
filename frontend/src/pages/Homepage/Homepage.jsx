@@ -95,7 +95,6 @@ function Homepage() {
         <section className="homepage__hero">
           <div className="homepage__container homepage__hero-inner">
             <div className="homepage__hero-content">
-              <p className="homepage__eyebrow">Gestion de colocation simplifiée</p>
               <h1 className="homepage__title">
                 Vivez ensemble, <span className="homepage__title-accent">gérez sereinement</span>
               </h1>
@@ -201,18 +200,20 @@ function Homepage() {
         </section>
 
         <section id="cta" className="homepage__cta">
-          <div className="homepage__container homepage__cta-inner">
-            <h2 className="homepage__cta-title">Prêt à simplifier votre colocation ?</h2>
-            <p className="homepage__cta-text">
-              Créez votre foyer en quelques clics ou rejoignez-le avec un code d&apos;invitation.
-            </p>
-            <div className="homepage__cta-actions">
-              <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--lg">
-                Commencer gratuitement
-              </Link>
-              <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--lg">
-                J&apos;ai déjà un compte
-              </Link>
+          <div className="homepage__container">
+            <div className="homepage__cta-inner">
+              <h2 className="homepage__cta-title">Prêt à simplifier votre colocation ?</h2>
+              <p className="homepage__cta-text">
+                Créez votre foyer en quelques clics ou rejoignez-le avec un code d&apos;invitation.
+              </p>
+              <div className="homepage__cta-actions">
+                <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--lg">
+                  Commencer gratuitement
+                </Link>
+                <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--lg">
+                  J&apos;ai déjà un compte
+                </Link>
+              </div>
             </div>
           </div>
         </section>
