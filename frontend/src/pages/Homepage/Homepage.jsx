@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
 import { Banknote, Check, Home, Sparkles } from 'lucide-react'
 import BurgerButton from '../../components/BurgerButton/BurgerButton'
+import { useAuth } from '../../context/AuthContext'
 import './Homepage.css'
 
 const features = [
@@ -40,6 +41,14 @@ const benefits = [
 
 function Homepage() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { user, isAuthenticated, isBootstrapping } = useAuth()
+
+  const displayName = user
+    ? `${user.firstName} ${user.lastName}`.trim()
+    : 'Utilisateur'
+  const avatarSrc =
+    user?.avatarUrl ??
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=3B82F6&color=fff`
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -79,8 +88,28 @@ function Homepage() {
           <nav className="homepage__nav" aria-label="Navigation principale">
             <a href="#features" className="homepage__nav-link" onClick={closeMenu}>Fonctionnalités</a>
             <a href="#benefits" className="homepage__nav-link" onClick={closeMenu}>Avantages</a>
-            <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--sm" onClick={closeMenu}>Connexion</Link>
-            <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
+            {!isBootstrapping && (
+              isAuthenticated ? (
+                <Link
+                  to="/dashboard"
+                  className="homepage__profile-btn"
+                  onClick={closeMenu}
+                >
+                  <img
+                    src={avatarSrc}
+                    alt=""
+                    className="homepage__profile-btn-avatar"
+                    aria-hidden="true"
+                  />
+                  <span className="homepage__profile-btn-name">{displayName}</span>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--sm" onClick={closeMenu}>Connexion</Link>
+                  <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
+                </>
+              )
+            )}
           </nav>
 
           <BurgerButton

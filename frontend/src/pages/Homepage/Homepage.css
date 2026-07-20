@@ -186,6 +186,42 @@
   font-size: 1rem;
 }
 
+.homepage__profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.375rem 0.875rem 0.375rem 0.375rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+  min-height: 2.75rem;
+}
+
+.homepage__profile-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.homepage__profile-btn-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.homepage__profile-btn-name {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Hero */
 .homepage__hero {
   padding: var(--homepage-section-y) 0;
@@ -621,10 +657,21 @@
     min-height: 2.75rem;
   }
 
-  .homepage__nav .homepage__btn {
+  .homepage__nav .homepage__btn,
+  .homepage__nav .homepage__profile-btn {
     width: 100%;
     margin-top: 0.25rem;
     white-space: normal;
+  }
+
+  .homepage__nav .homepage__profile-btn {
+    justify-content: flex-start;
+    border-radius: var(--radius-sm);
+    padding: 0.625rem 1rem;
+  }
+
+  .homepage__nav .homepage__profile-btn-name {
+    max-width: none;
   }
 
   .homepage__burger {
