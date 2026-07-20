@@ -13,7 +13,9 @@ use App\Exception\ApiException;
 use App\Repository\ColocationRepository;
 use App\Repository\ExpenseShareRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\ColocationVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class ColocationService
 {
@@ -24,6 +26,7 @@ final class ColocationService
         private readonly ExpenseShareRepository $expenseShareRepository,
         private readonly UserRepository $userRepository,
         private readonly ColocationSerializer $serializer,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -83,7 +86,9 @@ final class ColocationService
     public function update(User $user, int $id, UpdateColocationDto $dto): array
     {
         $context = $this->accessChecker->resolveContext($user, $id);
-        $this->requireAdmin($context->role);
+        if (!$this->authorizationChecker->isGranted(ColocationVoter::ADMIN, $context->colocation)) {
+            throw ApiException::forbidden('Action réservée aux administrateurs.');
+        }
 
         $context->colocation->setName($dto->name);
         $this->entityManager->flush();
@@ -94,7 +99,9 @@ final class ColocationService
     public function delete(User $user, int $id): void
     {
         $context = $this->accessChecker->resolveContext($user, $id);
-        $this->requireAdmin($context->role);
+        if (!$this->authorizationChecker->isGranted(ColocationVoter::ADMIN, $context->colocation)) {
+            throw ApiException::forbidden('Action réservée aux administrateurs.');
+        }
 
         $expensesCount = $this->colocationRepository->countExpenses($context->colocation);
         if ($expensesCount > 0) {
@@ -126,7 +133,9 @@ final class ColocationService
     public function removeMember(User $user, int $id, int $userId): void
     {
         $context = $this->accessChecker->resolveContext($user, $id);
-        $this->requireAdmin($context->role);
+        if (!$this->authorizationChecker->isGranted(ColocationVoter::ADMIN, $context->colocation)) {
+            throw ApiException::forbidden('Action réservée aux administrateurs.');
+        }
 
         if ($userId === $user->getId()) {
             throw new ApiException('Utilisez POST /leave pour quitter la colocation.');
@@ -175,7 +184,9 @@ final class ColocationService
     public function updateMemberRole(User $user, int $id, int $userId, UpdateMemberRoleDto $dto): array
     {
         $context = $this->accessChecker->resolveContext($user, $id);
-        $this->requireAdmin($context->role);
+        if (!$this->authorizationChecker->isGranted(ColocationVoter::ADMIN, $context->colocation)) {
+            throw ApiException::forbidden('Action réservée aux administrateurs.');
+        }
 
         $targetUser = $this->resolveColocationMember($context->colocation, $userId);
         $newRole = ColocationRole::from($dto->role);
@@ -202,7 +213,9 @@ final class ColocationService
     public function regenerateInvitationCode(User $user, int $id): array
     {
         $context = $this->accessChecker->resolveContext($user, $id);
-        $this->requireAdmin($context->role);
+        if (!$this->authorizationChecker->isGranted(ColocationVoter::ADMIN, $context->colocation)) {
+            throw ApiException::forbidden('Action réservée aux administrateurs.');
+        }
 
         $context->colocation->setInvitationCode($this->generateUniqueInvitationCode());
         $context->colocation->setInvitationCodeExpiresAt(new \DateTimeImmutable('+24 hours'));
@@ -223,13 +236,6 @@ final class ColocationService
         }
         $user->setColocation(null);
         $user->setRole(null);
-    }
-
-    private function requireAdmin(ColocationRole $role): void
-    {
-        if ($role !== ColocationRole::Admin) {
-            throw ApiException::forbidden('Action réservée aux administrateurs.');
-        }
     }
 
     private function resolveColocationMember(Colocation $colocation, int $userId): User
