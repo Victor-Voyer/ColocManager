@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\Task\CreateTaskDto;
+use App\DTO\Task\UpdateTaskStatusDto;
 use App\DTO\Task\UpdateTaskDto;
 use App\Service\Security\CurrentUserProvider;
 use App\Service\Task\TaskService;
@@ -90,12 +91,21 @@ class TaskController extends AbstractController
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    /** PATCH /api/tasks/{taskId}/complete - Marque une tache comme terminee */
-    #[Route('/tasks/{taskId}/complete', name: 'api_task_complete', methods: ['PATCH'], requirements: ['taskId' => '\d+'])]
-    public function complete(int $taskId): JsonResponse
+    /** PATCH /api/colocations/{colocationId}/tasks/{taskId}/status - Change le statut d'une tache */
+    #[Route('/colocations/{colocationId}/tasks/{taskId}/status', name: 'api_task_update_status', methods: ['PATCH'], requirements: ['colocationId' => '\d+', 'taskId' => '\d+'])]
+    public function updateStatus(
+        int $colocationId,
+        int $taskId,
+        #[MapRequestPayload] UpdateTaskStatusDto $dto,
+    ): JsonResponse
     {
         return $this->json(
-            $this->taskService->complete($this->currentUserProvider->getUser(), $taskId),
+            $this->taskService->updateStatus(
+                $this->currentUserProvider->getUser(),
+                $colocationId,
+                $taskId,
+                $dto,
+            ),
         );
     }
 }

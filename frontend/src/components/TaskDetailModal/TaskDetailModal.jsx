@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext.jsx'
 import {
+  canChangeTaskStatus,
   formatMemberName,
   formatTaskDate,
   getTaskPriority,
   getTaskStatus,
+  TASK_STATUS_OPTIONS,
 } from '../../utils/taskUtils'
 import Modal from '../Modal/Modal.jsx'
 import TaskForm from '../TaskForm/TaskForm.jsx'
@@ -15,14 +18,15 @@ function TaskDetailModal({
   task,
   members,
   onUpdate,
-  onComplete,
+  onStatusChange,
   onDeleteRequest,
   isSubmitting,
   formError,
   clearFormError,
 }) {
   const [mode, setMode] = useState('view')
-  const [isCompleting, setIsCompleting] = useState(false)
+  const [isChangingStatus, setIsChangingStatus] = useState(false)
+  const { user } = useAuth()
 
   const handleClose = () => {
     setMode('view')
@@ -37,16 +41,12 @@ function TaskDetailModal({
     }
   }
 
-  const handleComplete = async () => {
-    if (task.status === 'done') {
-      return
-    }
-
-    setIsCompleting(true)
+  const handleStatusChange = async (status) => {
+    setIsChangingStatus(true)
     try {
-      await onComplete(task.id)
+      await onStatusChange(task.id, status)
     } finally {
-      setIsCompleting(false)
+      setIsChangingStatus(false)
     }
   }
 
@@ -56,7 +56,9 @@ function TaskDetailModal({
 
   const status = getTaskStatus(task.status)
   const priority = getTaskPriority(task.priority)
-  const isCompleted = task.status === 'done'
+  const canChangeStatus = canChangeTaskStatus(task, user)
+  const canManageTask =
+    task.createdBy?.id === user?.id || user?.colocation?.role === 'admin'
   const title = mode === 'edit' ? 'Modifier la tâche' : 'Détail de la tâche'
 
   return (
@@ -87,11 +89,26 @@ function TaskDetailModal({
               </div>
               <div>
                 <span className="task-detail__label">Statut</span>
-                <p className="task-detail__value">
-                  <span className={`badge badge--${status.variant}`}>
-                    {status.label}
-                  </span>
-                </p>
+                {canChangeStatus ? (
+                  <select
+                    className="task-detail__status-select"
+                    value={task.status}
+                    disabled={isChangingStatus}
+                    onChange={(event) => handleStatusChange(event.target.value)}
+                  >
+                    {TASK_STATUS_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="task-detail__value">
+                    <span className={`badge badge--${status.variant}`}>
+                      {status.label}
+                    </span>
+                  </p>
+                )}
               </div>
               <div>
                 <span className="task-detail__label">Assignée à</span>
@@ -123,33 +140,27 @@ function TaskDetailModal({
             </div>
           </div>
 
-          <footer className="modal__footer task-detail__actions">
-            <button
-              type="button"
-              className="btn btn--neutral"
-              onClick={() => onDeleteRequest(task)}
-            >
-              Supprimer
-            </button>
-            <button
-              type="button"
-              className="btn btn--neutral"
-              onClick={() => {
-                clearFormError()
-                setMode('edit')
-              }}
-            >
-              Modifier
-            </button>
-            <button
-              type="button"
-              className="btn btn--primary task-detail__complete-btn"
-              disabled={isCompleted || isCompleting}
-              onClick={handleComplete}
-            >
-              {isCompleting ? 'Validation...' : 'Marquer comme terminée'}
-            </button>
-          </footer>
+          {canManageTask && (
+            <footer className="modal__footer task-detail__actions">
+              <button
+                type="button"
+                className="btn btn--neutral"
+                onClick={() => onDeleteRequest(task)}
+              >
+                Supprimer
+              </button>
+              <button
+                type="button"
+                className="btn btn--neutral"
+                onClick={() => {
+                  clearFormError()
+                  setMode('edit')
+                }}
+              >
+                Modifier
+              </button>
+            </footer>
+          )}
         </>
       )}
     </Modal>

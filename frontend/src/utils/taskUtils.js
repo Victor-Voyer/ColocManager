@@ -10,6 +10,14 @@ export const TASK_PRIORITY_OPTIONS = [
   { value: 'high', label: 'Haute' },
 ]
 
+export function canChangeTaskStatus(task, user) {
+  return (
+    task.createdBy?.id === user?.id ||
+    task.assignedTo?.id === user?.id ||
+    user?.colocation?.role === 'admin'
+  )
+}
+
 export function formatMemberName(member) {
   if (!member) {
     return 'Non assigne'

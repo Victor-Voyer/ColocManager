@@ -3,6 +3,7 @@
 namespace App\Service\Task;
 
 use App\DTO\Task\CreateTaskDto;
+use App\DTO\Task\UpdateTaskStatusDto;
 use App\DTO\Task\UpdateTaskDto;
 use App\Entity\Colocation;
 use App\Entity\Task;
@@ -96,16 +97,27 @@ final class TaskService
         $this->entityManager->flush();
     }
 
-    public function complete(User $user, int $taskId): array
+    public function updateStatus(User $user, int $colocationId, int $taskId, UpdateTaskStatusDto $dto): array
     {
-        $task = $this->taskRepository->find($taskId);
-        if ($task === null) {
-            throw ApiException::notFound('Tache introuvable.');
+        $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $task = $this->findTaskInColocation($colocationId, $taskId);
+
+        $isCreator = $task->getCreatedBy()?->getId() === $user->getId();
+        $isAssigned = $task->getAssignedTo()?->getId() === $user->getId();
+        $isAdmin = $context->role === ColocationRole::Admin;
+
+        if (!$isCreator && !$isAssigned && !$isAdmin) {
+            throw ApiException::forbidden(
+                'Seul le créateur, un administrateur ou le membre assigné peut changer le statut.',
+            );
         }
 
-        $this->accessChecker->requireMembership($user, $task->getColocation());
-        $task->setCompletedAt(new \DateTimeImmutable());
-        $task->setStatus(TaskStatus::Done);
+        $status = TaskStatus::from($dto->status);
+
+        $task->setStatus($status);
+        $task->setCompletedAt(
+            $status === TaskStatus::Done ? ($task->getCompletedAt() ?? new \DateTimeImmutable()) : null,
+        );
 
         $this->entityManager->flush();
 

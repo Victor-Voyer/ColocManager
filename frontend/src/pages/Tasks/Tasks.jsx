@@ -12,17 +12,6 @@ import {
 } from '../../utils/taskUtils'
 import './Tasks.css'
 
-function buildTaskPayload(task, status = task.status) {
-  return {
-    title: task.title,
-    description: task.description ?? null,
-    status,
-    priority: task.priority,
-    dueDate: task.dueDate ?? null,
-    assignedToUserId: task.assignedTo ? Number(task.assignedTo.id) : null,
-  }
-}
-
 function Tasks() {
   const { user } = useAuth()
   const colocationId = user?.colocation?.id
@@ -41,9 +30,8 @@ function Tasks() {
     isDeleting,
     createTask,
     updateTask,
-    checkTask,
+    updateTaskStatus,
     deleteTask,
-    completeTask,
     clearFormError,
   } = useTasks(colocationId)
 
@@ -83,10 +71,10 @@ function Tasks() {
     return updated
   }
 
-  const handleTaskCompleted = async (taskId) => {
+  const handleTaskStatusChange = async (taskId, status) => {
     setCompletingTaskId(taskId)
     try {
-      const updated = await completeTask(taskId)
+      const updated = await updateTaskStatus(taskId, status)
       if (updated) {
         setSelectedTask(updated)
       }
@@ -99,7 +87,7 @@ function Tasks() {
   const handleTaskChecked = async (task) => {
     setCompletingTaskId(task.id)
     try {
-      await checkTask(task.id, buildTaskPayload(task, 'done'))
+      await updateTaskStatus(task.id, 'done')
     } finally {
       setCompletingTaskId(null)
     }
@@ -167,6 +155,7 @@ function Tasks() {
           tasks={tasks}
           isLoading={isLoading}
           completingTaskId={completingTaskId}
+          currentUser={user}
           onSelectTask={setSelectedTask}
           onCompleteTask={handleTaskChecked}
         />
@@ -229,7 +218,7 @@ function Tasks() {
         task={selectedTask}
         members={members}
         onUpdate={handleTaskUpdated}
-        onComplete={handleTaskCompleted}
+        onStatusChange={handleTaskStatusChange}
         onDeleteRequest={setTaskToDelete}
         isSubmitting={isSubmitting}
         formError={formError}
