@@ -23,14 +23,14 @@ Le backend est globalement bien avancé et couvre la plupart des règles métier
 
 ## Dev B — Foyer, Tâches, Remboursements
 
-- [ ] **Foyer (frontend) — à construire quasi entièrement** : le backend gère déjà créer/rejoindre/régénérer le code/lister les membres/transférer l'admin/quitter/retirer un membre, mais `colocationApi.js` n'expose que `getMembers()`. Il faut :
-  - [ ] Page "créer un foyer"
-  - [ ] Page "rejoindre un foyer" via code d'invitation
-  - [ ] Affichage + régénération du code d'invitation (admin)
-  - [ ] Liste des membres avec leur rôle
-  - [ ] Transfert du rôle admin
-  - [ ] Quitter le foyer (avec gestion des erreurs : dette active / admin sans successeur)
-  - [ ] Retirer un membre (admin)
+- [X] **Foyer (frontend) — à construire quasi entièrement** : le backend gère déjà créer/rejoindre/régénérer le code/lister les membres/transférer l'admin/quitter/retirer un membre, mais `colocationApi.js` n'expose que `getMembers()`. Il faut :
+  - [X] Page "créer un foyer"
+  - [X] Page "rejoindre un foyer" via code d'invitation
+  - [X] Affichage + régénération du code d'invitation (admin)
+  - [X] Liste des membres avec leur rôle
+  - [X] Transfert du rôle admin
+  - [X] Quitter le foyer (avec gestion des erreurs : dette active / admin sans successeur)
+  - [X] Retirer un membre (admin)
 - [x] **Remboursements — permission** : `markShareAsPaid` / `markShareAsUnpaid` sont réservées au créateur de la dépense, qui valide ou annule le remboursement de chaque membre concerné.
 - [x] **Tâches — règle "l'assigné peut toujours changer le statut"** : une route dédiée permet au créateur, à l'admin et au membre assigné de choisir entre "À faire", "En cours" et "Terminée", sans leur ouvrir la modification complète de la tâche.
 - [ ] **Voters Foyer / Tâches** : créer `ColocationVoter` (rôle admin — ex: `updateMemberRole`, `removeMember` dans `ColocationService.php:247`) et `TaskVoter` (créateur ou admin — remplace la méthode privée `requireCreatorOrAdmin` de `TaskService.php:115`, dupliquée ailleurs sous une autre forme). Objectif : centraliser cette logique d'autorisation dans une seule classe par domaine au lieu de la retaper dans chaque service.
