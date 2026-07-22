@@ -74,10 +74,10 @@ function Layout({ children }) {
       />
 
       <aside className="dashboard-layout__sidebar">
-        <Link to="/" className="dashboard-layout__logo" onClick={closeMenu}>
+        <div className="dashboard-layout__logo" onClick={closeMenu}>
           <Home className="dashboard-layout__logo-icon" size={24} aria-hidden="true" />
           <span className="dashboard-layout__logo-text">ColocManager</span>
-        </Link>
+        </div>
 
         <nav className="dashboard-layout__nav" aria-label="Navigation principale">
           {navItems.map((item) => {
