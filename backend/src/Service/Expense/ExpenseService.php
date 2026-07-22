@@ -318,4 +318,20 @@ final class ExpenseService
 
         return $amounts;
     }
+    //récupération des données pour les afficher en graphique au front
+    public function statistics(User $user, int $colocationId): array
+    {
+        $context = $this->accessChecker->resolveContext($user, $colocationId);
+
+        $from = new \DateTimeImmutable('first day of -5 months');
+        $to = new \DateTimeImmutable('first day of next month');
+
+        return [
+            'monthly' => $this->expenseRepository->getMonthlyTotals(
+                $context->colocation,
+                $from,
+                $to,
+            ),
+        ];
+    }
 }

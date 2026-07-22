@@ -69,6 +69,31 @@ class ExpenseRepository extends ServiceEntityRepository
         return $result;
     }
 
+     /**
+     * Retourne le montant total des dépenses par mois.
+     */
+    public function getMonthlyTotals(
+        Colocation $colocation,
+        \DateTimeImmutable $from,
+        \DateTimeImmutable $to,
+    ): array {
+        return $this->createQueryBuilder('e')
+            ->select(
+                'SUBSTRING(e.expenseDate, 1, 7) AS month',
+                'SUM(e.amount) AS total',
+            )
+            ->where('e.colocation = :colocation')
+            ->andWhere('e.expenseDate >= :from')
+            ->andWhere('e.expenseDate < :to')
+            ->setParameter('colocation', $colocation)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     private function buildFilteredQuery(
         Colocation $colocation,
         ?string $category,

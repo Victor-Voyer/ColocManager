@@ -60,6 +60,17 @@ class ExpenseController extends AbstractController
             $this->expenseService->history($this->currentUserProvider->getUser(), $colocationId),
         );
     }
+    // Récupération des stats pour affichage au front.
+    #[Route('/colocations/{colocationId}/expenses/statistics', name: 'api_expense_statistics', methods: ['GET'], requirements: ['colocationId' => '\d+'],)]
+    public function statistics(int $colocationId): JsonResponse
+    {
+        return $this->json(
+            $this->expenseService->statistics(
+                $this->currentUserProvider->getUser(),
+                $colocationId,
+            ),
+        );
+    }
 
     /** GET /api/colocations/{colocationId}/balances — Soldes par membre (total payé, total dû, balance) */
     #[Route('/colocations/{colocationId}/balances', name: 'api_expense_balances', methods: ['GET'], requirements: ['colocationId' => '\d+'])]
