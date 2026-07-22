@@ -35,3 +35,10 @@ export function markShareAsUnpaid(expenseId, userId) {
     method: 'PATCH',
   })
 }
+
+export function getStatistics(colocationId) {
+  return apiRequest(`/colocations/${colocationId}/expenses/statistics`, {
+    method: 'GET',
+  }
+  )
+}

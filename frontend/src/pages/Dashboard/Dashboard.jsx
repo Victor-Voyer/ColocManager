@@ -10,6 +10,7 @@ import { useColocationMembers } from '../../hooks/useColocationMembers'
 import { useCrudPageState } from '../../hooks/useCrudPageState'
 import { getErrorMessage } from '../../utils/apiError'
 import { formatAmount } from '../../utils/expenseUtils'
+import ExpensesChart from '../../components/ExpensesChart/ExpensesChart.jsx'
 import './Dashboard.css'
 
 function Dashboard() {
@@ -25,6 +26,7 @@ function Dashboard() {
   const [taskFormError, setTaskFormError] = useState('')
   const [isExpenseSubmitting, setIsExpenseSubmitting] = useState(false)
   const [isTaskSubmitting, setIsTaskSubmitting] = useState(false)
+  const [expenseStatistics, setExpenseStatistics] = useState([])
 
   const { members } = useColocationMembers(colocationId)
   const {
@@ -51,14 +53,16 @@ function Dashboard() {
       setError('')
 
       try {
-        const [balanceData, taskData] = await Promise.all([
+        const [balanceData, taskData, statisticsData] = await Promise.all([
           expenseApi.getBalances(colocationId),
           taskApi.listTasks(colocationId, { status: 'pending' }),
+          expenseApi.getStatistics(colocationId),
         ])
 
         if (!cancelled) {
           setBalances(balanceData)
           setPendingTasks(Array.isArray(taskData.items) ? taskData.items.length : 0)
+          setExpenseStatistics(statisticsData.monthly ?? [])
         }
       } catch {
         if (!cancelled) {
@@ -237,6 +241,8 @@ function Dashboard() {
           ))}
         </div>
       )}
+
+      <ExpensesChart statistics={expenseStatistics} />
 
       {colocationId && balances?.members?.length > 0 && (
         <section className="dashboard-content__balances card">
