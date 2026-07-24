@@ -123,17 +123,22 @@ function Layout({ children }) {
           </div>
 
           <div className="dashboard-layout__topbar-right">
-            <div className="dashboard-layout__user-profile">
+            <Link
+              to="/settings?section=profile"
+              className="dashboard-layout__user-profile"
+              aria-label="Voir mon profil"
+            >
               <div className="dashboard-layout__user-info">
                 <span className="dashboard-layout__user-name">{displayName}</span>
                 <span className="dashboard-layout__flat-name">{colocationName.toUpperCase()}</span>
               </div>
               <img
                 src={avatarSrc}
-                alt={displayName}
+                alt=""
                 className="dashboard-layout__user-avatar"
+                aria-hidden="true"
               />
-            </div>
+            </Link>
             <BurgerButton
               isOpen={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
