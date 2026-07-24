@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Home } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
+import Logo from '../../components/Logo/Logo.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { getErrorMessage } from '../../utils/apiError'
 import './Auth.css'
@@ -41,10 +41,7 @@ function Register() {
   return (
     <div className="auth-page">
       <header className="auth-page__header">
-        <Link to="/" className="auth-page__logo">
-          <Home size={20} aria-hidden="true" />
-          ColocManager
-        </Link>
+        <Logo className="auth-page__logo" variant="light" />
       </header>
 
       <main className="auth-page__main">

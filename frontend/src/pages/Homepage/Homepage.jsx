@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
-import { Banknote, Check, Home, Sparkles } from 'lucide-react'
+import { Banknote, Check, Sparkles } from 'lucide-react'
 import BurgerButton from '../../components/BurgerButton/BurgerButton'
+import Logo from '../../components/Logo/Logo.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { getAvatarUrl } from '../../utils/avatarUtils'
 import './Homepage.css'
@@ -75,10 +76,7 @@ function Homepage() {
 
       <header className="homepage__header">
         <div className="homepage__container homepage__header-inner">
-          <Link to="/" className="homepage__logo" aria-label="ColocManager — Accueil">
-            <Home className="homepage__logo-icon" size={22} aria-hidden="true" />
-            <span className="homepage__logo-text">ColocManager</span>
-          </Link>
+          <Logo className="homepage__logo" variant="light" onClick={closeMenu} />
 
           <nav className="homepage__nav" aria-label="Navigation principale">
             <a href="#features" className="homepage__nav-link" onClick={closeMenu}>Fonctionnalités</a>
@@ -239,10 +237,12 @@ function Homepage() {
 
       <footer className="homepage__footer">
         <div className="homepage__container homepage__footer-inner">
-          <p className="homepage__footer-brand">
-            <Home size={18} aria-hidden="true" />
-            ColocManager
-          </p>
+          <Logo
+            className="homepage__footer-brand"
+            variant="light"
+            size="sm"
+            asLink={false}
+          />
           <p className="homepage__footer-copy">
             &copy; {new Date().getFullYear()} ColocManager — Projet de fin d&apos;année RNCP 5
           </p>

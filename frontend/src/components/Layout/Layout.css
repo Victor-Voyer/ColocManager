@@ -34,16 +34,8 @@
 }
 
 .dashboard-layout__logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   margin-bottom: 2.5rem;
   padding-left: 0.5rem;
-  text-decoration: none;
-}
-
-.dashboard-layout__logo-icon {
-  flex-shrink: 0;
 }
 
 .dashboard-layout__nav-icon,
@@ -54,12 +46,6 @@
 
 .dashboard-layout__search-icon {
   color: var(--color-text-muted);
-}
-
-.dashboard-layout__logo-text {
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--color-text);
 }
 
 .dashboard-layout__nav {

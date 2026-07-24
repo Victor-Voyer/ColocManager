@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import {
-  Home,
   LayoutDashboard,
   ListTodo,
   LogOut,
-  Search,
   Settings,
-  UserPlus,
   Wallet,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { getAvatarUrl } from '../../utils/avatarUtils'
 import BurgerButton from '../BurgerButton/BurgerButton'
+import Logo from '../Logo/Logo.jsx'
 import './Layout.css'
 
 const ICON_SIZE = 20
@@ -74,10 +72,12 @@ function Layout({ children }) {
       />
 
       <aside className="dashboard-layout__sidebar">
-        <div className="dashboard-layout__logo" onClick={closeMenu}>
-          <Home className="dashboard-layout__logo-icon" size={24} aria-hidden="true" />
-          <span className="dashboard-layout__logo-text">ColocManager</span>
-        </div>
+        <Logo
+          className="dashboard-layout__logo"
+          variant="dark"
+          size="lg"
+          onClick={closeMenu}
+        />
 
         <nav className="dashboard-layout__nav" aria-label="Navigation principale">
           {navItems.map((item) => {

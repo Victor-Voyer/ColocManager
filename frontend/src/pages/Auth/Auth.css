@@ -25,20 +25,6 @@
   padding: 1rem 1.25rem;
 }
 
-.auth-page__logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  color: var(--color-white);
-  font-weight: 700;
-  font-size: 1.125rem;
-}
-
-.auth-page__logo svg {
-  flex-shrink: 0;
-}
-
 .auth-page__main {
   flex: 1;
   display: flex;

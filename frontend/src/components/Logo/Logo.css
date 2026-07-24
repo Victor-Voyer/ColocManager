@@ -1,0 +1,36 @@
+.app-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.app-logo__image {
+  height: 2rem;
+  width: auto;
+  flex-shrink: 0;
+  display: block;
+}
+
+.app-logo__text {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.app-logo--sm .app-logo__image {
+  height: 1.75rem;
+}
+
+.app-logo--lg .app-logo__image {
+  height: 2.25rem;
+}
+
+.app-logo--light {
+  color: #ffffff;
+}
+
+.app-logo--dark {
+  color: #1f2937;
+}
