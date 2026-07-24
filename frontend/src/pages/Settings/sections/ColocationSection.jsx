@@ -226,7 +226,7 @@ function ColocationSection({ colocationId, colocationName, isAdmin }) {
         </div>
         <button
           type="button"
-          className="btn settings-leave-button"
+          className="btn settings-leave-block__button"
           onClick={() => {
             setLeaveError('')
             setIsLeaveDialogOpen(true)

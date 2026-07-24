@@ -217,13 +217,13 @@ function Dashboard() {
       </div>
 
       {error && (
-        <p className="alert--error" role="alert">
+        <p className="alert alert--error" role="alert">
           {error}
         </p>
       )}
 
       {isLoading ? (
-        <p className="page-status">Chargement du tableau de bord…</p>
+        <p className="page__status">Chargement du tableau de bord…</p>
       ) : (
         <div className="dashboard-content__stats-grid">
           {stats.map((stat) => (

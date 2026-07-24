@@ -76,7 +76,7 @@ function Layout({ children }) {
           className="dashboard-layout__logo"
           variant="dark"
           size="lg"
-          onClick={closeMenu}
+          asLink={false}
         />
 
         <nav className="dashboard-layout__nav" aria-label="Navigation principale">

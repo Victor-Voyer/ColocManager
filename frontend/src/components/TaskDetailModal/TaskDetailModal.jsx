@@ -80,15 +80,15 @@ function TaskDetailModal({
       ) : (
         <>
           <div className="modal__body">
-            <div className="task-detail__meta">
+            <div className="detail-modal__meta">
               <div>
-                <span className="task-detail__label">Titre</span>
-                <p className="task-detail__value task-detail__title">
+                <span className="detail-modal__label">Titre</span>
+                <p className="detail-modal__value task-detail__title">
                   {task.title}
                 </p>
               </div>
               <div>
-                <span className="task-detail__label">Statut</span>
+                <span className="detail-modal__label">Statut</span>
                 {canChangeStatus ? (
                   <select
                     className="task-detail__status-select"
@@ -103,7 +103,7 @@ function TaskDetailModal({
                     ))}
                   </select>
                 ) : (
-                  <p className="task-detail__value">
+                  <p className="detail-modal__value">
                     <span className={`badge badge--${status.variant}`}>
                       {status.label}
                     </span>
@@ -111,20 +111,20 @@ function TaskDetailModal({
                 )}
               </div>
               <div>
-                <span className="task-detail__label">Assignée à</span>
-                <p className="task-detail__value">
+                <span className="detail-modal__label">Assignée à</span>
+                <p className="detail-modal__value">
                   {formatMemberName(task.assignedTo)}
                 </p>
               </div>
               <div>
-                <span className="task-detail__label">Échéance</span>
-                <p className="task-detail__value">
+                <span className="detail-modal__label">Échéance</span>
+                <p className="detail-modal__value">
                   {formatTaskDate(task.dueDate)}
                 </p>
               </div>
               <div>
-                <span className="task-detail__label">Priorité</span>
-                <p className="task-detail__value">
+                <span className="detail-modal__label">Priorité</span>
+                <p className="detail-modal__value">
                   <span className={`badge badge--${priority.variant}`}>
                     {priority.label}
                   </span>
@@ -133,7 +133,7 @@ function TaskDetailModal({
             </div>
 
             <div className="task-detail__section">
-              <span className="task-detail__label">Description</span>
+              <span className="detail-modal__label">Description</span>
               <p className="task-detail__description">
                 {task.description || 'Aucune description.'}
               </p>

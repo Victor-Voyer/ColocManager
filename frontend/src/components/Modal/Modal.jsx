@@ -29,7 +29,7 @@ function Modal({ isOpen, onClose, title, children, wide = false }) {
 
   return (
     <div
-      className="modal-overlay"
+      className="modal__overlay"
       role="presentation"
       onClick={onClose}
     >

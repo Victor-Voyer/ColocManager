@@ -54,8 +54,8 @@ function HandleColocation() {
   }
 
   return (
-    <div className="page-content">
-      <div className="page-header">
+    <div className="page__content">
+      <div className="page__header">
         <div>
           <h1>Gérer ma colocation</h1>
           <p>Créez une colocation ou rejoignez un foyer existant.</p>

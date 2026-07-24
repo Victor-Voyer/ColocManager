@@ -111,8 +111,8 @@ function Tasks() {
   }
 
   return (
-    <div className="page-content">
-      <div className="page-header">
+    <div className="page__content">
+      <div className="page__header">
         <div>
           <h1>Tâches ménagères</h1>
           <p>Répartition équitable des corvées.</p>
@@ -128,7 +128,7 @@ function Tasks() {
       </div>
 
       {error && (
-        <p className="alert--error" role="alert">
+        <p className="alert alert--error" role="alert">
           {error}
         </p>
       )}
@@ -167,9 +167,9 @@ function Tasks() {
         <h2>Tâches terminées</h2>
         <div className="tasks-page__history-list">
           {isHistoryLoading ? (
-            <p className="page-status">Chargement…</p>
+            <p className="page__status">Chargement…</p>
           ) : history.length === 0 ? (
-            <p className="page-status">Aucun historique pour le moment.</p>
+            <p className="page__status">Aucun historique pour le moment.</p>
           ) : (
             history.map((task) => (
               <div key={task.id} className="tasks-page__history-item">

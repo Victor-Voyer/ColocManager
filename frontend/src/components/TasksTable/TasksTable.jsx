@@ -15,19 +15,19 @@ function TasksTable({
   onCompleteTask,
 }) {
   if (isLoading) {
-    return <p className="page-status">Chargement…</p>
+    return <p className="page__status">Chargement…</p>
   }
 
   if (tasks.length === 0) {
     return (
-      <p className="page-status">
+      <p className="page__status">
         Aucune tâche pour le moment. Ajoutez-en une !
       </p>
     )
   }
 
   return (
-    <div className="table-container">
+    <div className="table__container">
       <table className="table">
         <thead>
           <tr>

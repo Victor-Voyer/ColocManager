@@ -1,7 +1,7 @@
 @import '../shared/Pages.css';
 @import '../shared/forms.css';
 
-.settings-page .page-header {
+.settings-page .page__header {
   margin-bottom: 1.5rem;
 }
 
@@ -362,12 +362,12 @@
   border-bottom: none;
 }
 
-.settings-leave-button {
+.settings-leave-block__button {
   background-color: #ef4444;
   color: white;
 }
 
-.settings-leave-button:hover {
+.settings-leave-block__button:hover {
   background-color: #dc2626;
 }
 

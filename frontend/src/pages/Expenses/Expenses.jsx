@@ -78,8 +78,8 @@ function Expenses() {
   }
 
   return (
-    <div className="page-content">
-      <div className="page-header">
+    <div className="page__content">
+      <div className="page__header">
         <div>
           <h1>Dépenses</h1>
           <p>Gérez les finances de votre colocation.</p>
@@ -95,7 +95,7 @@ function Expenses() {
       </div>
 
       {error && (
-        <p className="alert--error" role="alert">
+        <p className="alert alert--error" role="alert">
           {error}
         </p>
       )}

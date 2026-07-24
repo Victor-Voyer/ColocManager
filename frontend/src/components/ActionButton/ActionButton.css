@@ -55,7 +55,7 @@
 }
 
 @media (max-width: 768px) {
-  .page-header .action-btn {
+  .page__header .action-btn {
     width: 100%;
   }
 }

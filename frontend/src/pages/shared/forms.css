@@ -64,9 +64,9 @@
 
 .detail-modal__meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .detail-modal__label {
@@ -82,5 +82,12 @@
 .detail-modal__value {
   margin: 0;
   font-size: 0.9375rem;
+  font-weight: 500;
   color: #1f2937;
+}
+
+@media (max-width: 480px) {
+  .detail-modal__meta {
+    grid-template-columns: 1fr;
+  }
 }

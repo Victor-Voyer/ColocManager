@@ -32,8 +32,8 @@ function Settings() {
   }
 
   return (
-    <div className="page-content settings-page">
-      <div className="page-header">
+    <div className="page__content settings-page">
+      <div className="page__header">
         <div>
           <h1>Paramètres</h1>
           <p>Gérez votre profil et votre colocation.</p>

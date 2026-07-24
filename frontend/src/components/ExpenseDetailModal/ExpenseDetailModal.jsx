@@ -36,7 +36,7 @@ function ExpenseDetailModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Détail de la dépense" wide>
       <div className="modal__body">
-        <div className="expense-detail__meta detail-modal__meta">
+        <div className="detail-modal__meta">
           <div>
             <span className="detail-modal__label">Montant</span>
             <p className="detail-modal__value expense-detail__amount">
