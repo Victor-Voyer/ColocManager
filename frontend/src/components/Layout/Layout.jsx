@@ -112,14 +112,14 @@ function Layout({ children }) {
       <main className="dashboard-layout__main">
         <header className="dashboard-layout__topbar">
           <div className="dashboard-layout__topbar-center">
-            <div className="dashboard-layout__search">
+            {/* <div className="dashboard-layout__search">
               <Search className="dashboard-layout__search-icon" size={18} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Rechercher…"
                 aria-label="Rechercher"
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="dashboard-layout__topbar-right">

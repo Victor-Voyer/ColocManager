@@ -61,7 +61,6 @@ function Register() {
           )}
 
           <form className="auth-page__form" onSubmit={handleSubmit} noValidate>
-            <div className="auth-page__row">
               <div className="auth-page__field">
                 <label htmlFor="register-firstName">Prénom</label>
                 <input
@@ -85,7 +84,6 @@ function Register() {
                   onChange={(event) => setLastName(event.target.value)}
                 />
               </div>
-            </div>
 
             <div className="auth-page__field">
               <label htmlFor="register-email">Adresse e-mail</label>
