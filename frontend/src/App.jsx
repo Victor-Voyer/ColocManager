@@ -10,12 +10,14 @@ import Expenses from './pages/Expenses/Expenses.jsx'
 import Tasks from './pages/Tasks/Tasks.jsx'
 import Settings from './pages/Settings/Settings.jsx'
 import HandleColocation from './pages/HandleColocation/HandleColocation.jsx'
+import CGU from './pages/CGU/CGU.jsx'
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/cgu" element={<CGU />} />
 
         <Route
           path="/login"

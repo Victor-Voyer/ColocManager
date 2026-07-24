@@ -120,6 +120,10 @@ function Register() {
             Déjà un compte ?{' '}
             <Link to="/login">Se connecter</Link>
           </p>
+          <p className="auth-page__footer">
+            En créant un compte, vous acceptez nos{' '}
+            <Link to="/cgu">Conditions Générales d&apos;Utilisation</Link>.
+          </p>
         </div>
       </main>
     </div>

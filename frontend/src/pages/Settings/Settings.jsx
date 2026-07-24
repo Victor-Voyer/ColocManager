@@ -4,11 +4,12 @@ import { useAuth } from '../../context/AuthContext'
 import SettingsNav from './SettingsNav.jsx'
 import SettingsSummary from './SettingsSummary.jsx'
 import AccountSection from './sections/AccountSection.jsx'
+import CguSection from './sections/CguSection.jsx'
 import ColocationSection from './sections/ColocationSection.jsx'
 import ProfileSection from './sections/ProfileSection.jsx'
 import './Settings.css'
 
-const VALID_SECTIONS = ['profile', 'colocation', 'account']
+const VALID_SECTIONS = ['profile', 'colocation', 'account', 'cgu']
 
 function Settings() {
   const { user } = useAuth()
@@ -49,7 +50,7 @@ function Settings() {
         </aside>
 
         <div className="settings-layout__content">
-          <SettingsSummary />
+          {activeSection !== 'cgu' && <SettingsSummary />}
 
           {activeSection === 'profile' && <ProfileSection />}
 
@@ -62,6 +63,8 @@ function Settings() {
           )}
 
           {activeSection === 'account' && <AccountSection />}
+
+          {activeSection === 'cgu' && <CguSection />}
         </div>
       </div>
     </div>

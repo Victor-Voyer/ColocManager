@@ -1,0 +1,116 @@
+.cgu-page {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e3a8a;
+  --color-bg: #f9fafb;
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-white: #ffffff;
+  --color-border: #e5e7eb;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  min-height: 100svh;
+}
+
+.cgu-page__main {
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+.cgu-page__card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.cgu-page__back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.cgu-page__back:hover {
+  text-decoration: underline;
+}
+
+.cgu-content__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  font-weight: 700;
+}
+
+.cgu-content__updated {
+  margin: 0 0 2rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+}
+
+.cgu-content__intro {
+  margin: 0 0 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  color: var(--color-text-muted, #6b7280);
+  line-height: 1.6;
+}
+
+.cgu-content__section {
+  margin-bottom: 1.75rem;
+}
+
+.cgu-content__section:last-child {
+  margin-bottom: 0;
+}
+
+.cgu-content__section h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.cgu-content__section p {
+  margin: 0 0 0.75rem;
+  line-height: 1.6;
+  color: var(--color-text, #1f2937);
+}
+
+.cgu-content__section p:last-child {
+  margin-bottom: 0;
+}
+
+.cgu-content__section ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+
+.cgu-content__section li {
+  margin-bottom: 0.375rem;
+}
+
+.cgu-content__section a {
+  color: var(--color-primary, #3b82f6);
+}
+
+/* Version embarquée dans les paramètres (titre déjà dans le header de section) */
+.cgu-content--embedded .cgu-content__title {
+  display: none;
+}
+
+.cgu-content--embedded .cgu-content__updated {
+  margin-top: 0;
+}
+
+@media (max-width: 480px) {
+  .cgu-page__main {
+    padding: 1.5rem 1rem 3rem;
+  }
+}

@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
 import { Banknote, Check, Sparkles } from 'lucide-react'
-import BurgerButton from '../../components/BurgerButton/BurgerButton'
 import Logo from '../../components/Logo/Logo.jsx'
-import { useAuth } from '../../context/AuthContext'
-import { getAvatarUrl } from '../../utils/avatarUtils'
+import PublicHeader from '../../components/PublicHeader/PublicHeader.jsx'
 import './Homepage.css'
 
 const features = [
@@ -38,80 +35,9 @@ const benefits = [
 ]
 
 function Homepage() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { user, isAuthenticated, isBootstrapping } = useAuth()
-
-  const displayName = user
-    ? `${user.firstName} ${user.lastName}`.trim()
-    : 'Utilisateur'
-  const avatarSrc = getAvatarUrl(displayName)
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [menuOpen])
-
-  useEffect(() => {
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') {
-        setMenuOpen(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [])
-
-  const closeMenu = () => setMenuOpen(false)
-
   return (
-    <div className={`homepage ${menuOpen ? 'homepage--menu-open' : ''}`}>
-      <div
-        className="homepage__overlay"
-        onClick={closeMenu}
-        aria-hidden="true"
-      />
-
-      <header className="homepage__header">
-        <div className="homepage__container homepage__header-inner">
-          <Logo className="homepage__logo" variant="light" onClick={closeMenu} />
-
-          <nav className="homepage__nav" aria-label="Navigation principale">
-            <a href="#features" className="homepage__nav-link" onClick={closeMenu}>Fonctionnalités</a>
-            <a href="#benefits" className="homepage__nav-link" onClick={closeMenu}>Avantages</a>
-            {!isBootstrapping && (
-              isAuthenticated ? (
-                <Link
-                  to="/dashboard"
-                  className="homepage__profile-btn"
-                  onClick={closeMenu}
-                >
-                  <img
-                    src={avatarSrc}
-                    alt=""
-                    className="homepage__profile-btn-avatar"
-                    aria-hidden="true"
-                  />
-                  <span className="homepage__profile-btn-name">{displayName}</span>
-                </Link>
-              ) : (
-                <>
-                  <Link to="/login" className="homepage__btn homepage__btn--neutral homepage__btn--sm" onClick={closeMenu}>Connexion</Link>
-                  <Link to="/register" className="homepage__btn homepage__btn--primary homepage__btn--sm" onClick={closeMenu}>S&apos;inscrire</Link>
-                </>
-              )
-            )}
-          </nav>
-
-          <BurgerButton
-            isOpen={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-            className="homepage__burger"
-          />
-        </div>
-      </header>
+    <div className="homepage">
+      <PublicHeader />
 
       <main>
         <section className="homepage__hero">
@@ -244,7 +170,9 @@ function Homepage() {
             asLink={false}
           />
           <p className="homepage__footer-copy">
-            &copy; {new Date().getFullYear()} ColocManager — Projet de fin d&apos;année RNCP 5
+            &copy; {new Date().getFullYear()} ColocManager
+            {' · '}
+            <Link to="/cgu" className="homepage__footer-link">CGU</Link>
           </p>
         </div>
       </footer>

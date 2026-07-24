@@ -1,9 +1,10 @@
-import { AlertTriangle, Home, User } from 'lucide-react'
+import { AlertTriangle, FileText, Home, User } from 'lucide-react'
 
 const SECTIONS = [
   { id: 'profile', label: 'Profil', icon: User },
   { id: 'colocation', label: 'Colocation', icon: Home },
   { id: 'account', label: 'Compte', icon: AlertTriangle },
+  { id: 'cgu', label: 'CGU', icon: FileText },
 ]
 
 function SettingsNav({ activeSection, onSectionChange }) {
