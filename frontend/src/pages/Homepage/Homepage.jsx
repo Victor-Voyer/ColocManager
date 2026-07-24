@@ -34,10 +34,6 @@ const benefits = [
     title: 'Convivialité',
     text: 'Une ambiance positive qui facilite la vie en colocation au quotidien.',
   },
-  {
-    title: 'Temps réel',
-    text: 'Listes et données synchronisées en temps réel entre tous les membres.',
-  },
 ]
 
 function Homepage() {
@@ -127,8 +123,7 @@ function Homepage() {
                 Vivez ensemble, <span className="homepage__title-accent">gérez sereinement</span>
               </h1>
               <p className="homepage__subtitle">
-                ColocManager centralise vos dépenses, tâches ménagères et listes de courses
-                — le tout dans une interface claire et apaisante.
+                ColocManager centralise vos dépenses, tâches ménagères, le tout dans une interface claire et apaisante.
               </p>
               <div className="homepage__hero-actions">
                 <Link to="/register" className="homepage__btn homepage__btn--primary">
@@ -157,11 +152,6 @@ function Homepage() {
                     <span className="homepage__preview-label">Tâches</span>
                     <strong>3 / 5</strong>
                     <small>Terminées</small>
-                  </div>
-                  <div className="homepage__preview-card homepage__preview-card--shop">
-                    <span className="homepage__preview-label">Courses</span>
-                    <strong>12</strong>
-                    <small>Articles restants</small>
                   </div>
                 </div>
               </div>
