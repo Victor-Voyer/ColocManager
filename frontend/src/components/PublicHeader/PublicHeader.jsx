@@ -9,7 +9,7 @@ import './PublicHeader.css'
 function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
-  const { user, isAuthenticated, isBootstrapping } = useAuth()
+  const { user, isAuthenticated } = useAuth()
 
   const displayName = user
     ? `${user.firstName} ${user.lastName}`.trim()
@@ -65,39 +65,37 @@ function PublicHeader() {
             <a href={benefitsHref} className="public-header__nav-link" onClick={closeMenu}>
               Avantages
             </a>
-            {!isBootstrapping && (
-              isAuthenticated ? (
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="public-header__profile-btn"
+                onClick={closeMenu}
+              >
+                <img
+                  src={avatarSrc}
+                  alt=""
+                  className="public-header__profile-btn-avatar"
+                  aria-hidden="true"
+                />
+                <span className="public-header__profile-btn-name">{displayName}</span>
+              </Link>
+            ) : (
+              <>
                 <Link
-                  to="/dashboard"
-                  className="public-header__profile-btn"
+                  to="/login"
+                  className="public-header__btn public-header__btn--neutral"
                   onClick={closeMenu}
                 >
-                  <img
-                    src={avatarSrc}
-                    alt=""
-                    className="public-header__profile-btn-avatar"
-                    aria-hidden="true"
-                  />
-                  <span className="public-header__profile-btn-name">{displayName}</span>
+                  Connexion
                 </Link>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="public-header__btn public-header__btn--neutral"
-                    onClick={closeMenu}
-                  >
-                    Connexion
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="public-header__btn public-header__btn--primary"
-                    onClick={closeMenu}
-                  >
-                    S&apos;inscrire
-                  </Link>
-                </>
-              )
+                <Link
+                  to="/register"
+                  className="public-header__btn public-header__btn--primary"
+                  onClick={closeMenu}
+                >
+                  S&apos;inscrire
+                </Link>
+              </>
             )}
           </nav>
 
