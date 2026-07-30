@@ -26,42 +26,45 @@ function MemberListItem({
         className="member-item__avatar"
         aria-hidden="true"
       />
-      <div className="member-item__info">
-        <span className="member-item__name">
-          {displayName}
-          {isCurrentUser && <span className="member-item__you"> (vous)</span>}
-        </span>
+      <div className="member-item__content">
+        <div className="member-item__header">
+          <span className="member-item__name">
+            {displayName}
+            {isCurrentUser && <span className="member-item__you"> (vous)</span>}
+          </span>
+
+          {isAdmin && !isCurrentUser && (
+            <div className="member-item__actions">
+              {!isMemberAdmin && (
+                <button
+                  type="button"
+                  className="member-item__action"
+                  onClick={onPromote}
+                  disabled={isPromoting}
+                  aria-label={`Nommer ${displayName} administrateur`}
+                  title="Nommer administrateur"
+                >
+                  <Shield size={18} aria-hidden="true" />
+                </button>
+              )}
+              <button
+                type="button"
+                className="member-item__action member-item__action--danger"
+                onClick={onRemove}
+                disabled={isRemoving}
+                aria-label={`Retirer ${displayName}`}
+                title="Retirer de la colocation"
+              >
+                <UserMinus size={18} aria-hidden="true" />
+              </button>
+            </div>
+          )}
+        </div>
+
         <span className={`member-item__role member-item__role--${isMemberAdmin ? 'admin' : 'member'}`}>
           {isMemberAdmin ? 'Administrateur' : 'Membre'}
         </span>
       </div>
-
-      {isAdmin && !isCurrentUser && (
-        <div className="member-item__actions">
-          {!isMemberAdmin && (
-            <button
-              type="button"
-              className="member-item__action"
-              onClick={onPromote}
-              disabled={isPromoting}
-              aria-label={`Nommer ${displayName} administrateur`}
-              title="Nommer administrateur"
-            >
-              <Shield size={18} aria-hidden="true" />
-            </button>
-          )}
-          <button
-            type="button"
-            className="member-item__action member-item__action--danger"
-            onClick={onRemove}
-            disabled={isRemoving}
-            aria-label={`Retirer ${displayName}`}
-            title="Retirer de la colocation"
-          >
-            <UserMinus size={18} aria-hidden="true" />
-          </button>
-        </div>
-      )}
     </div>
   )
 }

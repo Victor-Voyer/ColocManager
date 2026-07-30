@@ -319,7 +319,7 @@
   flex-shrink: 0;
 }
 
-.member-item__info {
+.member-item__content {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -327,10 +327,23 @@
   gap: 0.125rem;
 }
 
+.member-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
 .member-item__name {
+  flex: 1;
+  min-width: 0;
   font-size: 0.9375rem;
   font-weight: 600;
   color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .member-item__you {
@@ -593,25 +606,12 @@
   }
 
   .member-item {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 0.75rem;
     padding: 0.75rem;
   }
 
-  .member-item__info {
-    min-width: 0;
-  }
-
-  .member-item__name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .member-item__actions {
-    margin-left: auto;
+  .member-item__action {
+    width: 2rem;
+    height: 2rem;
   }
 
   .invitation-code__actions {
@@ -664,33 +664,6 @@
 
   .settings-summary__badges {
     justify-content: center;
-  }
-
-  .member-item {
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
-  }
-
-  .member-item__info {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .member-item__avatar {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    align-self: start;
-  }
-
-  .member-item__name {
-    white-space: normal;
-  }
-
-  .member-item__actions {
-    grid-column: 1 / -1;
-    width: 100%;
-    justify-content: flex-end;
-    margin-left: 0;
   }
 
   .settings-section .form .btn,
