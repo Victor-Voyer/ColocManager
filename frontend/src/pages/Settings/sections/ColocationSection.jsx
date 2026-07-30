@@ -14,6 +14,7 @@ import { useAuth } from '../../../context/AuthContext'
 import { useColocationMembers } from '../../../hooks/useColocationMembers'
 import { getErrorMessage } from '../../../utils/apiError'
 import InvitationCodeCard from '../components/InvitationCodeCard.jsx'
+import ColocationNameForm from '../components/ColocationNameForm.jsx'
 import MemberListItem from '../components/MemberListItem.jsx'
 
 function ColocationSection({ colocationId, colocationName, isAdmin }) {
@@ -155,11 +156,23 @@ function ColocationSection({ colocationId, colocationName, isAdmin }) {
             <p>Détails de votre colocation actuelle.</p>
           </div>
         </div>
+
+        {isAdmin ? (
+          <ColocationNameForm
+            colocationId={colocationId}
+            initialName={colocationName}
+            onUpdated={refreshUser}
+          />
+        ) : (
+          <dl className="settings-info-list">
+            <div className="settings-info-list__item">
+              <dt>Nom du foyer</dt>
+              <dd>{colocationName}</dd>
+            </div>
+          </dl>
+        )}
+
         <dl className="settings-info-list">
-          <div className="settings-info-list__item">
-            <dt>Nom du foyer</dt>
-            <dd>{colocationName}</dd>
-          </div>
           <div className="settings-info-list__item">
             <dt>Votre rôle</dt>
             <dd>{isAdmin ? 'Administrateur' : 'Membre'}</dd>

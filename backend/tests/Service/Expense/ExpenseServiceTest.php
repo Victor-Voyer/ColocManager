@@ -178,7 +178,7 @@ final class ExpenseServiceTest extends TestCase
         $this->entityManager->expects($this->never())->method('persist');
 
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('L\'utilisateur 999 n\'est pas membre de la colocation.');
+        $this->expectExceptionMessage('Ressource introuvable.');
 
         $this->expenseService->create($payer, 10, $dto);
     }

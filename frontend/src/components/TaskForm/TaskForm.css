@@ -44,6 +44,16 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+.task-form__field input[aria-invalid='true'] {
+  border-color: #ef4444;
+}
+
+.task-form__field-error {
+  margin: 0.375rem 0 0;
+  font-size: 0.8125rem;
+  color: #ef4444;
+}
+
 .task-form__row {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -11,11 +11,7 @@ final class DateParser
     {
         $parsed = \DateTimeImmutable::createFromFormat('Y-m-d', $date);
         if ($parsed === false) {
-            $message = $paramName !== null
-                ? sprintf('Format de date invalide pour "%s" (attendu : Y-m-d).', $paramName)
-                : 'Date invalide, format attendu : Y-m-d.';
-
-            throw new ApiException($message);
+            throw new ApiException('Date invalide.');
         }
 
         return $parsed;
@@ -29,7 +25,7 @@ final class DateParser
         }
 
         if (is_array($value) || !is_string($value)) {
-            throw new ApiException(sprintf('Format de date invalide pour "%s" (attendu : Y-m-d).', $paramName));
+            throw new ApiException('Date invalide.');
         }
 
         return self::parseYmd($value, $paramName);

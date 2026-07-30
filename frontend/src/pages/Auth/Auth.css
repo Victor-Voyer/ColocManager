@@ -94,6 +94,29 @@
   border-color: var(--color-primary);
 }
 
+.auth-page__field input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.auth-page__field input[aria-invalid='true']:focus {
+  outline-color: rgba(239, 68, 68, 0.35);
+  border-color: var(--color-error);
+}
+
+.auth-page__hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.auth-page__field-error {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  line-height: 1.45;
+}
+
 .auth-page__submit {
   margin-top: 0.5rem;
   padding: 0.75rem 1rem;

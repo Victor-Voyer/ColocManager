@@ -36,6 +36,7 @@ final class TaskService
     public function create(User $user, int $colocationId, CreateTaskDto $dto): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $this->assertDueDateNotInPast($dto->dueDate);
 
         $task = new Task();
         $task->setColocation($context->colocation);
@@ -143,7 +144,7 @@ final class TaskService
     {
         $task = $this->taskRepository->find($taskId);
         if ($task === null || $task->getColocation()->getId() !== $colocationId) {
-            throw ApiException::notFound('Tâche introuvable.');
+            throw ApiException::resourceNotFound();
         }
 
         return $task;
@@ -167,12 +168,30 @@ final class TaskService
     private function resolveMember(int $userId, Colocation $colocation): User
     {
         $member = $this->userRepository->find($userId);
-        if ($member === null) {
-            throw ApiException::notFound('Utilisateur introuvable.');
+        if (
+            $member === null
+            || $member->getColocation() === null
+            || $member->getColocation()->getId() !== $colocation->getId()
+        ) {
+            throw ApiException::resourceNotFound();
         }
 
-        $this->accessChecker->requireMembership($member, $colocation);
-
         return $member;
+    }
+
+    private function assertDueDateNotInPast(?string $dueDate): void
+    {
+        if ($dueDate === null || $dueDate === '') {
+            return;
+        }
+
+        $parsed = DateParser::parseNullableYmd($dueDate);
+        if ($parsed === null) {
+            return;
+        }
+
+        if ($parsed < new \DateTimeImmutable('today')) {
+            throw new ApiException('La date d\'échéance ne peut pas être antérieure à aujourd\'hui.');
+        }
     }
 }
