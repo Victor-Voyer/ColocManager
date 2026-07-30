@@ -356,6 +356,7 @@
 
   .dashboard-layout__logout {
     margin-top: auto;
+    margin-bottom: 1.5rem;
     flex-shrink: 0;
   }
 
