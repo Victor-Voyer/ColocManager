@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router'
+import { BrowserRouter as Router, Routes, Route } from 'react-router'
 import GuestRoute from './components/GuestRoute/GuestRoute.jsx'
 import ProtectedLayout from './components/ProtectedLayout/ProtectedLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx'
@@ -11,6 +11,7 @@ import Tasks from './pages/Tasks/Tasks.jsx'
 import Settings from './pages/Settings/Settings.jsx'
 import HandleColocation from './pages/HandleColocation/HandleColocation.jsx'
 import CGU from './pages/CGU/CGU.jsx'
+import NotFound from './pages/NotFound/NotFound.jsx'
 
 function App() {
   return (
@@ -50,7 +51,7 @@ function App() {
           <Route path="/collocations" element={<HandleColocation />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   )
