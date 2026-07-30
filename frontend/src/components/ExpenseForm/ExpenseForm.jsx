@@ -208,23 +208,25 @@ function ExpenseForm({
                 </label>
                 {share.included && (
                   <div className="expense-form__share-controls">
-                    {share.isManual ? (
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        className="expense-form__share-amount"
-                        placeholder="0.00"
-                        value={share.amountOwed}
-                        onChange={(event) =>
-                          updateShareAmount(share.userId, event.target.value)
-                        }
-                        autoFocus
-                      />
-                    ) : (
-                      <span className="expense-form__share-auto">
-                        {previewAmount} €
-                      </span>
-                    )}
+                    <div className="expense-form__share-value">
+                      {share.isManual ? (
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          className="expense-form__share-amount"
+                          placeholder="0.00"
+                          value={share.amountOwed}
+                          onChange={(event) =>
+                            updateShareAmount(share.userId, event.target.value)
+                          }
+                          autoFocus
+                        />
+                      ) : (
+                        <span className="expense-form__share-auto">
+                          {previewAmount} €
+                        </span>
+                      )}
+                    </div>
                     <button
                       type="button"
                       className={
