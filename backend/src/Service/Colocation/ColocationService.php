@@ -60,12 +60,12 @@ final class ColocationService
 
         $colocation = $this->colocationRepository->findOneByInvitationCode($dto->invitationCode);
         if ($colocation === null) {
-            throw ApiException::notFound('Code d\'invitation invalide.');
+            throw ApiException::notFound('Impossible de rejoindre la colocation.');
         }
 
         $expiresAt = $colocation->getInvitationCodeExpiresAt();
         if ($expiresAt !== null && $expiresAt < new \DateTimeImmutable()) {
-            throw ApiException::conflict('Le code d\'invitation a expiré.');
+            throw ApiException::notFound('Impossible de rejoindre la colocation.');
         }
 
         $user->setColocation($colocation);
@@ -108,7 +108,6 @@ final class ColocationService
         if ($expensesCount > 0) {
             throw ApiException::conflict(
                 'Impossible de supprimer la colocation : des dépenses y sont enregistrées.',
-                ['expensesCount' => $expensesCount],
             );
         }
 
@@ -139,7 +138,7 @@ final class ColocationService
         }
 
         if ($userId === $user->getId()) {
-            throw ApiException::conflict('Utilisez POST /leave pour quitter la colocation.');
+            throw ApiException::conflict('Action impossible.');
         }
 
         $targetUser = $this->resolveColocationMember($context->colocation, $userId);
@@ -149,7 +148,7 @@ final class ColocationService
         }
 
         if ($this->expenseShareRepository->hasActiveDebt($targetUser)) {
-            throw ApiException::conflict('Impossible d\'exclure ce membre : il a des dettes actives non réglées.');
+            throw ApiException::conflict('Impossible d\'exclure ce membre.');
         }
 
         $this->detachUserFromColocation($targetUser);
@@ -240,7 +239,7 @@ final class ColocationService
     {
         $targetUser = $this->userRepository->find($userId);
         if ($targetUser === null || $targetUser->getColocation()?->getId() !== $colocation->getId()) {
-            throw ApiException::notFound('Cet utilisateur ne fait pas partie de la colocation.');
+            throw ApiException::resourceNotFound();
         }
 
         return $targetUser;

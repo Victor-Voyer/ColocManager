@@ -143,7 +143,7 @@ final class TaskService
     {
         $task = $this->taskRepository->find($taskId);
         if ($task === null || $task->getColocation()->getId() !== $colocationId) {
-            throw ApiException::notFound('Tâche introuvable.');
+            throw ApiException::resourceNotFound();
         }
 
         return $task;
@@ -167,11 +167,13 @@ final class TaskService
     private function resolveMember(int $userId, Colocation $colocation): User
     {
         $member = $this->userRepository->find($userId);
-        if ($member === null) {
-            throw ApiException::notFound('Utilisateur introuvable.');
+        if (
+            $member === null
+            || $member->getColocation() === null
+            || $member->getColocation()->getId() !== $colocation->getId()
+        ) {
+            throw ApiException::resourceNotFound();
         }
-
-        $this->accessChecker->requireMembership($member, $colocation);
 
         return $member;
     }

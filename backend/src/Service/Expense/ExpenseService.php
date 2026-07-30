@@ -203,7 +203,7 @@ final class ExpenseService
     {
         $expense = $this->expenseRepository->find($expenseId);
         if ($expense === null) {
-            throw ApiException::notFound('Dépense introuvable.');
+            throw ApiException::resourceNotFound();
         }
 
         if (!$this->authorizationChecker->isGranted(ExpenseShareVoter::MANAGE_REPAYMENT, $expense)) {
@@ -214,14 +214,14 @@ final class ExpenseService
 
         $targetUser = $this->userRepository->find($targetUserId);
         if ($targetUser === null) {
-            throw ApiException::notFound('Membre introuvable.');
+            throw ApiException::resourceNotFound();
         }
 
         $share = $this->expenseShareRepository
             ->findOneByExpenseAndUser($expense, $targetUser);
 
         if ($share === null) {
-            throw ApiException::notFound('Part de dépense introuvable.');
+            throw ApiException::resourceNotFound();
         }
 
         return $share;
@@ -233,7 +233,7 @@ final class ExpenseService
 
         $expense = $this->expenseRepository->find($expenseId);
         if ($expense === null || $expense->getColocation()->getId() !== $colocationId) {
-            throw ApiException::notFound('Dépense introuvable.');
+            throw ApiException::resourceNotFound();
         }
 
         return $expense;
@@ -243,11 +243,13 @@ final class ExpenseService
     {
         $payer = $paidByUserId !== null ? $this->userRepository->find($paidByUserId) : $currentUser;
 
-        if ($payer === null) {
-            throw ApiException::notFound('Payeur introuvable.');
+        if (
+            $payer === null
+            || $payer->getColocation() === null
+            || $payer->getColocation()->getId() !== $colocation->getId()
+        ) {
+            throw ApiException::resourceNotFound();
         }
-
-        $this->accessChecker->requireMembership($payer, $colocation);
 
         return $payer;
     }
@@ -270,7 +272,7 @@ final class ExpenseService
 
         foreach ($shares as $shareInput) {
             if (!in_array($shareInput->userId, $memberIds, true)) {
-                throw new ApiException(sprintf('L\'utilisateur %d n\'est pas membre de la colocation.', $shareInput->userId));
+                throw ApiException::resourceNotFound();
             }
 
             if (isset($seenUserIds[$shareInput->userId])) {

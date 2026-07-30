@@ -131,7 +131,7 @@ final class UserServiceTest extends TestCase
         $this->entityManager->expects($this->never())->method('flush');
 
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Mot de passe actuel incorrect.');
+        $this->expectExceptionMessage('Informations incorrectes.');
 
         $this->userService->update($user, $dto);
     }

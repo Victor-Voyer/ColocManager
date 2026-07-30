@@ -22,7 +22,7 @@ final class AuthService
     public function register(RegisterUserDto $dto): User
     {
         if ($this->userRepository->findOneBy(['email' => $dto->email]) !== null) {
-            throw ApiException::conflict('Cet email est déjà utilisé.');
+            throw ApiException::conflict('Impossible de créer le compte. Vérifiez vos informations.');
         }
 
         $user = new User();

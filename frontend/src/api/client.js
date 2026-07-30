@@ -1,4 +1,8 @@
-import { translateErrorMessage } from '../utils/apiError'
+import {
+  sanitizeErrorMessage,
+  STATUS_FALLBACKS,
+  translateErrorMessage,
+} from '../utils/apiError'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8088/api'
 
@@ -30,7 +34,7 @@ async function parseResponse(response) {
   try {
     return JSON.parse(text)
   } catch {
-    return { error: text }
+    return null
   }
 }
 
@@ -62,9 +66,17 @@ export async function apiRequest(path, { skipAuthHandler = false, ...options } =
       data?.message ??
       (data?.errors && typeof data.errors === 'object'
         ? Object.values(data.errors)[0]
-        : null) ??
-      'Une erreur est survenue.'
-    throw new ApiError(translateErrorMessage(rawMessage), response.status, data)
+        : null)
+
+    const message = rawMessage
+      ? translateErrorMessage(String(rawMessage))
+      : (STATUS_FALLBACKS[response.status] ?? 'Une erreur est survenue.')
+
+    throw new ApiError(
+      sanitizeErrorMessage(message, response.status),
+      response.status,
+      data,
+    )
   }
 
   return data

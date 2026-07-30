@@ -11,6 +11,10 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  */
 final class ApiException extends \RuntimeException
 {
+    public const MESSAGE_RESOURCE_NOT_FOUND = 'Ressource introuvable.';
+    public const MESSAGE_ACCESS_DENIED = 'Accès refusé.';
+    public const MESSAGE_INVALID_DATA = 'Données invalides.';
+
     /**
      * @param array<string, mixed> $extra Données additionnelles dans la réponse JSON
      */
@@ -34,15 +38,25 @@ final class ApiException extends \RuntimeException
     }
 
     /** Raccourci pour une erreur 404 */
-    public static function notFound(string $message): self
+    public static function notFound(string $message = self::MESSAGE_RESOURCE_NOT_FOUND): self
     {
         return new self($message, Response::HTTP_NOT_FOUND);
     }
 
     /** Raccourci pour une erreur 403 */
-    public static function forbidden(string $message): self
+    public static function forbidden(string $message = self::MESSAGE_ACCESS_DENIED): self
     {
         return new self($message, Response::HTTP_FORBIDDEN);
+    }
+
+    public static function resourceNotFound(): self
+    {
+        return self::notFound();
+    }
+
+    public static function accessDenied(): self
+    {
+        return self::forbidden();
     }
 
     /** Raccourci pour une erreur 409 */

@@ -40,7 +40,7 @@ final class UserService
             }
 
             if ($dto->currentPassword === null || !$this->passwordHasher->isPasswordValid($user, $dto->currentPassword)) {
-                throw new ApiException('Mot de passe actuel incorrect.');
+                throw new ApiException('Informations incorrectes.');
             }
         }
 
@@ -60,7 +60,7 @@ final class UserService
         if ($dto->email !== null && $dto->email !== $user->getEmail()) {
             $existingUser = $this->userRepository->findOneBy(['email' => $dto->email]);
             if ($existingUser !== null && $existingUser->getId() !== $user->getId()) {
-                throw ApiException::conflict('Cet email est déjà utilisé.');
+                throw ApiException::conflict('Impossible de mettre à jour le profil. Vérifiez vos informations.');
             }
 
             $user->setEmail($dto->email);
@@ -78,7 +78,7 @@ final class UserService
     public function delete(User $user, DeleteUserAccountDto $dto): void
     {
         if (!$this->passwordHasher->isPasswordValid($user, $dto->password)) {
-            throw new ApiException('Mot de passe incorrect.');
+            throw new ApiException('Informations incorrectes.');
         }
 
         if ($this->expenseShareRepository->hasActiveDebt($user)) {

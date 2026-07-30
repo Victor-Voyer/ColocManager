@@ -20,7 +20,7 @@ final class ColocationAccessChecker
     {
         $colocation = $this->colocationRepository->find($colocationId);
         if ($colocation === null) {
-            throw ApiException::notFound('Colocation introuvable.');
+            throw ApiException::accessDenied();
         }
 
         $role = $this->requireMembership($user, $colocation);
@@ -31,7 +31,7 @@ final class ColocationAccessChecker
     public function requireMembership(User $user, Colocation $colocation): ColocationRole
     {
         if ($user->getColocation() === null || $user->getColocation()->getId() !== $colocation->getId()) {
-            throw ApiException::forbidden('Accès refusé : vous n\'êtes pas membre de cette colocation.');
+            throw ApiException::accessDenied();
         }
 
         return $user->getRole();
