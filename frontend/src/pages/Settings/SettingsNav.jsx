@@ -2,7 +2,7 @@ import { AlertTriangle, FileText, Home, User } from 'lucide-react'
 
 const SECTIONS = [
   { id: 'profile', label: 'Profil', icon: User },
-  { id: 'colocation', label: 'Colocation', icon: Home },
+  { id: 'colocation', label: 'Colocation', shortLabel: 'Coloc', icon: Home },
   { id: 'account', label: 'Compte', icon: AlertTriangle },
   { id: 'cgu', label: 'CGU', icon: FileText },
 ]
@@ -22,9 +22,17 @@ function SettingsNav({ activeSection, onSectionChange }) {
                 className={`settings-nav__item${isActive ? ' settings-nav__item--active' : ''}`}
                 onClick={() => onSectionChange(section.id)}
                 aria-current={isActive ? 'true' : undefined}
+                aria-label={section.label}
               >
-                <Icon size={18} aria-hidden="true" />
-                {section.label}
+                <Icon className="settings-nav__icon" size={18} aria-hidden="true" />
+                <span className="settings-nav__label settings-nav__label--full">
+                  {section.label}
+                </span>
+                {section.shortLabel && (
+                  <span className="settings-nav__label settings-nav__label--short">
+                    {section.shortLabel}
+                  </span>
+                )}
               </button>
             </li>
           )
