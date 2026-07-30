@@ -41,9 +41,12 @@ function InvitationCodeCard({
       )}
 
       <div className="invitation-code">
-        <code className="invitation-code__value">
-          {invitationCode || '…'}
-        </code>
+        <div className="invitation-code__field">
+          <label htmlFor="invitation-code-value">Code d&apos;invitation</label>
+          <code id="invitation-code-value" className="invitation-code__value">
+            {invitationCode || '…'}
+          </code>
+        </div>
         <div className="invitation-code__actions">
           <button
             type="button"

@@ -18,7 +18,7 @@
 
 .tasks-page__filters select {
   padding: 0.625rem 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: var(--input-border-width) solid var(--input-border-color);
   border-radius: 8px;
   font: inherit;
   font-weight: 400;
@@ -28,7 +28,7 @@
 
 .tasks-page__filters select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--input-border-color-focus);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 

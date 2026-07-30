@@ -26,7 +26,7 @@
 .task-form__field textarea {
   width: 100%;
   padding: 0.625rem 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: var(--input-border-width) solid var(--input-border-color);
   border-radius: 8px;
   font-size: 0.875rem;
   font-family: inherit;
@@ -40,7 +40,7 @@
 .task-form__field select:focus,
 .task-form__field textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--input-border-color-focus);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
@@ -65,7 +65,7 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: var(--input-border-width) solid var(--input-border-color);
   border-radius: 8px;
   max-height: 160px;
   overflow-y: auto;

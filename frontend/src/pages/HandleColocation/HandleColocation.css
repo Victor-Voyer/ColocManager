@@ -31,13 +31,13 @@
 .handle-colocation-card input {
   width: 100%;
   padding: 0.625rem 1rem;
-  border: 1px solid #e5e7eb;
+  border: var(--input-border-width) solid var(--input-border-color);
   border-radius: 8px;
   font: inherit;
 }
 
 .handle-colocation-card input:focus {
-  border-color: #3b82f6;
+  border-color: var(--input-border-color-focus);
   outline: none;
 }
 

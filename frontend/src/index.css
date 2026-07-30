@@ -1,3 +1,9 @@
+:root {
+  --input-border-width: 1.5px;
+  --input-border-color: #d1d5db;
+  --input-border-color-focus: #3b82f6;
+}
+
 *,
 *::before,
 *::after {

@@ -45,7 +45,7 @@ function ColocationNameForm({ colocationId, initialName, onUpdated }) {
   }
 
   return (
-    <form className="form" onSubmit={handleSubmit} noValidate>
+    <>
       {error && (
         <p className="settings-feedback settings-feedback--error" role="alert">
           {error}
@@ -57,29 +57,31 @@ function ColocationNameForm({ colocationId, initialName, onUpdated }) {
         </p>
       )}
 
-      <div className="form__field">
-        <label htmlFor="settings-colocation-name">Nom du foyer</label>
-        <input
-          id="settings-colocation-name"
-          type="text"
-          required
-          maxLength={255}
-          value={name}
-          onChange={(event) => {
-            setName(event.target.value)
-            setSuccess(false)
-          }}
-        />
-      </div>
+      <form className="form" onSubmit={handleSubmit} noValidate>
+        <div className="form__field">
+          <label htmlFor="settings-colocation-name">Nom du foyer</label>
+          <input
+            id="settings-colocation-name"
+            type="text"
+            required
+            maxLength={255}
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value)
+              setSuccess(false)
+            }}
+          />
+        </div>
 
-      <button
-        type="submit"
-        className="btn btn--primary"
-        disabled={isSubmitting || isUnchanged || !trimmedName}
-      >
-        {isSubmitting ? 'Enregistrement…' : 'Enregistrer le nom'}
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="btn btn--primary"
+          disabled={isSubmitting || isUnchanged || !trimmedName}
+        >
+          {isSubmitting ? 'Enregistrement…' : 'Enregistrer le nom'}
+        </button>
+      </form>
+    </>
   )
 }
 
