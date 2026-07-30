@@ -8,6 +8,13 @@ export function getColocation(colocationId) {
   return apiRequest(`/colocations/${colocationId}`)
 }
 
+export function updateColocation(colocationId, payload) {
+  return apiRequest(`/colocations/${colocationId}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+}
+
 export function createColocation(payload) {
   return apiRequest(`/colocations`,{
     method: 'POST',
