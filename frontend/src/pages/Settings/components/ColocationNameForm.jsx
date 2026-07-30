@@ -74,10 +74,10 @@ function ColocationNameForm({ colocationId, initialName, onUpdated }) {
 
       <button
         type="submit"
-        className="btn btn--neutral"
+        className="btn btn--primary"
         disabled={isSubmitting || isUnchanged || !trimmedName}
       >
-        {isSubmitting ? 'Mise à jour…' : 'Enregistrer le nom'}
+        {isSubmitting ? 'Enregistrement…' : 'Enregistrer le nom'}
       </button>
     </form>
   )

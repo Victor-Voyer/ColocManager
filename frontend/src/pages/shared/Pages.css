@@ -40,9 +40,21 @@
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.875rem;
+  font-family: inherit;
   cursor: pointer;
   border: none;
-  transition: all 0.2s;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.45);
+  outline-offset: 2px;
 }
 
 .btn--primary {
@@ -50,8 +62,9 @@
   color: white;
 }
 
-.btn--primary:hover {
+.btn--primary:hover:not(:disabled) {
   background-color: #2563eb;
+  transform: translateY(-1px);
 }
 
 .btn--neutral {
@@ -60,9 +73,16 @@
   border: 1px solid #e5e7eb;
 }
 
+.btn--neutral:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
 .btn--with-icon {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.375rem;
 }
 

@@ -47,7 +47,7 @@ function InvitationCodeCard({
         <div className="invitation-code__actions">
           <button
             type="button"
-            className="btn btn--neutral btn--with-icon"
+            className="btn btn--primary btn--with-icon"
             onClick={handleCopy}
             disabled={!invitationCode}
           >
