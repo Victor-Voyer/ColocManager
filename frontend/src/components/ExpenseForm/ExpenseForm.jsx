@@ -163,8 +163,8 @@ function ExpenseForm({
         </div>
       </div>
 
-      <div className="expense-form__field">
-        <label>Répartition</label>
+      <div className="expense-form__field expense-form__field--shares">
+        <span className="expense-form__field-label">Répartition</span>
         <p className="expense-form__hint">
           Cochez les membres concernés : le montant total est réparti à parts
           égales entre eux. Cliquez sur « Précis » pour saisir un montant
@@ -173,7 +173,7 @@ function ExpenseForm({
           coché : décochez-le s'il a avancé la totalité pour quelqu'un
           d'autre.
         </p>
-        <div className="expense-form__participants">
+        <ul className="expense-form__participants">
           {shares.map((share) => {
             const member = members.find((m) => m.id === share.userId)
             if (!member) {
@@ -187,14 +187,24 @@ function ExpenseForm({
               previewIndex >= 0 ? previewAmounts[previewIndex] : '0.00'
 
             return (
-              <div key={share.userId} className="expense-form__share-row">
+              <li
+                key={share.userId}
+                className={
+                  share.included
+                    ? 'expense-form__share-row expense-form__share-row--active'
+                    : 'expense-form__share-row'
+                }
+              >
                 <label className="expense-form__participant">
                   <input
                     type="checkbox"
+                    className="expense-form__participant-checkbox"
                     checked={share.included}
                     onChange={() => toggleShare(share.userId)}
                   />
-                  {member.firstName} {member.lastName}
+                  <span className="expense-form__participant-name">
+                    {member.firstName} {member.lastName}
+                  </span>
                 </label>
                 {share.included && (
                   <div className="expense-form__share-controls">
@@ -224,10 +234,10 @@ function ExpenseForm({
                     </button>
                   </div>
                 )}
-              </div>
+              </li>
             )
           })}
-        </div>
+        </ul>
         <p
           className={
             totalsMatch
