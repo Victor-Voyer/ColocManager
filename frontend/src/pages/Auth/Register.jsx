@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import Logo from '../../components/Logo/Logo.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { getErrorMessage } from '../../utils/apiError'
+import { getEmailValidationError } from '../../utils/emailValidation'
 import {
   formatPasswordValidationError,
   getPasswordValidationErrors,
@@ -17,10 +18,20 @@ function Register() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [password, setPassword] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleEmailChange = (event) => {
+    const nextEmail = event.target.value
+    setEmail(nextEmail)
+
+    if (emailError) {
+      setEmailError(getEmailValidationError(nextEmail))
+    }
+  }
 
   const handlePasswordChange = (event) => {
     const nextPassword = event.target.value
@@ -36,13 +47,27 @@ function Register() {
     event.preventDefault()
     setError('')
 
+    const nextEmailError = getEmailValidationError(email)
     const missingRequirements = getPasswordValidationErrors(password)
-    if (missingRequirements.length > 0) {
-      setPasswordError(formatPasswordValidationError(missingRequirements))
-      return
+    let hasValidationError = false
+
+    if (nextEmailError) {
+      setEmailError(nextEmailError)
+      hasValidationError = true
+    } else {
+      setEmailError('')
     }
 
-    setPasswordError('')
+    if (missingRequirements.length > 0) {
+      setPasswordError(formatPasswordValidationError(missingRequirements))
+      hasValidationError = true
+    } else {
+      setPasswordError('')
+    }
+
+    if (hasValidationError) {
+      return
+    }
     setIsSubmitting(true)
 
     try {
@@ -113,9 +138,20 @@ function Register() {
                 type="email"
                 autoComplete="email"
                 required
+                aria-describedby="register-email-error"
+                aria-invalid={emailError ? 'true' : undefined}
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={handleEmailChange}
               />
+              {emailError && (
+                <p
+                  id="register-email-error"
+                  className="auth-page__field-error"
+                  role="alert"
+                >
+                  {emailError}
+                </p>
+              )}
             </div>
 
             <div className="auth-page__field">
