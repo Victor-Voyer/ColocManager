@@ -36,6 +36,7 @@ final class TaskService
     public function create(User $user, int $colocationId, CreateTaskDto $dto): array
     {
         $context = $this->accessChecker->resolveContext($user, $colocationId);
+        $this->assertDueDateNotInPast($dto->dueDate);
 
         $task = new Task();
         $task->setColocation($context->colocation);
@@ -176,5 +177,21 @@ final class TaskService
         }
 
         return $member;
+    }
+
+    private function assertDueDateNotInPast(?string $dueDate): void
+    {
+        if ($dueDate === null || $dueDate === '') {
+            return;
+        }
+
+        $parsed = DateParser::parseNullableYmd($dueDate);
+        if ($parsed === null) {
+            return;
+        }
+
+        if ($parsed < new \DateTimeImmutable('today')) {
+            throw new ApiException('La date d\'échéance ne peut pas être antérieure à aujourd\'hui.');
+        }
     }
 }

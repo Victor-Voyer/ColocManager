@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { todayIso } from '../../utils/dateUtils'
 import { TASK_PRIORITY_OPTIONS } from '../../utils/taskUtils'
 import './TaskForm.css'
 
@@ -19,7 +20,7 @@ function buildInitialState(task) {
     description: '',
     status: 'pending',
     priority: 'medium',
-    dueDate: '',
+    dueDate: todayIso(),
     assignedToUserId: '',
   }
 }
@@ -32,14 +33,35 @@ function TaskForm({
   isSubmitting = false,
   error = '',
 }) {
+  const isCreating = task === null
+  const minDueDate = todayIso()
   const [form, setForm] = useState(() => buildInitialState(task))
+  const [dueDateError, setDueDateError] = useState('')
 
   const updateField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
+
+    if (field === 'dueDate' && dueDateError) {
+      setDueDateError(getDueDateValidationError(value, isCreating, minDueDate))
+    }
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+
+    if (isCreating) {
+      const nextDueDateError = getDueDateValidationError(
+        form.dueDate,
+        true,
+        minDueDate,
+      )
+      if (nextDueDateError) {
+        setDueDateError(nextDueDateError)
+        return
+      }
+    }
+
+    setDueDateError('')
 
     await onSubmit({
       title: form.title.trim(),
@@ -102,9 +124,21 @@ function TaskForm({
           <input
             id="task-due-date"
             type="date"
+            min={isCreating ? minDueDate : undefined}
+            aria-describedby={dueDateError ? 'task-due-date-error' : undefined}
+            aria-invalid={dueDateError ? 'true' : undefined}
             value={form.dueDate}
             onChange={(event) => updateField('dueDate', event.target.value)}
           />
+          {dueDateError && (
+            <p
+              id="task-due-date-error"
+              className="task-form__field-error"
+              role="alert"
+            >
+              {dueDateError}
+            </p>
+          )}
         </div>
       </div>
 
@@ -149,6 +183,18 @@ function TaskForm({
       </footer>
     </form>
   )
+}
+
+function getDueDateValidationError(dueDate, isCreating, minDueDate) {
+  if (!isCreating || !dueDate) {
+    return ''
+  }
+
+  if (dueDate < minDueDate) {
+    return 'La date d\'échéance ne peut pas être antérieure à aujourd\'hui.'
+  }
+
+  return ''
 }
 
 export default TaskForm
