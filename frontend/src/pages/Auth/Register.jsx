@@ -3,6 +3,11 @@ import { Link, useNavigate } from 'react-router'
 import Logo from '../../components/Logo/Logo.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { getErrorMessage } from '../../utils/apiError'
+import {
+  formatPasswordValidationError,
+  getPasswordValidationErrors,
+  PASSWORD_REQUIREMENTS_HINT,
+} from '../../utils/passwordValidation'
 import './Auth.css'
 
 function Register() {
@@ -13,12 +18,31 @@ function Register() {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handlePasswordChange = (event) => {
+    const nextPassword = event.target.value
+    setPassword(nextPassword)
+
+    if (passwordError) {
+      const missingRequirements = getPasswordValidationErrors(nextPassword)
+      setPasswordError(formatPasswordValidationError(missingRequirements))
+    }
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
+
+    const missingRequirements = getPasswordValidationErrors(password)
+    if (missingRequirements.length > 0) {
+      setPasswordError(formatPasswordValidationError(missingRequirements))
+      return
+    }
+
+    setPasswordError('')
     setIsSubmitting(true)
 
     try {
@@ -101,10 +125,26 @@ function Register() {
                 type="password"
                 autoComplete="new-password"
                 required
-                minLength={8}
+                aria-describedby="register-password-hint register-password-error"
+                aria-invalid={passwordError ? 'true' : undefined}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={handlePasswordChange}
               />
+              <p
+                id="register-password-hint"
+                className="auth-page__hint"
+              >
+                {PASSWORD_REQUIREMENTS_HINT}
+              </p>
+              {passwordError && (
+                <p
+                  id="register-password-error"
+                  className="auth-page__field-error"
+                  role="alert"
+                >
+                  {passwordError}
+                </p>
+              )}
             </div>
 
             <button
