@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Pencil, Undo2 } from 'lucide-react'
 import {
   computeShareAmounts,
   isShareSplitValid,
@@ -167,11 +168,10 @@ function ExpenseForm({
         <span className="expense-form__field-label">Répartition</span>
         <p className="expense-form__hint">
           Cochez les membres concernés : le montant total est réparti à parts
-          égales entre eux. Cliquez sur « Précis » pour saisir un montant
-          particulier pour un membre — le reste continue d'être réparti
-          également entre les autres. Le payeur n'est pas obligé d'être
-          coché : décochez-le s'il a avancé la totalité pour quelqu'un
-          d'autre.
+          égales entre eux. Utilisez l'icône crayon pour ajuster le montant
+          d'un membre — le reste continue d'être réparti entre les autres. Le
+          payeur n'est pas obligé d'être coché : décochez-le s'il a avancé la
+          totalité pour quelqu'un d'autre.
         </p>
         <ul className="expense-form__participants">
           {shares.map((share) => {
@@ -227,10 +227,28 @@ function ExpenseForm({
                     )}
                     <button
                       type="button"
-                      className="expense-form__share-toggle"
+                      className={
+                        share.isManual
+                          ? 'expense-form__share-action expense-form__share-action--revert'
+                          : 'expense-form__share-action expense-form__share-action--edit'
+                      }
                       onClick={() => toggleManual(share.userId, previewAmount)}
+                      title={
+                        share.isManual
+                          ? 'Revenir au calcul automatique'
+                          : 'Modifier le montant'
+                      }
+                      aria-label={
+                        share.isManual
+                          ? `Annuler la modification du montant de ${member.firstName} ${member.lastName}`
+                          : `Modifier le montant de ${member.firstName} ${member.lastName}`
+                      }
                     >
-                      {share.isManual ? 'Automatique' : 'Précis'}
+                      {share.isManual ? (
+                        <Undo2 size={15} aria-hidden="true" />
+                      ) : (
+                        <Pencil size={15} aria-hidden="true" />
+                      )}
                     </button>
                   </div>
                 )}
