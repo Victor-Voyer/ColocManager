@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import Logo from '../../components/Logo/Logo.jsx'
 import { useAuth } from '../../context/AuthContext'
@@ -86,6 +86,17 @@ function Register() {
       setIsSubmitting(false)
     }
   }
+
+  useEffect(() => {
+    document.title = 'Créer un compte – ColocManager'
+
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        'content',
+        'Créer un compte sur ColocManager pour créer, gérer ou rejoindre une colocation.',
+      )
+  }, [])
 
   return (
     <div className="auth-page">

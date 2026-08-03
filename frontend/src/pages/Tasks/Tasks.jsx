@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Trash2 } from 'lucide-react'
 import ActionButton from '../../components/ActionButton/ActionButton.jsx'
 import CreateTaskModal from '../../components/CreateTaskModal/CreateTaskModal.jsx'
@@ -100,6 +100,10 @@ function Tasks() {
       setCompletingTaskId(null)
     }
   }
+
+  useEffect(() => {
+    document.title = "Tâches – ColocManger"
+  }, [])
 
   if (!colocationId) {
     return (

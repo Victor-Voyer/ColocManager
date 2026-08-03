@@ -23,6 +23,8 @@ function Settings() {
     : 'profile'
 
   useEffect(() => {
+    document.title = "Paramètres – ColocManger"
+
     if (sectionParam && !VALID_SECTIONS.includes(sectionParam)) {
       setSearchParams({ section: 'profile' }, { replace: true })
     }
