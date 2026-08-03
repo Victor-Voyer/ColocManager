@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import Logo from '../../components/Logo/Logo.jsx'
 import { useAuth } from '../../context/AuthContext'
@@ -32,6 +32,16 @@ function Login() {
       setIsSubmitting(false)
     }
   }
+  useEffect(() => {
+    document.title = 'Se connecter – ColocManager'
+
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        'content',
+        'Connectez-vous à ColocManager pour accéder à votre colocation.',
+      )
+  }, [])
 
   return (
     <div className="auth-page">

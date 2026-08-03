@@ -42,6 +42,7 @@ function Dashboard() {
 
   useEffect(() => {
     let cancelled = false
+    document.title = "Tableau de bord – ColocManager"
 
     async function bootstrap() {
       if (!colocationId) {

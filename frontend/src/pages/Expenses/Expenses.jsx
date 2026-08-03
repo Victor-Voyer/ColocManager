@@ -7,6 +7,7 @@ import ExpensesTable from '../../components/ExpensesTable/ExpensesTable.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { useCrudPageState } from '../../hooks/useCrudPageState'
 import { useExpenses } from '../../hooks/useExpenses'
+import { useEffect } from 'react'
 import './Expenses.css'
 
 function Expenses() {
@@ -67,6 +68,10 @@ function Expenses() {
       completeDelete()
     }
   }
+
+  useEffect(() => {
+    document.title = "Dépenses – ColocManger"
+  }, [])
 
   if (!colocationId) {
     return (

@@ -7,7 +7,11 @@ import './CGU.css'
 function CGU() {
   useEffect(() => {
     window.scrollTo(0, 0)
+    
+    document.title = "Conditions générales d'utilisation – ColocManager"
   }, [])
+
+
 
   return (
     <div className="cgu-page">
